@@ -1,0 +1,368 @@
+// Faculty Connect — Prisma Schema (Phase 1)
+// Single-department v1. Department is a config value, not a DB entity.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Enums --------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  HOD
+  CLUSTER_HEAD
+  FACULTY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationEventType {
+  TASK_ASSIGNED
+  TASK_COMPLETED
+  TASK_OVERDUE
+  LEAVE_APPLIED
+  LEAVE_APPROVED
+  LEAVE_REJECTED
+  STARS_AWARDED
+  LEADERBOARD_REFRESHED
+  BADGE_EARNED
+  EVALUATION_RECEIVED
+  FACULTY_OF_MONTH
+  ROLE_CHANGED
+}
+
+// --- Core Entities ------------------------------------------------------------
+
+model Cluster {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  headId      String?
+
+  head              User?              @relation("ClusterHead", fields: [headId], references: [id])
+  members           ClusterMembership[]
+  tasks             Task[]
+  leaveApplications LeaveApplication[]
+
+  @@map("clusters")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(FACULTY)
+  avatarUrl    String?
+  designation  String?
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  headOfCluster        Cluster[]            @relation("ClusterHead")
+  clusterMemberships   ClusterMembership[]
+  assignedTasks        Task[]               @relation("TaskAssignee")
+  createdTasks         Task[]               @relation("TaskCreator")
+  leaveApplications    LeaveApplication[]   @relation("LeaveApplicant")
+  decidedLeaves        LeaveApplication[]   @relation("LeaveDecider")
+  evaluationsGiven     Evaluation[]         @relation("EvaluationGiver")
+  evaluationsReceived  Evaluation[]         @relation("EvaluationReceiver")
+  pointsLedger         PointsLedger[]
+  leaderboardSnapshots LeaderboardSnapshot[]
+  facultyOfMonthAwards FacultyOfMonth[]
+  badges               UserBadge[]
+  notifications        Notification[]
+  auditLogsAsActor     AuditLog[]           @relation("AuditActor")
+  scoringConfigs       ScoringConfig[]
+  sessions             Session[]
+
+  @@map("users")
+}
+
+model ClusterMembership {
+  id        String    @id @default(cuid())
+  userId    String
+  clusterId String
+  joinedAt  DateTime  @default(now())
+  leftAt    DateTime?
+
+  user    User    @relation(fields: [userId], references: [id])
+  cluster Cluster @relation(fields: [clusterId], references: [id])
+
+  @@unique([userId, clusterId])
+  @@map("cluster_memberships")
+}
+
+// --- Auth ---------------------------------------------------------------------
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// --- Leave / CL Module --------------------------------------------------------
+
+model LeaveApplication {
+  id          String      @id @default(cuid())
+  applicantId String
+  clusterId   String
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
+  status      LeaveStatus @default(PENDING)
+  remarks     String?
+  decidedById String?
+  decidedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  applicant User    @relation("LeaveApplicant", fields: [applicantId], references: [id])
+  decidedBy User?   @relation("LeaveDecider", fields: [decidedById], references: [id])
+  cluster   Cluster @relation(fields: [clusterId], references: [id])
+
+  @@map("leave_applications")
+}
+
+// --- Task Management ----------------------------------------------------------
+
+model Task {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  assignedToId  String
+  assignedById  String
+  clusterId     String
+  priority      TaskPriority @default(MEDIUM)
+  status        TaskStatus   @default(OPEN)
+  deadline      DateTime
+  completedAt   DateTime?
+  remarks       String?
+  qualityRating Int?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime?
+
+  assignedTo User    @relation("TaskAssignee", fields: [assignedToId], references: [id])
+  assignedBy User    @relation("TaskCreator", fields: [assignedById], references: [id])
+  cluster    Cluster @relation(fields: [clusterId], references: [id])
+
+  @@map("tasks")
+}
+
+// --- Recognition Engine -------------------------------------------------------
+
+model ScoringConfig {
+  id                   String   @id @default(cuid())
+  version              Int      @default(1)
+  onTimeWeight         Float    @default(0.20)
+  earlyWeight          Float    @default(0.10)
+  completionRateWeight Float    @default(0.15)
+  streakWeight         Float    @default(0.05)
+  qualityWeight        Float    @default(0.20)
+  contributionWeight   Float    @default(0.10)
+  initiativeWeight     Float    @default(0.10)
+  overallRatingWeight  Float    @default(0.10)
+  setByAdminId         String
+  createdAt            DateTime @default(now())
+  isActive             Boolean  @default(true)
+
+  setByAdmin User @relation(fields: [setByAdminId], references: [id])
+
+  @@map("scoring_configs")
+}
+
+model Evaluation {
+  id            String   @id @default(cuid())
+  evaluatorId   String
+  facultyId     String
+  period        String
+  quality       Int
+  contribution  Int
+  initiative    Int
+  overallRating Int
+  remarks       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  evaluator User @relation("EvaluationGiver", fields: [evaluatorId], references: [id])
+  faculty   User @relation("EvaluationReceiver", fields: [facultyId], references: [id])
+
+  @@map("evaluations")
+}
+
+model PointsLedger {
+  id                   String   @id @default(cuid())
+  facultyId            String
+  source               String
+  amount               Float
+  reason               String
+  metadata             Json?
+  scoringConfigVersion Int?
+  createdAt            DateTime @default(now())
+
+  faculty User @relation(fields: [facultyId], references: [id])
+
+  @@map("points_ledger")
+}
+
+// --- Leaderboard --------------------------------------------------------------
+
+model LeaderboardSnapshot {
+  id        String   @id @default(cuid())
+  facultyId String
+  rank      Int
+  points    Float
+  period    String
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  faculty User @relation(fields: [facultyId], references: [id])
+
+  @@unique([facultyId, period, date])
+  @@map("leaderboard_snapshots")
+}
+
+model FacultyOfMonth {
+  id            String   @id @default(cuid())
+  month         Int
+  year          Int
+  facultyId     String
+  snapshotStats Json
+  createdAt     DateTime @default(now())
+
+  faculty User @relation(fields: [facultyId], references: [id])
+
+  @@unique([month, year])
+  @@map("faculty_of_month")
+}
+
+// --- Gamification -------------------------------------------------------------
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  iconUrl     String?
+  rule        Json
+  createdAt   DateTime @default(now())
+
+  userBadges UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// --- Notifications ------------------------------------------------------------
+
+model NotificationRule {
+  id        String                @id @default(cuid())
+  eventType NotificationEventType
+  enabled   Boolean               @default(true)
+  threshold Int?
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@unique([eventType])
+  @@map("notification_rules")
+}
+
+model Notification {
+  id        String                @id @default(cuid())
+  userId    String
+  eventType NotificationEventType
+  title     String
+  message   String
+  deepLink  String?
+  isRead    Boolean               @default(false)
+  readAt    DateTime?
+  metadata  Json?
+  createdAt DateTime              @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+// --- Audit Log ----------------------------------------------------------------
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  actorId        String
+  action         String
+  entityType     String
+  entityId       String
+  beforeState    Json?
+  afterState     Json?
+  isImpersonated Boolean  @default(false)
+  impersonatorId String?
+  ipAddress      String?
+  timestamp      DateTime @default(now())
+
+  actor User @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@map("audit_logs")
+}
+
+// --- Publications (Phase 5 stub) ----------------------------------------------
+
+model Publication {
+  id          String    @id @default(cuid())
+  authorId    String
+  title       String
+  journal     String?
+  conference  String?
+  year        Int
+  doi         String?
+  type        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@map("publications")
+}
