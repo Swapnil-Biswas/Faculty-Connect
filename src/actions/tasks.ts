@@ -110,6 +110,11 @@ export async function createTask(
     }
   }
 
+  // Narrow type — guards above guarantee this is set
+  if (!effectiveClusterId) {
+    return { success: false, error: 'Could not determine cluster for assignee' }
+  }
+
   const task = await db.task.create({
     data: {
       title,

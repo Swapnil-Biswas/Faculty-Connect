@@ -1,10 +1,10 @@
 'use client'
 
 import { useActionState } from 'react'
-import { applyLeave } from '@/actions/leave'
+import { applyLeave, type ActionState } from '@/actions/leave'
 import { SubmitButton } from '@/components/ui/SubmitButton'
 
-const initialState = { success: false }
+const initialState: ActionState = { success: false }
 
 export function ApplyLeaveForm() {
   const [state, formAction] = useActionState(applyLeave, initialState)
