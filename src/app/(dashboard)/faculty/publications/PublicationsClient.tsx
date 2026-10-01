@@ -2,10 +2,20 @@
 
 import { useState, useTransition } from "react";
 import {
-  BookOpen, Plus, ExternalLink, Trash2, Search, Filter,
-  Award, FileText, CheckCircle2, X, Star, Sparkles
+  BookOpen,
+  Plus,
+  ExternalLink,
+  Trash2,
+  Search,
+  Award,
+  Calendar,
+  X,
+  FileText,
 } from "lucide-react";
 import { createPublication, deletePublication } from "@/actions/publications";
+import { MetricBlock } from "@/components/ui/MetricBlock";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { formatDate } from "@/lib/utils";
 
 interface PublicationItem {
   id: string;
@@ -22,12 +32,12 @@ interface Props {
   initialPublications: PublicationItem[];
 }
 
-const TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  JOURNAL: { label: "Journal Article", color: "hsl(var(--color-primary))" },
-  CONFERENCE: { label: "Conference Paper", color: "hsl(var(--color-info))" },
-  BOOK_CHAPTER: { label: "Book Chapter", color: "#8B5CF6" },
-  PATENT: { label: "Patent", color: "#F59E0B" },
-  OTHER: { label: "Other Publication", color: "hsl(var(--text-muted))" },
+const TYPE_CONFIG: Record<string, { label: string; bg: string; color: string; border: string }> = {
+  JOURNAL: { label: "Journal Article", bg: "#EFF6FF", color: "#173B67", border: "#BFDBFE" },
+  CONFERENCE: { label: "Conference Paper", bg: "#F0FDF4", color: "#198754", border: "#BBF7D0" },
+  BOOK_CHAPTER: { label: "Book Chapter", bg: "#FEFCE8", color: "#B7791F", border: "#FEF08A" },
+  PATENT: { label: "Patent", bg: "#F3E8FF", color: "#7E22CE", border: "#E9D5FF" },
+  OTHER: { label: "Other Publication", bg: "#F2F4F7", color: "#667085", border: "#E4E7EC" },
 };
 
 export function PublicationsClient({ initialPublications }: Props) {
@@ -41,7 +51,7 @@ export function PublicationsClient({ initialPublications }: Props) {
   const journalCount = publications.filter((p) => p.type === "JOURNAL").length;
   const confCount = publications.filter((p) => p.type === "CONFERENCE").length;
   const patentCount = publications.filter((p) => p.type === "PATENT").length;
-  const totalStars = journalCount * 15 + confCount * 10 + patentCount * 25;
+  const bookCount = publications.filter((p) => p.type === "BOOK_CHAPTER").length;
 
   const filtered = publications.filter((p) => {
     if (activeTab !== "ALL" && p.type !== activeTab) return false;
@@ -89,312 +99,544 @@ export function PublicationsClient({ initialPublications }: Props) {
 
   return (
     <div>
-      {/* Metric Cards */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-primary) / 0.12)", color: "hsl(var(--color-primary))" }}>
-            <BookOpen size={22} />
-          </div>
-          <div className="stat-card-value">{publications.length}</div>
-          <div className="stat-card-label">Total Publications</div>
-          <div className="stat-card-trend trend-up">Indexed academic records</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-info) / 0.12)", color: "hsl(var(--color-info))" }}>
-            <FileText size={22} />
-          </div>
-          <div className="stat-card-value">{journalCount}</div>
-          <div className="stat-card-label">Peer-Reviewed Journals</div>
-          <div className="stat-card-trend" style={{ color: "hsl(var(--text-secondary))" }}>
-            15 stars per publication
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#F59E0B" }}>
-            <Award size={22} />
-          </div>
-          <div className="stat-card-value">{patentCount}</div>
-          <div className="stat-card-label">Granted / Filed Patents</div>
-          <div className="stat-card-trend" style={{ color: "hsl(var(--text-secondary))" }}>
-            25 stars per patent
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#F59E0B" }}>
-            <Star size={22} />
-          </div>
-          <div className="stat-card-value">★ {totalStars}</div>
-          <div className="stat-card-label">Research Recognition Stars</div>
-          <div className="stat-card-trend trend-up">Added directly to leaderboard</div>
-        </div>
+      {/* 1. Research Summary Metric Blocks */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        <MetricBlock
+          label="Total Publications"
+          value={publications.length}
+          context="Indexed academic items"
+          trendType="neutral"
+          icon={<BookOpen size={18} />}
+        />
+        <MetricBlock
+          label="Journal Articles"
+          value={journalCount}
+          context="Peer-reviewed journals"
+          trendType="positive"
+          icon={<FileText size={18} />}
+        />
+        <MetricBlock
+          label="Conference Papers"
+          value={confCount}
+          context="Proceedings & symposia"
+          trendType="neutral"
+          icon={<Award size={18} />}
+        />
+        <MetricBlock
+          label="Patents & Chapters"
+          value={patentCount + bookCount}
+          context="IP & authored chapters"
+          trendType="neutral"
+          icon={<Award size={18} />}
+        />
       </div>
 
-      {/* Controls Bar */}
+      {/* 2. Controls Toolbar: Search, Filter Tabs, Add Button */}
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
           gap: 16,
-          marginBottom: 20,
+          marginBottom: 16,
           flexWrap: "wrap",
         }}
       >
-        {/* Search */}
-        <div style={{ position: "relative", minWidth: 260, flex: 1, maxWidth: 400 }}>
-          <Search
-            size={16}
-            style={{
-              position: "absolute",
-              left: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: "hsl(var(--text-muted))",
-            }}
-          />
-          <input
-            type="text"
-            className="form-input"
-            placeholder="Search by title, journal, or DOI…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: 38 }}
-          />
-        </div>
-
-        {/* Add Button */}
-        <button
-          onClick={() => {
-            setFormError("");
-            setShowAddModal(true);
-          }}
-          className="btn-gradient"
-          style={{ fontSize: 13, gap: 6 }}
-        >
-          <Plus size={16} />
-          Add Publication
-        </button>
-      </div>
-
-      {/* Type Filter Tabs */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          borderBottom: "1px solid hsl(var(--border))",
-          marginBottom: 20,
-          overflowX: "auto",
-        }}
-      >
-        {[
-          { key: "ALL", label: "All Items" },
-          { key: "JOURNAL", label: "Journals" },
-          { key: "CONFERENCE", label: "Conferences" },
-          { key: "PATENT", label: "Patents" },
-          { key: "BOOK_CHAPTER", label: "Book Chapters" },
-        ].map((tab) => {
-          const isActive = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: isActive ? "2px solid hsl(var(--color-primary))" : "2px solid transparent",
-                padding: "8px 14px",
-                fontSize: 13,
-                fontWeight: isActive ? 700 : 500,
-                color: isActive ? "hsl(var(--color-primary))" : "hsl(var(--text-secondary))",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Publications List */}
-      {filtered.length === 0 ? (
-        <div className="card" style={{ textAlign: "center", padding: "56px 20px" }}>
-          <BookOpen size={36} style={{ opacity: 0.3, margin: "0 auto 12px" }} />
-          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>No Publications Found</h3>
-          <p style={{ color: "hsl(var(--text-muted))", fontSize: 13, maxWidth: 360, margin: "0 auto 16px" }}>
-            {searchQuery
-              ? "No items match your search query."
-              : "You haven't recorded any publications in this category yet."}
-          </p>
-          <button onClick={() => setShowAddModal(true)} className="btn-outline" style={{ fontSize: 13 }}>
-            Add Your First Publication
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {filtered.map((pub) => {
-            const meta = TYPE_LABELS[pub.type] ?? {
-              label: pub.type,
-              color: "hsl(var(--color-primary))",
-            };
-
+        {/* Filter Tabs */}
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {[
+            { id: "ALL", label: "All Items", count: publications.length },
+            { id: "JOURNAL", label: "Journals", count: journalCount },
+            { id: "CONFERENCE", label: "Conferences", count: confCount },
+            { id: "BOOK_CHAPTER", label: "Chapters", count: bookCount },
+            { id: "PATENT", label: "Patents", count: patentCount },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
             return (
-              <div
-                key={pub.id}
-                className="card"
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
                 style={{
-                  padding: "18px 22px",
-                  display: "flex",
+                  height: 32,
+                  padding: "0 12px",
+                  borderRadius: 4,
+                  fontSize: 12.5,
+                  fontWeight: isActive ? 600 : 500,
+                  border: isActive ? "1px solid #173B67" : "1px solid #E4E7EC",
+                  backgroundColor: isActive ? "#173B67" : "#FFFFFF",
+                  color: isActive ? "#FFFFFF" : "#667085",
+                  cursor: "pointer",
+                  display: "inline-flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  borderLeft: `3px solid ${meta.color}`,
+                  gap: 6,
                 }}
               >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 700,
-                        padding: "2px 8px",
-                        borderRadius: 6,
-                        background: `${meta.color}15`,
-                        color: meta.color,
-                      }}
-                    >
-                      {meta.label}
-                    </span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: "hsl(var(--text-muted))" }}>
-                      Published {pub.year}
-                    </span>
-                  </div>
-
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "hsl(var(--text-primary))", marginBottom: 6 }}>
-                    {pub.title}
-                  </h3>
-
-                  <div style={{ fontSize: 13, color: "hsl(var(--text-secondary))", display: "flex", gap: 16, flexWrap: "wrap" }}>
-                    {pub.journal && (
-                      <span><strong>Journal:</strong> {pub.journal}</span>
-                    )}
-                    {pub.conference && (
-                      <span><strong>Conference:</strong> {pub.conference}</span>
-                    )}
-                    {pub.doi && (
-                      <span><strong>DOI:</strong> <code>{pub.doi}</code></span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                  {pub.doi && (
-                    <a
-                      href={pub.doi.startsWith("http") ? pub.doi : `https://doi.org/${pub.doi}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-outline"
-                      style={{ fontSize: 12, padding: "6px 12px", gap: 6, textDecoration: "none" }}
-                    >
-                      <span>View DOI</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  )}
-
-                  <button
-                    onClick={() => handleDelete(pub.id)}
-                    className="btn-ghost"
-                    title="Delete publication"
-                    aria-label="Delete publication"
-                    style={{ padding: 8, color: "hsl(var(--color-danger))" }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
+                <span>{tab.label}</span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    padding: "0 5px",
+                    borderRadius: 10,
+                    backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "#F2F4F7",
+                    color: isActive ? "#FFFFFF" : "#667085",
+                  }}
+                >
+                  {tab.count}
+                </span>
+              </button>
             );
           })}
         </div>
+
+        {/* Search & Add Action */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ position: "relative" }}>
+            <Search
+              size={14}
+              color="#667085"
+              style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }}
+            />
+            <input
+              type="text"
+              placeholder="Search by title, venue, DOI..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                height: 34,
+                padding: "0 12px 0 32px",
+                fontSize: 13,
+                border: "1px solid #E4E7EC",
+                borderRadius: 4,
+                backgroundColor: "#FFFFFF",
+                color: "#17202A",
+                width: 240,
+              }}
+            />
+          </div>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="btn-primary"
+            style={{ height: 34, padding: "0 14px", fontSize: 13, whiteSpace: "nowrap" }}
+          >
+            <Plus size={15} />
+            Record Publication
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Publications Registry Table */}
+      {filtered.length === 0 ? (
+        <EmptyState
+          icon={BookOpen}
+          title="No publication records found"
+          description={
+            searchQuery
+              ? "No publication matches your search criteria. Try a different query."
+              : "No research items recorded in this category. Click 'Record Publication' to add an entry."
+          }
+          action={
+            !searchQuery ? (
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="btn-primary"
+                style={{ fontSize: 13 }}
+              >
+                <Plus size={15} /> Record Publication
+              </button>
+            ) : undefined
+          }
+        />
+      ) : (
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 6,
+            overflow: "hidden",
+            boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
+          }}
+        >
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+                fontSize: 13,
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: "#F7F8FA",
+                    borderBottom: "1px solid #E4E7EC",
+                    color: "#667085",
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  <th style={{ padding: "12px 18px", width: "45%" }}>Publication Title & Outlet</th>
+                  <th style={{ padding: "12px 14px" }}>Category</th>
+                  <th style={{ padding: "12px 14px" }}>Year</th>
+                  <th style={{ padding: "12px 16px" }}>Digital Object Identifier (DOI)</th>
+                  <th style={{ padding: "12px 18px", textAlign: "right" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((pub, idx) => {
+                  const typeMeta = TYPE_CONFIG[pub.type] || TYPE_CONFIG.OTHER;
+                  const venue = pub.journal || pub.conference || "Institutional Repository";
+
+                  return (
+                    <tr
+                      key={pub.id}
+                      style={{
+                        borderBottom: idx < filtered.length - 1 ? "1px solid #F2F4F7" : "none",
+                      }}
+                    >
+                      {/* Title & Venue */}
+                      <td style={{ padding: "14px 18px", verticalAlign: "top" }}>
+                        <div style={{ fontWeight: 600, color: "#17202A", lineHeight: 1.35, marginBottom: 4 }}>
+                          {pub.title}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#667085" }}>
+                          Published in: <span style={{ fontWeight: 500, color: "#17202A" }}>{venue}</span>
+                        </div>
+                      </td>
+
+                      {/* Type Pill */}
+                      <td style={{ padding: "14px 14px", verticalAlign: "top" }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 8px",
+                            borderRadius: 4,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            backgroundColor: typeMeta.bg,
+                            color: typeMeta.color,
+                            border: `1px solid ${typeMeta.border}`,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {typeMeta.label}
+                        </span>
+                      </td>
+
+                      {/* Year */}
+                      <td style={{ padding: "14px 14px", verticalAlign: "top", color: "#17202A", fontWeight: 500 }}>
+                        {pub.year}
+                      </td>
+
+                      {/* DOI (Technical Monospace) */}
+                      <td style={{ padding: "14px 16px", verticalAlign: "top" }}>
+                        {pub.doi ? (
+                          <a
+                            href={pub.doi.startsWith("http") ? pub.doi : `https://doi.org/${pub.doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              fontFamily: "ui-monospace, monospace",
+                              fontSize: 12,
+                              color: "#2F6FED",
+                              textDecoration: "none",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              maxWidth: 220,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <span>{pub.doi}</span>
+                            <ExternalLink size={11} style={{ flexShrink: 0 }} />
+                          </a>
+                        ) : (
+                          <span style={{ fontSize: 12, color: "#98A2B3" }}>Not available</span>
+                        )}
+                      </td>
+
+                      {/* Delete Action */}
+                      <td style={{ padding: "14px 18px", verticalAlign: "top", textAlign: "right" }}>
+                        <button
+                          onClick={() => handleDelete(pub.id)}
+                          title="Delete record"
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "#667085",
+                            cursor: "pointer",
+                            padding: 4,
+                            borderRadius: 4,
+                          }}
+                          className="hover:text-red-600"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
-      {/* Add Publication Modal */}
+      {/* 4. Administrative Add Publication Modal */}
       {showAddModal && (
         <div
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            backdropFilter: "blur(4px)",
-            zIndex: 100,
+            backgroundColor: "rgba(16, 24, 40, 0.45)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 20,
+            zIndex: 50,
+            padding: 16,
           }}
         >
-          <div className="card" style={{ maxWidth: 500, width: "100%", padding: 28, animation: "scaleUp 0.15s ease" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 800 }}>Add Academic Publication</h2>
-              <button onClick={() => setShowAddModal(false)} className="btn-ghost" style={{ padding: 4 }}>
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: 8,
+              border: "1px solid #E4E7EC",
+              width: "100%",
+              maxWidth: 540,
+              boxShadow: "0 12px 24px -4px rgba(16, 24, 40, 0.12)",
+              overflow: "hidden",
+            }}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: "16px 20px",
+                borderBottom: "1px solid #E4E7EC",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: "#17202A", margin: 0 }}>
+                  Record Academic Publication
+                </h3>
+                <p style={{ fontSize: 12, color: "#667085", margin: "2px 0 0 0" }}>
+                  Add bibliographic details for institutional NBA/NAAC verification
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#667085",
+                  cursor: "pointer",
+                  padding: 4,
+                }}
+              >
                 <X size={18} />
               </button>
             </div>
 
-            {formError && (
-              <div style={{ background: "hsl(0 84% 60% / 0.1)", color: "hsl(0 70% 50%)", padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 16 }}>
-                {formError}
-              </div>
-            )}
+            {/* Modal Body / Form */}
+            <form onSubmit={handleAddSubmit} style={{ padding: "20px" }}>
+              {formError && (
+                <div
+                  style={{
+                    padding: "10px 14px",
+                    backgroundColor: "#FEF2F2",
+                    border: "1px solid #FECDCA",
+                    borderRadius: 4,
+                    fontSize: 12,
+                    color: "#C0392B",
+                    marginBottom: 16,
+                  }}
+                >
+                  {formError}
+                </div>
+              )}
 
-            <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="title">Paper / Publication Title</label>
-                <input id="title" name="title" className="form-input" placeholder="e.g. Distributed Deep Learning in Edge Computing" required />
-              </div>
-
-              <div className="grid-2">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="type">Publication Type</label>
-                  <select id="type" name="type" className="form-input" defaultValue="JOURNAL" required>
-                    <option value="JOURNAL">Journal Article (+15 Stars)</option>
-                    <option value="CONFERENCE">Conference Proceedings (+10 Stars)</option>
-                    <option value="PATENT">Patent (+25 Stars)</option>
-                    <option value="BOOK_CHAPTER">Book Chapter (+10 Stars)</option>
-                    <option value="OTHER">Other Academic Work</option>
-                  </select>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {/* Title */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                    Publication Title *
+                  </label>
+                  <input
+                    name="title"
+                    required
+                    placeholder="Full title of the paper or work..."
+                    style={{
+                      width: "100%",
+                      height: 36,
+                      padding: "6px 12px",
+                      fontSize: 13,
+                      border: "1px solid #E4E7EC",
+                      borderRadius: 4,
+                      backgroundColor: "#FFFFFF",
+                      color: "#17202A",
+                    }}
+                  />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="year">Year of Publication</label>
-                  <input id="year" name="year" type="number" min={1950} max={new Date().getFullYear() + 1} defaultValue={new Date().getFullYear()} className="form-input" required />
+                {/* Type & Year */}
+                <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                      Category *
+                    </label>
+                    <select
+                      name="type"
+                      required
+                      style={{
+                        width: "100%",
+                        height: 36,
+                        padding: "6px 10px",
+                        fontSize: 13,
+                        border: "1px solid #E4E7EC",
+                        borderRadius: 4,
+                        backgroundColor: "#FFFFFF",
+                        color: "#17202A",
+                      }}
+                    >
+                      <option value="JOURNAL">Journal Article</option>
+                      <option value="CONFERENCE">Conference Paper</option>
+                      <option value="BOOK_CHAPTER">Book Chapter</option>
+                      <option value="PATENT">Patent</option>
+                      <option value="OTHER">Other Publication</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                      Publication Year *
+                    </label>
+                    <input
+                      name="year"
+                      type="number"
+                      required
+                      min={1950}
+                      max={new Date().getFullYear() + 1}
+                      defaultValue={new Date().getFullYear()}
+                      style={{
+                        width: "100%",
+                        height: 36,
+                        padding: "6px 12px",
+                        fontSize: 13,
+                        border: "1px solid #E4E7EC",
+                        borderRadius: 4,
+                        backgroundColor: "#FFFFFF",
+                        color: "#17202A",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Journal / Conference Venue */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                      Journal Name
+                    </label>
+                    <input
+                      name="journal"
+                      placeholder="e.g. IEEE Transactions on AI"
+                      style={{
+                        width: "100%",
+                        height: 36,
+                        padding: "6px 12px",
+                        fontSize: 13,
+                        border: "1px solid #E4E7EC",
+                        borderRadius: 4,
+                        backgroundColor: "#FFFFFF",
+                        color: "#17202A",
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                      Conference Name
+                    </label>
+                    <input
+                      name="conference"
+                      placeholder="e.g. ICML 2026"
+                      style={{
+                        width: "100%",
+                        height: 36,
+                        padding: "6px 12px",
+                        fontSize: 13,
+                        border: "1px solid #E4E7EC",
+                        borderRadius: 4,
+                        backgroundColor: "#FFFFFF",
+                        color: "#17202A",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* DOI */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}>
+                    Digital Object Identifier (DOI)
+                  </label>
+                  <input
+                    name="doi"
+                    placeholder="e.g. 10.1109/TPAMI.2026.1234567"
+                    style={{
+                      width: "100%",
+                      height: 36,
+                      padding: "6px 12px",
+                      fontSize: 13,
+                      fontFamily: "ui-monospace, monospace",
+                      border: "1px solid #E4E7EC",
+                      borderRadius: 4,
+                      backgroundColor: "#FFFFFF",
+                      color: "#17202A",
+                    }}
+                  />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="journal">Journal Name (if applicable)</label>
-                <input id="journal" name="journal" className="form-input" placeholder="e.g. IEEE Transactions on Computers" />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="conference">Conference Name (if applicable)</label>
-                <input id="conference" name="conference" className="form-input" placeholder="e.g. ACM SIGCOMM 2026" />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="doi">DOI / Link (Digital Object Identifier)</label>
-                <input id="doi" name="doi" className="form-input" placeholder="e.g. 10.1109/TC.2026.1234567" />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 10 }}>
-                <button type="button" onClick={() => setShowAddModal(false)} className="btn-outline">
+              {/* Modal Footer Actions */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                  marginTop: 24,
+                  borderTop: "1px solid #E4E7EC",
+                  paddingTop: 16,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="btn-outline"
+                  style={{ height: 34, padding: "0 14px", fontSize: 13 }}
+                >
                   Cancel
                 </button>
-                <button type="submit" disabled={isPending} className="btn-gradient">
-                  {isPending ? "Adding…" : "Save Publication"}
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="btn-primary"
+                  style={{ height: 34, padding: "0 16px", fontSize: 13 }}
+                >
+                  {isPending ? "Recording..." : "Save Record"}
                 </button>
               </div>
             </form>

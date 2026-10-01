@@ -3,10 +3,26 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import {
-  Bell, Check, CheckCheck, Trash2, ExternalLink, Filter,
-  CheckSquare, Calendar, Star, Award, ShieldAlert, Sparkles
+  Bell,
+  Check,
+  CheckCheck,
+  Trash2,
+  ExternalLink,
+  CheckSquare,
+  Calendar,
+  Star,
+  Award,
+  AlertTriangle,
+  Clock,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
-import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from "@/actions/notifications";
+import {
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+} from "@/actions/notifications";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatDate } from "@/lib/utils";
 
 interface NotificationItem {
@@ -23,17 +39,80 @@ interface Props {
   initialNotifications: NotificationItem[];
 }
 
-const TYPE_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; category: string }> = {
-  TASK_ASSIGNED: { label: "Task Assigned", color: "hsl(var(--color-primary))", icon: <CheckSquare size={16} />, category: "tasks" },
-  TASK_COMPLETED: { label: "Task Completed", color: "hsl(var(--color-success))", icon: <Check size={16} />, category: "tasks" },
-  TASK_OVERDUE: { label: "Task Overdue", color: "hsl(var(--color-danger))", icon: <ShieldAlert size={16} />, category: "tasks" },
-  LEAVE_APPLIED: { label: "Leave Applied", color: "hsl(var(--color-info))", icon: <Calendar size={16} />, category: "leave" },
-  LEAVE_APPROVED: { label: "Leave Approved", color: "hsl(var(--color-success))", icon: <CheckCheck size={16} />, category: "leave" },
-  LEAVE_REJECTED: { label: "Leave Rejected", color: "hsl(var(--color-danger))", icon: <ShieldAlert size={16} />, category: "leave" },
-  STARS_AWARDED: { label: "Stars Awarded", color: "#F59E0B", icon: <Star size={16} />, category: "recognition" },
-  BADGE_EARNED: { label: "Badge Earned", color: "#EC4899", icon: <Award size={16} />, category: "recognition" },
-  EVALUATION_RECEIVED: { label: "Evaluation", color: "#3B82F6", icon: <Sparkles size={16} />, category: "recognition" },
-  ROLE_CHANGED: { label: "System", color: "#8B5CF6", category: "system", icon: <Bell size={16} /> },
+const EVENT_CONFIG: Record<
+  string,
+  { label: string; icon: React.ReactNode; color: string; bg: string; category: string }
+> = {
+  TASK_ASSIGNED: {
+    label: "Task Assignment",
+    icon: <CheckSquare size={16} />,
+    color: "#2F6FED",
+    bg: "#EFF6FF",
+    category: "tasks",
+  },
+  TASK_COMPLETED: {
+    label: "Task Completed",
+    icon: <Check size={16} />,
+    color: "#198754",
+    bg: "#F0FDF4",
+    category: "tasks",
+  },
+  TASK_OVERDUE: {
+    label: "Task Overdue",
+    icon: <AlertTriangle size={16} />,
+    color: "#C0392B",
+    bg: "#FEF2F2",
+    category: "tasks",
+  },
+  LEAVE_APPLIED: {
+    label: "Leave Application",
+    icon: <Calendar size={16} />,
+    color: "#B7791F",
+    bg: "#FEFCE8",
+    category: "leave",
+  },
+  LEAVE_APPROVED: {
+    label: "Leave Approved",
+    icon: <CheckCheck size={16} />,
+    color: "#198754",
+    bg: "#F0FDF4",
+    category: "leave",
+  },
+  LEAVE_REJECTED: {
+    label: "Leave Rejected",
+    icon: <AlertTriangle size={16} />,
+    color: "#C0392B",
+    bg: "#FEF2F2",
+    category: "leave",
+  },
+  STARS_AWARDED: {
+    label: "Points Credited",
+    icon: <Star size={16} />,
+    color: "#173B67",
+    bg: "#EFF6FF",
+    category: "recognition",
+  },
+  BADGE_EARNED: {
+    label: "Badge Unlocked",
+    icon: <Award size={16} />,
+    color: "#7E22CE",
+    bg: "#F3E8FF",
+    category: "recognition",
+  },
+  EVALUATION_RECEIVED: {
+    label: "Evaluation Submitted",
+    icon: <Sparkles size={16} />,
+    color: "#2F6FED",
+    bg: "#EFF6FF",
+    category: "recognition",
+  },
+  ROLE_CHANGED: {
+    label: "System Notice",
+    icon: <Bell size={16} />,
+    color: "#667085",
+    bg: "#F2F4F7",
+    category: "system",
+  },
 };
 
 export function NotificationsClient({ initialNotifications }: Props) {
@@ -45,9 +124,9 @@ export function NotificationsClient({ initialNotifications }: Props) {
 
   const filtered = notifications.filter((n) => {
     if (activeTab === "unread") return !n.isRead;
-    if (activeTab === "tasks") return TYPE_CONFIG[n.eventType]?.category === "tasks";
-    if (activeTab === "leave") return TYPE_CONFIG[n.eventType]?.category === "leave";
-    if (activeTab === "recognition") return TYPE_CONFIG[n.eventType]?.category === "recognition";
+    if (activeTab === "tasks") return EVENT_CONFIG[n.eventType]?.category === "tasks";
+    if (activeTab === "leave") return EVENT_CONFIG[n.eventType]?.category === "leave";
+    if (activeTab === "recognition") return EVENT_CONFIG[n.eventType]?.category === "recognition";
     return true;
   });
 
@@ -76,153 +155,151 @@ export function NotificationsClient({ initialNotifications }: Props) {
 
   return (
     <div>
-      {/* Header */}
+      {/* Controls & Filter Bar */}
       <div
         style={{
           display: "flex",
+          alignItems: "center",
           justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: 24,
-          flexWrap: "wrap",
           gap: 16,
+          marginBottom: 20,
+          flexWrap: "wrap",
         }}
       >
-        <div>
-          <h1 className="page-title">Notification Center</h1>
-          <p className="page-subtitle">
-            Stay updated with tasks, leave applications, recognition stars, and announcements.
-          </p>
+        {/* Category Tabs */}
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {[
+            { id: "all", label: "All", count: notifications.length },
+            { id: "unread", label: "Unread", count: unreadCount, isUrgent: unreadCount > 0 },
+            { id: "tasks", label: "Tasks", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "tasks").length },
+            { id: "leave", label: "Leave", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "leave").length },
+            { id: "recognition", label: "Recognition", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "recognition").length },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                style={{
+                  height: 32,
+                  padding: "0 12px",
+                  borderRadius: 4,
+                  fontSize: 12.5,
+                  fontWeight: isActive ? 600 : 500,
+                  border: isActive ? "1px solid #173B67" : "1px solid #E4E7EC",
+                  backgroundColor: isActive ? "#173B67" : "#FFFFFF",
+                  color: isActive ? "#FFFFFF" : "#667085",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <span>{tab.label}</span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    padding: "0 5px",
+                    borderRadius: 10,
+                    backgroundColor: isActive
+                      ? "rgba(255, 255, 255, 0.2)"
+                      : tab.isUrgent
+                      ? "#FEF2F2"
+                      : "#F2F4F7",
+                    color: isActive
+                      ? "#FFFFFF"
+                      : tab.isUrgent
+                      ? "#C0392B"
+                      : "#667085",
+                    fontWeight: 600,
+                  }}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
+        {/* Bulk Action: Mark All Read */}
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAll}
             disabled={isPending}
             className="btn-outline"
-            style={{ fontSize: 13, gap: 6 }}
+            style={{
+              height: 32,
+              padding: "0 12px",
+              fontSize: 12,
+              fontWeight: 500,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
           >
-            <CheckCheck size={16} />
-            Mark all read ({unreadCount})
+            <CheckCheck size={14} />
+            <span>Mark all read</span>
           </button>
         )}
       </div>
 
-      {/* Tabs */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          borderBottom: "1px solid hsl(var(--border))",
-          marginBottom: 20,
-          overflowX: "auto",
-          paddingBottom: 2,
-        }}
-      >
-        {[
-          { key: "all", label: "All", count: notifications.length },
-          { key: "unread", label: "Unread", count: unreadCount },
-          { key: "tasks", label: "Tasks", count: notifications.filter((n) => TYPE_CONFIG[n.eventType]?.category === "tasks").length },
-          { key: "leave", label: "Leave", count: notifications.filter((n) => TYPE_CONFIG[n.eventType]?.category === "leave").length },
-          { key: "recognition", label: "Recognition", count: notifications.filter((n) => TYPE_CONFIG[n.eventType]?.category === "recognition").length },
-        ].map((tab) => {
-          const isActive = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: isActive ? "2px solid hsl(var(--color-primary))" : "2px solid transparent",
-                padding: "8px 14px",
-                fontSize: 13.5,
-                fontWeight: isActive ? 700 : 500,
-                color: isActive ? "hsl(var(--color-primary))" : "hsl(var(--text-secondary))",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                transition: "all 0.15s ease",
-              }}
-            >
-              {tab.label}
-              <span
-                style={{
-                  fontSize: 11,
-                  padding: "1px 6px",
-                  borderRadius: 100,
-                  background: isActive ? "hsl(var(--color-primary) / 0.15)" : "hsl(var(--bg-subtle))",
-                  color: isActive ? "hsl(var(--color-primary))" : "hsl(var(--text-muted))",
-                  fontWeight: 600,
-                }}
-              >
-                {tab.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Notifications List */}
+      {/* Notification List Container */}
       {filtered.length === 0 ? (
-        <div className="card" style={{ textAlign: "center", padding: "64px 20px" }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: "50%",
-              background: "hsl(var(--bg-subtle))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 16px",
-              color: "hsl(var(--text-muted))",
-            }}
-          >
-            <Bell size={28} />
-          </div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>No notifications found</h3>
-          <p style={{ color: "hsl(var(--text-muted))", fontSize: 13, maxWidth: 360, margin: "0 auto" }}>
-            {activeTab === "unread"
-              ? "You're all caught up! No unread notifications at this time."
-              : "There are no notifications in this category yet."}
-          </p>
-        </div>
+        <EmptyState
+          icon={Bell}
+          title="No notifications in this view"
+          description={
+            activeTab === "unread"
+              ? "All your notifications have been marked as read. New institutional alerts will appear here."
+              : "No notification records found in this category."
+          }
+        />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {filtered.map((item) => {
-            const config = TYPE_CONFIG[item.eventType] ?? {
-              label: item.eventType,
-              color: "hsl(var(--color-primary))",
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 6,
+            overflow: "hidden",
+            boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
+          }}
+        >
+          {filtered.map((item, idx) => {
+            const config = EVENT_CONFIG[item.eventType] || {
+              label: item.eventType.replace("_", " "),
               icon: <Bell size={16} />,
+              color: "#667085",
+              bg: "#F2F4F7",
+              category: "system",
             };
 
             return (
               <div
                 key={item.id}
-                className="card"
                 style={{
-                  padding: "16px 20px",
                   display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  transition: "all 0.15s ease",
-                  borderLeft: item.isRead ? "1px solid hsl(var(--border))" : `4px solid ${config.color}`,
-                  background: item.isRead ? "hsl(var(--bg-surface))" : "hsl(var(--color-primary) / 0.03)",
+                  alignItems: "flex-start",
+                  gap: 14,
+                  padding: "16px 20px",
+                  borderBottom: idx < filtered.length - 1 ? "1px solid #F2F4F7" : "none",
+                  backgroundColor: item.isRead ? "#FFFFFF" : "#EFF6FF",
+                  borderLeft: item.isRead ? "3px solid transparent" : "3px solid #2F6FED",
+                  transition: "background-color 0.15s ease",
                 }}
               >
-                {/* Event Icon */}
+                {/* Event Category Icon */}
                 <div
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 12,
-                    background: `${config.color}15`,
+                    width: 32,
+                    height: 32,
+                    borderRadius: 4,
+                    backgroundColor: config.bg,
                     color: config.color,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    marginTop: 2,
                   }}
                 >
                   {config.icon}
@@ -230,31 +307,40 @@ export function NotificationsClient({ initialNotifications }: Props) {
 
                 {/* Content */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginBottom: 4,
+                      flexWrap: "wrap",
+                    }}
+                  >
                     <span
                       style={{
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         textTransform: "uppercase",
-                        letterSpacing: "0.04em",
+                        letterSpacing: "0.03em",
                         color: config.color,
                       }}
                     >
                       {config.label}
                     </span>
-                    <span style={{ fontSize: 11, color: "hsl(var(--text-muted))" }}>•</span>
-                    <span style={{ fontSize: 11.5, color: "hsl(var(--text-muted))" }}>
+                    <span style={{ fontSize: 11, color: "#98A2B3" }}>•</span>
+                    <span style={{ fontSize: 12, color: "#667085", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                      <Clock size={11} />
                       {formatDate(item.createdAt)}
                     </span>
                     {!item.isRead && (
                       <span
                         style={{
                           fontSize: 10,
-                          padding: "1px 6px",
-                          borderRadius: 10,
-                          background: "hsl(var(--color-primary))",
-                          color: "white",
                           fontWeight: 700,
+                          backgroundColor: "#BFDBFE",
+                          color: "#173B67",
+                          padding: "1px 6px",
+                          borderRadius: 4,
                         }}
                       >
                         NEW
@@ -262,67 +348,89 @@ export function NotificationsClient({ initialNotifications }: Props) {
                     )}
                   </div>
 
-                  <h3
+                  <div
                     style={{
-                      fontSize: 14.5,
-                      fontWeight: item.isRead ? 600 : 700,
-                      color: "hsl(var(--text-primary))",
-                      marginBottom: 4,
+                      fontSize: 13.5,
+                      fontWeight: item.isRead ? 500 : 600,
+                      color: "#17202A",
+                      lineHeight: 1.35,
+                      marginBottom: 3,
                     }}
                   >
                     {item.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: "hsl(var(--text-secondary))",
-                      lineHeight: 1.5,
-                      margin: 0,
-                    }}
-                  >
+                  </div>
+
+                  <div style={{ fontSize: 13, color: "#667085", lineHeight: 1.45 }}>
                     {item.message}
-                  </p>
+                  </div>
+
+                  {/* Deep Link Action */}
+                  {item.deepLink && (
+                    <div style={{ marginTop: 8 }}>
+                      <Link
+                        href={item.deepLink}
+                        onClick={() => !item.isRead && handleMarkOne(item.id)}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 500,
+                          color: "#2F6FED",
+                          textDecoration: "none",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                        className="hover:underline"
+                      >
+                        <span>View Details</span>
+                        <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
-                {/* Actions */}
+                {/* Right Actions: Mark as Read & Delete */}
                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-                  {item.deepLink && (
-                    <Link
-                      href={item.deepLink}
-                      className="btn-outline"
-                      style={{
-                        fontSize: 12,
-                        padding: "6px 12px",
-                        gap: 4,
-                        textDecoration: "none",
-                      }}
-                      onClick={() => !item.isRead && handleMarkOne(item.id)}
-                    >
-                      <span>View</span>
-                      <ExternalLink size={12} />
-                    </Link>
-                  )}
-
                   {!item.isRead && (
                     <button
                       onClick={() => handleMarkOne(item.id)}
-                      className="btn-ghost"
                       title="Mark as read"
-                      aria-label="Mark as read"
-                      style={{ padding: 8 }}
+                      style={{
+                        height: 28,
+                        padding: "0 8px",
+                        fontSize: 11.5,
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #E4E7EC",
+                        borderRadius: 4,
+                        color: "#17202A",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
                     >
-                      <Check size={16} />
+                      <Check size={12} />
+                      <span>Read</span>
                     </button>
                   )}
 
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="btn-ghost"
                     title="Delete notification"
-                    aria-label="Delete notification"
-                    style={{ padding: 8, color: "hsl(var(--text-muted))" }}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 4,
+                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "#667085",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    className="hover:text-red-600"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>

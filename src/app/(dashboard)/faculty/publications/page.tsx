@@ -1,7 +1,11 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { PublicationsClient } from "./PublicationsClient";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Faculty Workspace — Publications" };
 
 export default async function FacultyPublicationsPage() {
   const session = await auth();
@@ -9,7 +13,7 @@ export default async function FacultyPublicationsPage() {
     redirect("/login");
   }
 
-  // Fetch publications for current user
+  // Fetch publications for current user from database
   const publications = await db.publication.findMany({
     where: {
       authorId: session.user.id,
@@ -19,13 +23,16 @@ export default async function FacultyPublicationsPage() {
   });
 
   return (
-    <div className="page-content">
-      <div style={{ marginBottom: 28 }}>
-        <h1 className="page-title">Research & Publications Portfolio</h1>
-        <p className="page-subtitle">
-          Track published journals, peer-reviewed conferences, book chapters, and patents for NBA/NAAC criteria.
-        </p>
-      </div>
+    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
+      {/* 1. Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Faculty Workspace", href: "/faculty" },
+          { label: "Publications" },
+        ]}
+        title="Research & Academic Publications Registry"
+        subtitle="Departmental dossier of indexed journals, peer-reviewed conference proceedings, and patents for NBA/NAAC compliance."
+      />
 
       <PublicationsClient
         initialPublications={publications.map((p) => ({
