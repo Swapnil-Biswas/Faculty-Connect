@@ -21,13 +21,17 @@ export function DecideLeaveForm({ leaveId }: DecideLeaveFormProps) {
           display: 'inline-flex',
           alignItems: 'center',
           gap: 6,
-          fontSize: 13,
-          fontWeight: 600,
-          color: 'hsl(var(--color-success))',
+          fontSize: 12,
+          fontFamily: 'var(--font-mono)',
+          fontWeight: 700,
+          color: '#22C55E',
+          background: 'rgba(34, 197, 94, 0.12)',
+          border: '1px solid rgba(34, 197, 94, 0.25)',
+          padding: '4px 10px',
+          borderRadius: 6,
         }}
       >
-        <CheckCircle2 size={16} />
-        Decision saved
+        <CheckCircle2 size={14} /> DECISION RECORDED
       </div>
     )
   }
@@ -44,61 +48,107 @@ export function DecideLeaveForm({ leaveId }: DecideLeaveFormProps) {
             type="button"
             onClick={() => {
               setDecision('APPROVED')
-              // submit the form after state updates
               setTimeout(() => {
                 const form = document.getElementById(`decide-form-${leaveId}`)
                 ;(form as HTMLFormElement)?.requestSubmit()
               }, 50)
             }}
-            className="btn-gradient"
-            style={{ padding: '7px 16px', fontSize: 12 }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              fontSize: 11,
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.08) 100%)',
+              color: '#22C55E',
+              border: '1px solid rgba(34, 197, 94, 0.35)',
+              borderRadius: 6,
+              cursor: 'pointer',
+            }}
           >
-            <CheckCircle2 size={14} /> Approve
+            <CheckCircle2 size={13} /> APPROVE
           </button>
 
           <button
             type="button"
             onClick={() => setDecision('REJECTED')}
-            className="btn-outline"
             style={{
-              padding: '7px 16px',
-              fontSize: 12,
-              color: 'hsl(var(--color-danger))',
-              borderColor: 'hsl(var(--color-danger) / 0.3)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 14px',
+              fontSize: 11,
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800,
+              background: 'rgba(244, 63, 94, 0.08)',
+              color: '#F43F5E',
+              border: '1px solid rgba(244, 63, 94, 0.3)',
+              borderRadius: 6,
+              cursor: 'pointer',
             }}
           >
-            <XCircle size={14} /> Reject
+            <XCircle size={13} /> REJECT
           </button>
         </div>
 
         {/* Remarks field — show when rejecting (required reasoning) */}
         {decision === 'REJECTED' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
             <textarea
               name="remarks"
-              className="form-input"
               rows={2}
               placeholder="Reason for rejection (optional)…"
-              style={{ resize: 'none', fontSize: 13 }}
+              style={{
+                resize: 'none',
+                fontSize: 12,
+                fontFamily: 'var(--font-mono)',
+                background: '#07090E',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: 6,
+                padding: '8px 12px',
+                color: '#F8FAFC',
+                outline: 'none',
+              }}
             />
             {state.error && (
-              <span style={{ fontSize: 12, color: 'hsl(var(--color-danger))' }}>
+              <span style={{ fontSize: 11, color: '#F43F5E', fontFamily: 'var(--font-mono)' }}>
                 {state.error}
               </span>
             )}
             <div style={{ display: 'flex', gap: 8 }}>
               <SubmitButton
-                label="Confirm Reject"
-                pendingLabel="Rejecting…"
-                variant="danger"
+                label="CONFIRM REJECT"
+                pendingLabel="REJECTING…"
+                style={{
+                  padding: '6px 12px',
+                  fontSize: 11,
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 800,
+                  background: 'rgba(244, 63, 94, 0.2)',
+                  color: '#F43F5E',
+                  border: '1px solid rgba(244, 63, 94, 0.4)',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                }}
               />
               <button
                 type="button"
                 onClick={() => setDecision(null)}
-                className="btn-outline"
-                style={{ fontSize: 13 }}
+                style={{
+                  padding: '6px 12px',
+                  fontSize: 11,
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 600,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  color: '#94A3B8',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                }}
               >
-                Cancel
+                CANCEL
               </button>
             </div>
           </div>
