@@ -2,11 +2,13 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
-import { Users, CheckSquare, Calendar, TrendingUp, Clock, AlertTriangle } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { Users, CheckSquare, Calendar, AlertTriangle, Clock, ArrowRight } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Cluster Dashboard" };
+export const metadata: Metadata = { title: "Cluster Console // Operations" };
 
 export default async function ClusterDashboard() {
   const session = await auth();
@@ -18,9 +20,9 @@ export default async function ClusterDashboard() {
   if (!clusterId) {
     return (
       <div className="empty-state">
-        <AlertTriangle size={40} />
-        <div className="empty-state-title">No cluster assigned</div>
-        <div className="empty-state-desc">Contact Admin to assign you to a cluster.</div>
+        <AlertTriangle size={40} color="#F59E0B" />
+        <div className="empty-state-title" style={{ fontFamily: "var(--font-mono)" }}>NO CLUSTER ASSIGNED</div>
+        <div className="empty-state-desc">Contact the department HOD or Administrator to link your identity to a cluster node.</div>
       </div>
     );
   }
@@ -53,75 +55,125 @@ export default async function ClusterDashboard() {
   const overdueTasks = clusterTasks.filter((t) => t.status === "OVERDUE").length;
 
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">
-          <span className="text-gradient">{cluster?.name ?? "Cluster"}</span> Dashboard
-        </h2>
-        <p className="page-subtitle">
-          Manage your cluster's tasks, leaves, and team performance.
-        </p>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "CLUSTER_CONSOLE" },
+          { label: cluster?.name?.toUpperCase() ?? "NODE_WORKSPACE" },
+        ]}
+        title={`${cluster?.name ?? "Cluster"} Operations Matrix`}
+        subtitle="Manage assigned cluster deliverables, review faculty leave pipelines, and inspect roster standing."
+        actions={
+          <div className="tech-ticker">
+            <span className="tech-led led-green" />
+            <span style={{ color: "#F8FAFC", fontWeight: 700 }}>CLUSTER ACTIVE // {totalMembers} NODES</span>
+          </div>
+        }
+      />
+
+      {/* Cyber Stats */}
+      <div className="grid-4" style={{ marginBottom: 28 }}>
+        <StatCard
+          label="FACULTY NODES"
+          value={totalMembers}
+          icon={<Users size={20} />}
+          iconBg="rgba(14, 165, 233, 0.1)"
+          glowColor="rgba(14, 165, 233, 0.2)"
+        />
+        <StatCard
+          label="ACTIVE TASKS"
+          value={openTasks}
+          icon={<CheckSquare size={20} />}
+          iconBg="rgba(255, 215, 0, 0.1)"
+          glowColor="rgba(255, 215, 0, 0.2)"
+        />
+        <StatCard
+          label="OVERDUE DELIVERABLES"
+          value={overdueTasks}
+          icon={<AlertTriangle size={20} />}
+          iconBg="rgba(244, 63, 94, 0.1)"
+          glowColor="rgba(244, 63, 94, 0.2)"
+        />
+        <StatCard
+          label="PENDING LEAVE REVIEWS"
+          value={pendingLeaves.length}
+          icon={<Calendar size={20} />}
+          iconBg="rgba(245, 158, 11, 0.1)"
+          glowColor="rgba(245, 158, 11, 0.2)"
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid-4 fade-in" style={{ marginBottom: 28 }}>
-        <StatCard label="Faculty Members" value={totalMembers} icon={<Users size={20} />}
-          iconBg="hsl(192 91% 50% / 0.12)" />
-        <StatCard label="Active Tasks" value={openTasks} icon={<CheckSquare size={20} />}
-          iconBg="hsl(258 90% 66% / 0.12)" />
-        <StatCard label="Overdue Tasks" value={overdueTasks} icon={<AlertTriangle size={20} />}
-          iconBg="hsl(0 84% 60% / 0.12)" />
-        <StatCard label="Pending Leaves" value={pendingLeaves.length} icon={<Calendar size={20} />}
-          iconBg="hsl(38 92% 50% / 0.12)" />
-      </div>
-
-      <div className="grid-2" style={{ alignItems: "start" }}>
+      <div className="grid-2" style={{ alignItems: "start", gap: 20 }}>
         {/* Pending Leave Requests */}
-        <div className="card fade-in fade-in-delay-1">
+        <div className="tech-card" style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>Pending Leave Requests</h3>
-            <a href="/cluster/leave" className="btn-gradient" style={{ padding: "6px 14px", fontSize: 12 }}>
-              Review all
+            <div>
+              <span className="hero-eyebrow" style={{ margin: 0 }}>
+                // PENDING APPROVALS
+              </span>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                Leave Applications
+              </h3>
+            </div>
+            <a href="/cluster/leave" className="btn-primary" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+              REVIEW ALL ({pendingLeaves.length})
             </a>
           </div>
 
           {pendingLeaves.length === 0 ? (
-            <div className="empty-state" style={{ padding: "24px" }}>
-              <Calendar size={36} className="empty-state-icon" />
-              <div className="empty-state-title">No pending requests</div>
+            <div style={{ padding: 28, textAlign: "center" }}>
+              <Calendar size={32} style={{ color: "#334155", margin: "0 auto 8px" }} />
+              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NO PENDING LEAVE REQUESTS</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {pendingLeaves.map((leave) => (
-                <div key={leave.id} style={{
-                  display: "flex", alignItems: "center", gap: 12,
-                  padding: "12px 14px", background: "hsl(var(--bg-subtle))", borderRadius: 10,
-                }}>
-                  <div className="avatar avatar-sm">
+                <div
+                  key={leave.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 14px",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    borderRadius: 8,
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                  }}
+                >
+                  <div
+                    className="avatar avatar-sm"
+                    style={{
+                      background: "#07090E",
+                      border: "1.5px solid #FFD700",
+                      color: "#FFD700",
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 700,
+                    }}
+                  >
                     {getInitials(leave.applicant.name)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 600, color: "hsl(var(--text-primary))" }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: "#F8FAFC" }}>
                       {leave.applicant.name}
                     </div>
-                    <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>
+                    <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B" }}>
                       {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <a
                       href={`/cluster/leave/${leave.id}?action=approve`}
-                      className="btn-gradient"
-                      style={{ padding: "5px 12px", fontSize: 11 }}
+                      className="btn-primary"
+                      style={{ padding: "4px 10px", fontSize: 11, fontFamily: "var(--font-mono)" }}
                     >
-                      Approve
+                      APPROVE
                     </a>
                     <a
                       href={`/cluster/leave/${leave.id}?action=reject`}
                       className="btn-outline"
-                      style={{ padding: "5px 12px", fontSize: 11 }}
+                      style={{ padding: "4px 10px", fontSize: 11, fontFamily: "var(--font-mono)" }}
                     >
-                      Reject
+                      REJECT
                     </a>
                   </div>
                 </div>
@@ -131,42 +183,64 @@ export default async function ClusterDashboard() {
         </div>
 
         {/* Task overview */}
-        <div className="card fade-in fade-in-delay-2">
+        <div className="tech-card" style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>Task Overview</h3>
-            <a href="/cluster/tasks" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-              View all
+            <div>
+              <span className="hero-eyebrow" style={{ margin: 0 }}>
+                // DELIVERABLES
+              </span>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                Active Task Pipeline
+              </h3>
+            </div>
+            <a href="/cluster/tasks" className="btn-outline" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+              TASKS MATRIX →
             </a>
           </div>
 
           {clusterTasks.length === 0 ? (
-            <div className="empty-state" style={{ padding: "24px" }}>
-              <CheckSquare size={36} className="empty-state-icon" />
-              <div className="empty-state-title">No tasks yet</div>
+            <div style={{ padding: 28, textAlign: "center" }}>
+              <CheckSquare size={32} style={{ color: "#334155", margin: "0 auto 8px" }} />
+              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NO CLUSTER TASKS LOGGED</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {clusterTasks.map((task) => (
-                <div key={task.id} style={{
-                  display: "flex", alignItems: "center", gap: 12,
-                  padding: "10px 12px", background: "hsl(var(--bg-subtle))", borderRadius: 8,
-                }}>
-                  <div className="avatar avatar-sm" style={{ width: 28, height: 28, fontSize: 10 }}>
+                <div
+                  key={task.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "10px 14px",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    borderRadius: 8,
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                  }}
+                >
+                  <div
+                    className="avatar avatar-sm"
+                    style={{
+                      width: 28,
+                      height: 28,
+                      fontSize: 10,
+                      background: "#07090E",
+                      border: "1px solid #38BDF8",
+                      color: "#38BDF8",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
                     {getInitials(task.assignedTo.name)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "hsl(var(--text-primary))",
-                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#F8FAFC", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {task.title}
                     </div>
-                    <div style={{ fontSize: 11.5, color: "hsl(var(--text-muted))", display: "flex", gap: 6, marginTop: 1 }}>
-                      <Clock size={11} /> {formatDate(task.deadline)} · {task.assignedTo.name.split(" ")[0]}
+                    <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B", display: "flex", gap: 6, marginTop: 2 }}>
+                      <Clock size={11} /> {formatDate(task.deadline)} · ASSIGNED: {task.assignedTo.name.split(" ")[0].toUpperCase()}
                     </div>
                   </div>
-                  <span className={`status-badge status-${task.status.toLowerCase().replace("_", "-")}`}
-                    style={{ fontSize: 10.5, padding: "2px 8px" }}>
-                    {task.status.replace("_", " ")}
-                  </span>
+                  <StatusBadge status={task.status} size="sm" />
                 </div>
               ))}
             </div>
@@ -175,52 +249,111 @@ export default async function ClusterDashboard() {
       </div>
 
       {/* Faculty Roster */}
-      <div className="card fade-in" style={{ marginTop: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <h3 className="section-title" style={{ margin: 0 }}>Faculty Roster</h3>
-          <a href="/cluster/roster" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-            Full roster
+      <div className="tech-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
+        <div
+          style={{
+            padding: "16px 24px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: "rgba(7, 9, 14, 0.6)",
+          }}
+        >
+          <div>
+            <span className="hero-eyebrow" style={{ margin: 0 }}>
+              // NODE DIRECTORY
+            </span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+              Faculty Cluster Roster
+            </h3>
+          </div>
+          <a href="/cluster/roster" className="btn-primary" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+            FULL ROSTER →
           </a>
         </div>
-        <div className="table-wrapper">
-          <table>
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              textAlign: "left",
+              fontSize: 13,
+            }}
+          >
             <thead>
-              <tr>
-                <th>Faculty Member</th>
-                <th>Designation</th>
-                <th>Joined</th>
-                <th>Actions</th>
+              <tr
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                  color: "#64748B",
+                  fontSize: 11,
+                  fontFamily: "var(--font-mono)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                <th style={{ padding: "12px 20px" }}>Faculty Member</th>
+                <th style={{ padding: "12px 18px" }}>Designation</th>
+                <th style={{ padding: "12px 18px" }}>Registered</th>
+                <th style={{ padding: "12px 20px", textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {members.length === 0 ? (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: "center", color: "hsl(var(--text-muted))", padding: 32 }}>
-                    No members in this cluster yet.
+                  <td colSpan={4} style={{ textAlign: "center", color: "#64748B", padding: 36, fontFamily: "var(--font-mono)" }}>
+                    NO MEMBERS IN THIS CLUSTER NODE YET.
                   </td>
                 </tr>
               ) : (
                 members.map((m) => (
-                  <tr key={m.userId}>
-                    <td>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div className="avatar avatar-sm">{getInitials(m.user.name)}</div>
+                  <tr
+                    key={m.userId}
+                    style={{
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                      transition: "background-color 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <td style={{ padding: "14px 20px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <div
+                          className="avatar avatar-sm"
+                          style={{
+                            background: "#07090E",
+                            border: "1.5px solid #FFD700",
+                            color: "#FFD700",
+                            fontFamily: "var(--font-mono)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {getInitials(m.user.name)}
+                        </div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: 13.5 }}>{m.user.name}</div>
-                          <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>{m.user.email}</div>
+                          <div style={{ fontWeight: 600, fontSize: 13.5, color: "#F8FAFC" }}>{m.user.name}</div>
+                          <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B" }}>{m.user.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td style={{ color: "hsl(var(--text-secondary))", fontSize: 13 }}>
-                      {m.user.designation ?? "—"}
+                    <td style={{ color: "#94A3B8", fontSize: 12.5, fontFamily: "var(--font-mono)", padding: "14px 18px" }}>
+                      {m.user.designation ?? "FACULTY"}
                     </td>
-                    <td style={{ color: "hsl(var(--text-muted))", fontSize: 13 }}>
+                    <td style={{ color: "#64748B", fontSize: 12, fontFamily: "var(--font-mono)", padding: "14px 18px" }}>
                       {formatDate(m.joinedAt)}
                     </td>
-                    <td>
-                      <a href={`/cluster/roster/${m.userId}`} className="btn-outline"
-                        style={{ padding: "5px 12px", fontSize: 12 }}>
-                        View Profile
+                    <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                      <a
+                        href={`/cluster/roster/${m.userId}`}
+                        className="btn-outline"
+                        style={{ padding: "5px 12px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}
+                      >
+                        VIEW PROFILE
                       </a>
                     </td>
                   </tr>
