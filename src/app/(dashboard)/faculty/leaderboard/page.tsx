@@ -1,8 +1,13 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getLiveLeaderboard } from "@/services/recognition";
-import { Trophy, Medal, Star, CheckCircle, Users } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Trophy, CheckCircle2, User } from "lucide-react";
 import { getInitials } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Faculty Workspace — Leaderboard" };
 
 export default async function FacultyLeaderboardPage() {
   const session = await auth();
@@ -11,207 +16,241 @@ export default async function FacultyLeaderboardPage() {
   const currentUserId = session.user.id;
   const leaderboard = await getLiveLeaderboard();
 
-  const top3 = leaderboard.slice(0, 3);
-  const rank1 = top3[0];
-  const rank2 = top3[1];
-  const rank3 = top3[2];
+  const currentUserRank = leaderboard.find((e) => e.userId === currentUserId);
 
   return (
-    <div className="dashboard-container" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      {/* Header */}
-      <div>
-        <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Trophy className="text-warning" size={28} />
-          Department Leaderboard
-        </h1>
-        <p className="page-subtitle">
-          Transparent department-wide performance rankings based on on-time completion, quality evaluations, and consistency.
-        </p>
-      </div>
+    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
+      {/* 1. Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Faculty Workspace", href: "/faculty" },
+          { label: "Department Leaderboard" },
+        ]}
+        title="Department Performance Standing"
+        subtitle="Objective rankings derived from task on-time delivery rates, evaluations, and accredited academic outputs."
+      />
 
-      {/* Podium for Top 3 */}
-      {leaderboard.length >= 3 && (
-        <div className="podium-grid">
-          {/* Rank 2 (Silver) */}
-          <div className="podium-card podium-rank-2" style={{ order: 1 }}>
-            <div className="podium-medal medal-silver">2</div>
-            <div className="avatar avatar-md" style={{ margin: "0 auto 0.75rem auto" }}>
-              {getInitials(rank2.name)}
+      {/* 2. Logged-in Faculty Personal Standing Callout */}
+      {currentUserRank && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px 20px",
+            backgroundColor: "#EFF6FF",
+            border: "1px solid #BFDBFE",
+            borderRadius: 6,
+            marginBottom: 20,
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 4,
+                backgroundColor: "#173B67",
+                color: "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 16,
+                fontWeight: 700,
+              }}
+            >
+              #{currentUserRank.rank}
             </div>
-            <div style={{ fontWeight: 700, fontSize: "1.0625rem" }}>{rank2.name}</div>
-            <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))" }}>{rank2.clusterName}</div>
-            <div style={{ marginTop: "1rem", fontSize: "1.5rem", fontWeight: 800, color: "hsl(var(--color-primary))" }}>
-              {rank2.totalPoints} <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>pts</span>
-            </div>
-            <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))", marginTop: "0.25rem" }}>
-              {rank2.onTimeRate}% on-time · {rank2.completedTasks} tasks
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#17202A" }}>
+                Your Institutional Standing: Rank #{currentUserRank.rank} of {leaderboard.length} Faculty Members
+              </div>
+              <div style={{ fontSize: 12.5, color: "#667085", marginTop: 2 }}>
+                Cluster: {currentUserRank.clusterName} · {currentUserRank.completedTasks} tasks completed · {currentUserRank.onTimeRate}% on-time delivery rate
+              </div>
             </div>
           </div>
 
-          {/* Rank 1 (Gold) */}
-          <div className="podium-card podium-rank-1" style={{ order: 2 }}>
-            <div className="podium-medal medal-gold">1</div>
-            <div className="avatar avatar-lg" style={{ margin: "0 auto 0.75rem auto", boxShadow: "0 0 16px hsl(45 93% 47% / 0.3)" }}>
-              {getInitials(rank1.name)}
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#173B67" }}>
+              {currentUserRank.totalPoints.toLocaleString()} <span style={{ fontSize: 13, fontWeight: 500 }}>pts</span>
             </div>
-            <div style={{ fontWeight: 800, fontSize: "1.1875rem" }}>{rank1.name}</div>
-            <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))" }}>{rank1.clusterName}</div>
-            <div style={{ marginTop: "1rem", fontSize: "1.75rem", fontWeight: 900, color: "#eab308" }}>
-              {rank1.totalPoints} <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>pts</span>
-            </div>
-            <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))", marginTop: "0.25rem" }}>
-              {rank1.onTimeRate}% on-time · {rank1.completedTasks} tasks
-            </div>
-          </div>
-
-          {/* Rank 3 (Bronze) */}
-          <div className="podium-card podium-rank-3" style={{ order: 3 }}>
-            <div className="podium-medal medal-bronze">3</div>
-            <div className="avatar avatar-md" style={{ margin: "0 auto 0.75rem auto" }}>
-              {getInitials(rank3.name)}
-            </div>
-            <div style={{ fontWeight: 700, fontSize: "1.0625rem" }}>{rank3.name}</div>
-            <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))" }}>{rank3.clusterName}</div>
-            <div style={{ marginTop: "1rem", fontSize: "1.5rem", fontWeight: 800, color: "#ea580c" }}>
-              {rank3.totalPoints} <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>pts</span>
-            </div>
-            <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))", marginTop: "0.25rem" }}>
-              {rank3.onTimeRate}% on-time · {rank3.completedTasks} tasks
+            <div style={{ fontSize: 11.5, color: "#667085" }}>
+              Cumulative star points
             </div>
           </div>
         </div>
       )}
 
-      {/* Full Leaderboard Table */}
-      <div className="card" style={{ padding: "1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+      {/* 3. Comprehensive Institutional Ranking Table */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 6,
+          overflow: "hidden",
+          boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 20px",
+            borderBottom: "1px solid #E4E7EC",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <div>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: 700 }}>Faculty Rankings</h2>
-            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))" }}>
-              Total point balances accumulated from tasks, bonuses, and evaluations.
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
+              Faculty Performance Roster
+            </h2>
+            <p style={{ fontSize: 12, color: "#667085", margin: "2px 0 0 0" }}>
+              Ranked in descending order by cumulative Star points balance
             </p>
           </div>
-          <span style={{ fontSize: "0.875rem", color: "hsl(var(--text-muted))" }}>
-            {leaderboard.length} Faculty Members
+          <span style={{ fontSize: 12, fontWeight: 500, color: "#667085" }}>
+            {leaderboard.length} active faculty
           </span>
         </div>
 
         {leaderboard.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "hsl(var(--text-muted))" }}>
-            No ranking data available yet.
+          <div style={{ padding: 40 }}>
+            <EmptyState
+              icon={Trophy}
+              title="No rankings available"
+              description="Leaderboard rankings will be automatically computed once faculty tasks are evaluated and verified."
+            />
           </div>
         ) : (
-          <div className="table-wrapper">
-            <table>
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+                fontSize: 13.5,
+              }}
+            >
               <thead>
-                <tr>
-                  <th style={{ width: "60px" }}>Rank</th>
-                  <th>Faculty</th>
-                  <th>Cluster</th>
-                  <th>Total Points</th>
-                  <th>Tasks Done</th>
-                  <th>On-Time %</th>
-                  <th>Avg Eval</th>
-                  <th>Badges</th>
+                <tr
+                  style={{
+                    backgroundColor: "#F7F8FA",
+                    borderBottom: "1px solid #E4E7EC",
+                    color: "#667085",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  <th style={{ padding: "12px 18px", width: 70 }}>Rank</th>
+                  <th style={{ padding: "12px 18px" }}>Faculty Member</th>
+                  <th style={{ padding: "12px 16px" }}>Cluster</th>
+                  <th style={{ padding: "12px 16px", textAlign: "right" }}>Completed Tasks</th>
+                  <th style={{ padding: "12px 16px", textAlign: "right" }}>On-Time Rate</th>
+                  <th style={{ padding: "12px 20px", textAlign: "right" }}>Total Points</th>
                 </tr>
               </thead>
               <tbody>
-                {leaderboard.map((entry) => {
+                {leaderboard.map((entry, idx) => {
                   const isCurrentUser = entry.userId === currentUserId;
+
                   return (
                     <tr
                       key={entry.userId}
                       style={{
-                        backgroundColor: isCurrentUser
-                          ? "hsl(var(--color-primary) / 0.08)"
-                          : undefined,
+                        borderBottom: idx < leaderboard.length - 1 ? "1px solid #F2F4F7" : "none",
+                        backgroundColor: isCurrentUser ? "#EFF6FF" : "#FFFFFF",
+                        borderLeft: isCurrentUser ? "3px solid #2F6FED" : "3px solid transparent",
                       }}
                     >
-                      <td>
-                        <span
-                          style={{
-                            fontWeight: 800,
-                            fontSize: "0.9375rem",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "28px",
-                            height: "28px",
-                            borderRadius: "50%",
-                            background:
-                              entry.rank === 1
-                                ? "#fef08a"
-                                : entry.rank === 2
-                                ? "#e2e8f0"
-                                : entry.rank === 3
-                                ? "#fed7aa"
-                                : "hsl(var(--bg-muted))",
-                            color:
-                              entry.rank === 1
-                                ? "#854d0e"
-                                : entry.rank === 2
-                                ? "#334155"
-                                : entry.rank === 3
-                                ? "#9a3412"
-                                : "hsl(var(--text-primary))",
-                          }}
-                        >
-                          {entry.rank}
-                        </span>
+                      {/* Rank */}
+                      <td style={{ padding: "14px 18px", fontWeight: 700, color: isCurrentUser ? "#173B67" : "#17202A" }}>
+                        #{entry.rank}
                       </td>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                          <div className="avatar avatar-sm">{getInitials(entry.name)}</div>
+
+                      {/* Faculty Name & Initials */}
+                      <td style={{ padding: "14px 18px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                          <div
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              backgroundColor: isCurrentUser ? "#173B67" : "#F2F4F7",
+                              color: isCurrentUser ? "#FFFFFF" : "#17202A",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 12,
+                              fontWeight: 600,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {getInitials(entry.name)}
+                          </div>
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                            <div style={{ fontWeight: 600, color: "#17202A" }}>
                               {entry.name}
                               {isCurrentUser && (
                                 <span
-                                  className="status-badge"
                                   style={{
-                                    marginLeft: "0.5rem",
-                                    fontSize: "10px",
-                                    background: "hsl(var(--color-primary))",
-                                    color: "white",
+                                    marginLeft: 6,
+                                    fontSize: 11,
+                                    fontWeight: 600,
                                     padding: "1px 6px",
+                                    borderRadius: 4,
+                                    backgroundColor: "#BFDBFE",
+                                    color: "#173B67",
                                   }}
                                 >
                                   You
                                 </span>
                               )}
                             </div>
-                            <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))" }}>
-                              {entry.designation ?? entry.email}
+                            <div style={{ fontSize: 12, color: "#667085" }}>
+                              {entry.email}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td>
-                        <span className="role-badge" style={{ fontSize: "11px", padding: "2px 8px" }}>
-                          {entry.clusterName}
-                        </span>
+
+                      {/* Cluster */}
+                      <td style={{ padding: "14px 16px", color: "#667085" }}>
+                        {entry.clusterName}
                       </td>
-                      <td>
-                        <span style={{ fontWeight: 800, fontSize: "0.9375rem", color: "hsl(var(--color-primary))" }}>
-                          {entry.totalPoints} pts
-                        </span>
+
+                      {/* Completed Tasks */}
+                      <td style={{ padding: "14px 16px", textAlign: "right", color: "#17202A" }}>
+                        {entry.completedTasks}
                       </td>
-                      <td>{entry.completedTasks}</td>
-                      <td>
-                        <span style={{ fontWeight: 600, color: entry.onTimeRate >= 80 ? "#16a34a" : "#b45309" }}>
+
+                      {/* On-Time Rate */}
+                      <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            color: entry.onTimeRate >= 85 ? "#198754" : entry.onTimeRate >= 70 ? "#B7791F" : "#C0392B",
+                          }}
+                        >
                           {entry.onTimeRate}%
                         </span>
                       </td>
-                      <td>
-                        <span style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                          <Star size={13} fill="#eab308" color="#eab308" />
-                          {entry.avgEvaluation > 0 ? entry.avgEvaluation : "—"}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="status-badge" style={{ fontSize: "11px" }}>
-                          {entry.badgesCount} 🏅
-                        </span>
+
+                      {/* Total Points */}
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          textAlign: "right",
+                          fontWeight: 700,
+                          fontSize: 14,
+                          color: "#173B67",
+                        }}
+                      >
+                        {entry.totalPoints.toLocaleString()} pts
                       </td>
                     </tr>
                   );
