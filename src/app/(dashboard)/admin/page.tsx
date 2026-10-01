@@ -3,12 +3,20 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
 import { RoleBadge } from "@/components/ui/RoleBadge";
-import { Users, Shield, Settings, BarChart3, AlertTriangle, Clock } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Users, Shield, Settings, BarChart3, AlertTriangle, Clock, Activity, Cpu, Database } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import { Role } from "@prisma/client";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Admin Dashboard" };
+export const metadata: Metadata = { title: "Admin Console // System Overview" };
+
+const ROLE_GLYPHS: Record<Role, string> = {
+  FACULTY: "◆",
+  CLUSTER_HEAD: "▣",
+  HOD: "◈",
+  ADMIN: "★",
+};
 
 export default async function AdminDashboard() {
   const session = await auth();
@@ -44,82 +52,162 @@ export default async function AdminDashboard() {
     roleCounts[r.role] = r._count.role;
   }
 
+  const todayAuditCount = recentAuditLogs.filter((l) =>
+    new Date(l.timestamp).toDateString() === new Date().toDateString()
+  ).length;
+
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">
-          <span className="text-gradient">Admin</span> Dashboard
-        </h2>
-        <p className="page-subtitle">System-level overview. All actions are fully audited.</p>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "SYSTEM_ROOT" },
+          { label: "ADMIN_CONSOLE" },
+        ]}
+        title="Infrastructure & System Console"
+        subtitle="Full administrative control over identity directory, scoring heuristics, background engines, and cryptographic audit logs."
+        actions={
+          <div className="tech-ticker">
+            <span className="tech-led led-green" />
+            <span style={{ color: "#F8FAFC", fontWeight: 700 }}>CLUSTER STATE: HEALTHY</span>
+          </div>
+        }
+      />
+
+      {/* Cyber System Telemetry Stat Cards */}
+      <div className="grid-4" style={{ marginBottom: 28 }}>
+        <StatCard
+          label="ACTIVE ACCOUNTS"
+          value={totalUsers}
+          icon={<Users size={20} />}
+          iconBg="rgba(255, 215, 0, 0.1)"
+          glowColor="rgba(255, 215, 0, 0.2)"
+        />
+        <StatCard
+          label="CLUSTER UNITS"
+          value={totalClusters}
+          icon={<BarChart3 size={20} />}
+          iconBg="rgba(14, 165, 233, 0.1)"
+          glowColor="rgba(14, 165, 233, 0.2)"
+        />
+        <StatCard
+          label="SCORING ENGINE"
+          value={`v${scoringConfig?.version ?? 1}.0`}
+          icon={<Settings size={20} />}
+          iconBg="rgba(129, 140, 248, 0.1)"
+          glowColor="rgba(129, 140, 248, 0.2)"
+        />
+        <StatCard
+          label="SECURITY EVENTS"
+          value={todayAuditCount}
+          icon={<Shield size={20} />}
+          iconBg="rgba(244, 63, 94, 0.1)"
+          glowColor="rgba(244, 63, 94, 0.2)"
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid-4 fade-in" style={{ marginBottom: 28 }}>
-        <StatCard label="Total Users" value={totalUsers} icon={<Users size={20} />}
-          iconBg="hsl(258 90% 66% / 0.12)" glowColor="hsl(258, 90%, 66%)" />
-        <StatCard label="Clusters" value={totalClusters} icon={<BarChart3 size={20} />}
-          iconBg="hsl(192 91% 50% / 0.12)" glowColor="hsl(192, 91%, 50%)" />
-        <StatCard label="Scoring Config v" value={scoringConfig?.version ?? 1}
-          icon={<Settings size={20} />} iconBg="hsl(38 92% 50% / 0.12)" />
-        <StatCard label="Audit Events Today" value={
-          recentAuditLogs.filter((l) =>
-            new Date(l.timestamp).toDateString() === new Date().toDateString()
-          ).length
-        } icon={<Shield size={20} />} iconBg="hsl(326 100% 65% / 0.12)" />
-      </div>
-
-      {/* Role breakdown pills */}
-      <div className="card fade-in" style={{ marginBottom: 20 }}>
-        <h3 className="section-title" style={{ marginBottom: 14 }}>User Distribution by Role</h3>
+      {/* Role Breakdown Grid */}
+      <div className="tech-card" style={{ marginBottom: 24, padding: "20px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <span className="hero-eyebrow" style={{ margin: 0 }}>
+            // DIRECTORY DISTRIBUTION BY ROLE
+          </span>
+          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B" }}>
+            TOTAL IDENTITIES: {totalUsers}
+          </span>
+        </div>
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           {Object.values(Role).map((role) => (
-            <div key={role} style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "12px 18px",
-              background: "hsl(var(--bg-subtle))",
-              borderRadius: 12, border: "1px solid hsl(var(--border))",
-              minWidth: 140,
-            }}>
+            <div
+              key={role}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 18px",
+                background: "rgba(255, 255, 255, 0.02)",
+                borderRadius: 8,
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                minWidth: 150,
+              }}
+            >
               <div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: "hsl(var(--text-primary))",
-                  fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+                <div
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 800,
+                    color: "#F8FAFC",
+                    fontFamily: "var(--font-mono)",
+                    lineHeight: 1.1,
+                  }}
+                >
                   {roleCounts[role] ?? 0}
                 </div>
-                <RoleBadge role={role} />
+                <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ color: "#FFD700", fontFamily: "var(--font-mono)", fontSize: 11 }}>
+                    {ROLE_GLYPHS[role]}
+                  </span>
+                  <RoleBadge role={role} />
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid-2" style={{ alignItems: "start" }}>
-        {/* Recent Users */}
-        <div className="card fade-in fade-in-delay-1">
+      <div className="grid-2" style={{ alignItems: "start", gap: 20 }}>
+        {/* Recent Users Card */}
+        <div className="tech-card" style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>Recent Users</h3>
-            <a href="/admin/users" className="btn-gradient" style={{ padding: "6px 14px", fontSize: 12 }}>
-              Manage Users
+            <div>
+              <span className="hero-eyebrow" style={{ margin: 0 }}>
+                // RECENT PROVISIONING
+              </span>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                Identity Directory
+              </h3>
+            </div>
+            <a href="/admin/users" className="btn-primary" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+              USER MATRIX →
             </a>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {recentUsers.map((u) => (
-              <div key={u.id} style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "10px 12px", background: "hsl(var(--bg-subtle))", borderRadius: 10,
-              }}>
-                <div className="avatar avatar-sm">{getInitials(u.name)}</div>
+              <div
+                key={u.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "10px 14px",
+                  background: "rgba(255, 255, 255, 0.02)",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                }}
+              >
+                <div
+                  className="avatar avatar-sm"
+                  style={{
+                    background: "#07090E",
+                    border: "1.5px solid #FFD700",
+                    color: "#FFD700",
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
+                  }}
+                >
+                  {getInitials(u.name)}
+                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "hsl(var(--text-primary))" }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "#F8FAFC" }}>
                     {u.name}
                   </div>
-                  <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>
+                  <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B" }}>
                     {u.email}
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
                   <RoleBadge role={u.role} />
-                  <div style={{ fontSize: 11, color: "hsl(var(--text-muted))" }}>
+                  <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "#475569" }}>
                     {formatDate(u.createdAt)}
                   </div>
                 </div>
@@ -129,53 +217,89 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Audit Log preview */}
-        <div className="card fade-in fade-in-delay-2">
+        <div className="tech-card" style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>Recent Audit Events</h3>
-            <a href="/admin/audit" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-              Full log
+            <div>
+              <span className="hero-eyebrow" style={{ margin: 0 }}>
+                // LEDGER TRAIL
+              </span>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                Security Audit Ledger
+              </h3>
+            </div>
+            <a href="/admin/audit" className="btn-outline" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+              FULL LEDGER →
             </a>
           </div>
 
           {recentAuditLogs.length === 0 ? (
-            <div className="empty-state" style={{ padding: "24px" }}>
-              <Shield size={32} className="empty-state-icon" />
-              <div className="empty-state-title">No audit events yet</div>
+            <div style={{ padding: "28px", textAlign: "center" }}>
+              <Shield size={32} style={{ color: "#334155", margin: "0 auto 8px" }} />
+              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NO AUDIT EVENTS RECORDED</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {recentAuditLogs.map((log) => (
-                <div key={log.id} style={{
-                  display: "flex", alignItems: "flex-start", gap: 10,
-                  padding: "10px 12px",
-                  background: log.isImpersonated
-                    ? "hsl(326 100% 65% / 0.06)"
-                    : "hsl(var(--bg-subtle))",
-                  borderRadius: 8,
-                  border: log.isImpersonated
-                    ? "1px solid hsl(326 100% 65% / 0.2)"
-                    : "1px solid transparent",
-                }}>
-                  <div style={{
-                    width: 8, height: 8, borderRadius: "50%", marginTop: 5,
-                    background: "hsl(var(--color-primary))", flexShrink: 0,
-                  }} />
+                <div
+                  key={log.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 12,
+                    padding: "10px 14px",
+                    background: log.isImpersonated
+                      ? "rgba(244, 63, 94, 0.08)"
+                      : "rgba(255, 255, 255, 0.02)",
+                    borderRadius: 8,
+                    border: log.isImpersonated
+                      ? "1px solid rgba(244, 63, 94, 0.35)"
+                      : "1px solid rgba(255, 255, 255, 0.06)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      marginTop: 5,
+                      background: log.isImpersonated ? "#F43F5E" : "#38BDF8",
+                      boxShadow: `0 0 6px ${log.isImpersonated ? "#F43F5E" : "#38BDF8"}`,
+                      flexShrink: 0,
+                    }}
+                  />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 600, color: "hsl(var(--text-primary))" }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 700, fontFamily: "var(--font-mono)", color: "#F8FAFC" }}>
                       {log.action}
                       {log.isImpersonated && (
-                        <span style={{ fontSize: 10, color: "hsl(326 80% 50%)", marginLeft: 6,
-                          background: "hsl(326 100% 65% / 0.1)", padding: "1px 6px", borderRadius: 4 }}>
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: "#FB7185",
+                            marginLeft: 6,
+                            background: "rgba(244, 63, 94, 0.15)",
+                            padding: "1px 6px",
+                            borderRadius: 4,
+                          }}
+                        >
                           IMPERSONATED
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>
-                      by {log.actor.name} · {log.entityType} #{log.entityId.slice(0, 8)}
+                    <div style={{ fontSize: 11.5, color: "#64748B", marginTop: 2 }}>
+                      BY: {log.actor.name.toUpperCase()} // ENTITY: {log.entityType} #{log.entityId.slice(0, 8)}
                     </div>
                   </div>
-                  <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", display: "flex",
-                    alignItems: "center", gap: 3, flexShrink: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontFamily: "var(--font-mono)",
+                      color: "#475569",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                      flexShrink: 0,
+                    }}
+                  >
                     <Clock size={11} />
                     {formatDate(log.timestamp)}
                   </div>
@@ -186,48 +310,74 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* Admin quick actions */}
-      <div className="card fade-in" style={{ marginTop: 20 }}>
-        <h3 className="section-title" style={{ marginBottom: 14 }}>System Configuration</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+      {/* Admin Quick Configuration Navigation */}
+      <div className="tech-card" style={{ marginTop: 24, padding: 24 }}>
+        <div style={{ marginBottom: 16 }}>
+          <span className="hero-eyebrow" style={{ margin: 0 }}>
+            // SYSTEM CONTROLS
+          </span>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+            Operational Engine Configuration
+          </h3>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
           {[
-            { href: "/admin/users", icon: <Users size={20} />, label: "Manage Users & Roles",
-              desc: "Create, edit, promote, or soft-delete any user" },
-            { href: "/admin/clusters", icon: <BarChart3 size={20} />, label: "Manage Clusters",
-              desc: "Create clusters, assign heads, manage memberships" },
-            { href: "/admin/scoring", icon: <Settings size={20} />, label: "Scoring Defaults",
-              desc: "Set system-wide scoring weights and factor config" },
-            { href: "/admin/notifications", icon: <AlertTriangle size={20} />, label: "Notification Rules",
-              desc: "Enable/disable event types, set thresholds" },
-            { href: "/admin/badges", icon: <Shield size={20} />, label: "Badge Rules",
-              desc: "Define badge criteria and gamification logic" },
-            { href: "/admin/audit", icon: <Shield size={20} />, label: "Full Audit Log",
-              desc: "View every action across every department" },
+            { href: "/admin/users", icon: <Users size={18} />, label: "Identity & Roles Directory",
+              desc: "Manage faculty profiles, cluster roles, and account provisioning" },
+            { href: "/admin/clusters", icon: <BarChart3 size={18} />, label: "Cluster Topology Units",
+              desc: "Configure departmental cluster nodes and leader assignments" },
+            { href: "/admin/jobs", icon: <Clock size={18} />, label: "Automated Jobs & Cron",
+              desc: "Monitor live cron timers, snapshot generators, and evaluation triggers" },
+            { href: "/admin/webhooks", icon: <Database size={18} />, label: "Webhooks & Outbound API",
+              desc: "Dispatch endpoints, delivery verification, and external sync" },
+            { href: "/admin/scoring", icon: <Settings size={18} />, label: "Points Scoring Engine",
+              desc: "Calibrate global multiplier rules and evaluation heuristics" },
+            { href: "/admin/badges", icon: <Shield size={18} />, label: "Merit Badge Registry",
+              desc: "Configure achievement rules and gamification criteria" },
           ].map((a) => (
             <a
               key={a.href}
               href={a.href}
               style={{
-                padding: "16px", borderRadius: 12,
-                background: "hsl(var(--bg-subtle))",
-                border: "1px solid hsl(var(--border))",
+                padding: "16px",
+                borderRadius: 10,
+                background: "rgba(255, 255, 255, 0.02)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
                 textDecoration: "none",
-                transition: "all 0.15s ease",
-                display: "flex", flexDirection: "column", gap: 8,
+                transition: "all 0.18s ease",
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.transform = "none";
               }}
             >
-              <div style={{
-                width: 38, height: 38, borderRadius: 10,
-                background: "hsl(var(--color-primary) / 0.1)",
-                color: "hsl(var(--color-primary))",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: "rgba(255, 215, 0, 0.08)",
+                  border: "1px solid rgba(255, 215, 0, 0.25)",
+                  color: "#FFD700",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 {a.icon}
               </div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: "hsl(var(--text-primary))" }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: "#F8FAFC" }}>
                 {a.label}
               </div>
-              <div style={{ fontSize: 12, color: "hsl(var(--text-secondary))", lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: "#94A3B8", lineHeight: 1.45 }}>
                 {a.desc}
               </div>
             </a>
