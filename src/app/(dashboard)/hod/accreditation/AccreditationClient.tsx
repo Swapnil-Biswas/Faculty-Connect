@@ -101,80 +101,188 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
   }
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Top Banner & Export Actions */}
       <div
-        className="card"
         style={{
-          padding: "20px 24px",
-          marginBottom: 24,
+          background: "linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(14, 18, 27, 0.95) 60%, rgba(56, 189, 248, 0.08) 100%)",
+          border: "1px solid rgba(245, 158, 11, 0.3)",
+          borderRadius: 12,
+          padding: "24px 28px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: 16,
-          background: "linear-gradient(135deg, hsl(var(--color-primary) / 0.08), hsl(var(--color-secondary) / 0.05))",
-          borderColor: "hsl(var(--color-primary) / 0.25)",
+          gap: 20,
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <Award size={20} style={{ color: "hsl(var(--color-primary))" }} />
-            <h2 style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>NBA Self-Study Report (SSR) Generator</h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(245, 158, 11, 0.2)", border: "1px solid rgba(245, 158, 11, 0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Award size={18} style={{ color: "#F59E0B" }} />
+            </div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, color: "#F8FAFC", letterSpacing: "-0.01em" }}>
+              NBA Self-Study Report (SSR) Generator
+            </h2>
           </div>
-          <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", margin: 0 }}>
-            Automated Criterion 5 calculations pre-validated against Tier-I and Tier-II engineering accreditation metrics.
+          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0, maxWidth: 600 }}>
+            Automated Criterion 5 calculations pre-validated against Tier-I and Tier-II engineering accreditation metrics (Form 5A & 5B).
           </p>
         </div>
 
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button onClick={() => window.print()} className="btn-outline" style={{ fontSize: 13, gap: 6 }}>
-            <Printer size={16} /> Print SSR
+          <button
+            onClick={() => window.print()}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 16px",
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: 8,
+              color: "#E2E8F0",
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            <Printer size={15} style={{ color: "#38BDF8" }} /> PRINT SSR
           </button>
-          <button onClick={exportForm5ACSV} className="btn-outline" style={{ fontSize: 13, gap: 6 }}>
-            <FileText size={16} /> Export Form 5A (CSV)
+          <button
+            onClick={exportForm5ACSV}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 16px",
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: 8,
+              color: "#E2E8F0",
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            <FileText size={15} style={{ color: "#F59E0B" }} /> EXPORT FORM 5A (.CSV)
           </button>
-          <button onClick={exportDossierJSON} className="btn-gradient" style={{ fontSize: 13, gap: 6 }}>
-            <Download size={16} /> Export JSON Dossier
+          <button
+            onClick={exportDossierJSON}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 18px",
+              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+              border: "none",
+              borderRadius: 8,
+              color: "#0A0D14",
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: "0 0 16px rgba(245, 158, 11, 0.35)",
+            }}
+          >
+            <Download size={15} /> EXPORT JSON DOSSIER
           </button>
         </div>
       </div>
 
       {/* Main Analysis Grid */}
-      <div className="grid-2" style={{ marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 20 }}>
         {/* Criterion 5.1: Student Faculty Ratio */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+        <div
+          style={{
+            background: "#0E121B",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "hsl(var(--color-primary))", textTransform: "uppercase" }}>
-                Criterion 5.1
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
+                // CRITERION 5.1
               </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0" }}>Student-Faculty Ratio (SFR)</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+                Student-Faculty Ratio (SFR)
+              </h3>
             </div>
             {fsrCompliant ? (
-              <span className="role-badge" style={{ background: "hsl(var(--color-success) / 0.15)", color: "hsl(var(--color-success))" }}>
-                ✓ NBA Compliant (≤ 1:15)
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 10px",
+                  borderRadius: 20,
+                  fontSize: 11,
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: 700,
+                  background: "rgba(34, 197, 94, 0.12)",
+                  color: "#22C55E",
+                  border: "1px solid rgba(34, 197, 94, 0.25)",
+                }}
+              >
+                ● NBA COMPLIANT (≤ 1:15)
               </span>
             ) : (
-              <span className="role-badge" style={{ background: "hsl(var(--color-danger) / 0.15)", color: "hsl(var(--color-danger))" }}>
-                ⚠️ Needs Optimization
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 10px",
+                  borderRadius: 20,
+                  fontSize: 11,
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: 700,
+                  background: "rgba(244, 63, 94, 0.12)",
+                  color: "#F43F5E",
+                  border: "1px solid rgba(244, 63, 94, 0.25)",
+                }}
+              >
+                ▲ NEEDS OPTIMIZATION
               </span>
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "16px 0" }}>
-            <span style={{ fontSize: 36, fontWeight: 900, color: fsrCompliant ? "hsl(var(--color-success))" : "hsl(var(--color-danger))" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, margin: "20px 0" }}>
+            <span
+              style={{
+                fontSize: 42,
+                fontWeight: 900,
+                fontFamily: "var(--font-mono)",
+                color: fsrCompliant ? "#22C55E" : "#F43F5E",
+                letterSpacing: "-0.03em",
+              }}
+            >
               1:{fsr}
             </span>
-            <span style={{ fontSize: 13, color: "hsl(var(--text-muted))" }}>
-              Target: 1:15 for maximum marks (20 pts)
+            <span style={{ fontSize: 12, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+              Target: 1:15 for max score (20 pts)
             </span>
           </div>
 
-          <div style={{ background: "hsl(var(--bg-subtle))", padding: "14px 16px", borderRadius: "var(--radius-sm)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-              <span>Total Sanctioned Intake Students</span>
-              <strong style={{ color: "hsl(var(--color-primary))" }}>{sanctionedStudents} students</strong>
+          <div
+            style={{
+              background: "#07090E",
+              padding: "16px 18px",
+              borderRadius: 8,
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
+              <span style={{ color: "#94A3B8" }}>Total Sanctioned Intake Students:</span>
+              <strong style={{ color: "#38BDF8", fontFamily: "var(--font-mono)", fontSize: 14 }}>
+                {sanctionedStudents} students
+              </strong>
             </div>
             <input
               type="range"
@@ -183,116 +291,229 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
               step={30}
               value={sanctionedStudents}
               onChange={(e) => setSanctionedStudents(parseInt(e.target.value, 10))}
-              style={{ width: "100%", cursor: "pointer" }}
+              style={{
+                width: "100%",
+                accentColor: "#F59E0B",
+                cursor: "pointer",
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: 4,
+                height: 6,
+              }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "hsl(var(--text-muted))", marginTop: 4 }}>
-              <span>60 (1 Division)</span>
-              <span>240 (Standard)</span>
-              <span>600 (Multi-shift)</span>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: 11,
+                color: "#64748B",
+                fontFamily: "var(--font-mono)",
+                marginTop: 8,
+              }}
+            >
+              <span>60 (1 Div)</span>
+              <span>240 (Standard BMSIT)</span>
+              <span>600 (Multi-Shift)</span>
             </div>
           </div>
         </div>
 
         {/* Criterion 5.2: Cadre Ratio */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+        <div
+          style={{
+            background: "#0E121B",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "hsl(var(--color-primary))", textTransform: "uppercase" }}>
-                Criterion 5.2
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
+                // CRITERION 5.2
               </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0" }}>Faculty Cadre Proportion</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+                Faculty Cadre Proportion
+              </h3>
             </div>
-            <span className="role-badge" style={{ background: "hsl(var(--color-info) / 0.15)", color: "hsl(var(--color-info))" }}>
-              Target Ratio 1:2:6
+            <span
+              style={{
+                padding: "4px 10px",
+                borderRadius: 20,
+                fontSize: 11,
+                fontFamily: "var(--font-mono)",
+                fontWeight: 700,
+                background: "rgba(56, 189, 248, 0.12)",
+                color: "#38BDF8",
+                border: "1px solid rgba(56, 189, 248, 0.25)",
+              }}
+            >
+              TARGET RATIO 1:2:6
             </span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, margin: "16px 0", textAlign: "center" }}>
-            <div style={{ background: "hsl(var(--bg-subtle))", padding: "12px", borderRadius: 8 }}>
-              <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>PROFESSORS</div>
-              <div style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>{metrics.professors}</div>
-              <div style={{ fontSize: 10, color: "hsl(var(--text-muted))" }}>Target: 1</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, margin: "20px 0", textAlign: "center" }}>
+            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>PROFESSORS</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#F59E0B", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+                {metrics.professors}
+              </div>
+              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 1</div>
             </div>
 
-            <div style={{ background: "hsl(var(--bg-subtle))", padding: "12px", borderRadius: 8 }}>
-              <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>ASSOC. PROF</div>
-              <div style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>{metrics.associateProfessors}</div>
-              <div style={{ fontSize: 10, color: "hsl(var(--text-muted))" }}>Target: 2</div>
+            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASSOC. PROF</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#38BDF8", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+                {metrics.associateProfessors}
+              </div>
+              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 2</div>
             </div>
 
-            <div style={{ background: "hsl(var(--bg-subtle))", padding: "12px", borderRadius: 8 }}>
-              <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>ASST. PROF</div>
-              <div style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>{metrics.assistantProfessors}</div>
-              <div style={{ fontSize: 10, color: "hsl(var(--text-muted))" }}>Target: 6</div>
+            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASST. PROF</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#A855F7", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+                {metrics.assistantProfessors}
+              </div>
+              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 6</div>
             </div>
           </div>
 
-          <div style={{ fontSize: 12.5, color: "hsl(var(--text-secondary))", lineHeight: 1.5 }}>
-            Total sanctioned cadre strength active: <strong>{metrics.totalFaculty} faculty members</strong> across department clusters.
+          <div style={{ fontSize: 12, color: "#94A3B8", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>
+            Sanctioned cadre strength active: <span style={{ color: "#F8FAFC", fontWeight: 700 }}>{metrics.totalFaculty} faculty members</span> across academic clusters.
           </div>
         </div>
       </div>
 
       {/* Criterion 5.7: Research & Development */}
-      <div className="card" style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+      <div
+        style={{
+          background: "#0E121B",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
           <div>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "hsl(var(--color-primary))", textTransform: "uppercase" }}>
-              Criterion 5.7
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#22C55E", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
+              // CRITERION 5.7
             </span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0" }}>Research Publications & IPR Portfolio</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+              Research Publications & IPR Portfolio
+            </h3>
           </div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#F59E0B" }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              fontFamily: "var(--font-mono)",
+              color: "#F59E0B",
+              background: "rgba(245, 158, 11, 0.12)",
+              padding: "4px 12px",
+              borderRadius: 6,
+              border: "1px solid rgba(245, 158, 11, 0.25)",
+            }}
+          >
             ★ {metrics.pubsPerFaculty} papers / faculty
           </div>
         </div>
 
-        <div className="grid-4">
-          <div style={{ background: "hsl(var(--bg-subtle))", padding: "14px", borderRadius: 8 }}>
-            <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>Scopus / SCI Journals</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "hsl(var(--color-primary))" }}>{metrics.journals}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Scopus / SCI Journals</div>
+            <div style={{ fontSize: 26, fontWeight: 900, color: "#38BDF8", fontFamily: "var(--font-mono)" }}>{metrics.journals}</div>
           </div>
-          <div style={{ background: "hsl(var(--bg-subtle))", padding: "14px", borderRadius: 8 }}>
-            <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>IEEE / ACM Conferences</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "hsl(var(--color-info))" }}>{metrics.conferences}</div>
+          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>IEEE / ACM Conferences</div>
+            <div style={{ fontSize: 26, fontWeight: 900, color: "#A855F7", fontFamily: "var(--font-mono)" }}>{metrics.conferences}</div>
           </div>
-          <div style={{ background: "hsl(var(--bg-subtle))", padding: "14px", borderRadius: 8 }}>
-            <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>Granted / Published Patents</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "#F59E0B" }}>{metrics.patents}</div>
+          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Granted / Published Patents</div>
+            <div style={{ fontSize: 26, fontWeight: 900, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>{metrics.patents}</div>
           </div>
-          <div style={{ background: "hsl(var(--bg-subtle))", padding: "14px", borderRadius: 8 }}>
-            <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>Faculty Retention Rate</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "hsl(var(--color-success))" }}>{metrics.retentionRate}%</div>
+          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Faculty Retention Rate</div>
+            <div style={{ fontSize: 26, fontWeight: 900, color: "#22C55E", fontFamily: "var(--font-mono)" }}>{metrics.retentionRate}%</div>
           </div>
         </div>
       </div>
 
       {/* Faculty SSR Roster */}
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid hsl(var(--border))" }}>
-          <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>Faculty Table (Form 5A Compliance)</h3>
+      <div
+        style={{
+          background: "#0E121B",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 24px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+              // NBA CRITERIA FORM 5A
+            </span>
+            <h3 style={{ fontSize: 15, fontWeight: 700, margin: "2px 0 0", color: "#F8FAFC" }}>
+              Faculty Compliance Matrix & Service Record
+            </h3>
+          </div>
+          <span style={{ fontSize: 12, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+            {facultyList.length} FACULTY MEMBERS ENROLLED
+          </span>
         </div>
-        <div className="table-wrapper">
-          <table>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
             <thead>
-              <tr>
-                <th>Faculty Name</th>
-                <th>Designation</th>
-                <th>Service Tenure</th>
-                <th>Indexed Publications</th>
-                <th>Compliance Status</th>
+              <tr style={{ background: "rgba(255, 255, 255, 0.02)", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
+                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>FACULTY NAME</th>
+                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>DESIGNATION</th>
+                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>SERVICE TENURE</th>
+                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>INDEXED PUBS</th>
+                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700, textAlign: "right" }}>STATUS</th>
               </tr>
             </thead>
             <tbody>
               {facultyList.map((f, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{f.name}</td>
-                  <td>{f.designation}</td>
-                  <td>{f.serviceYears} year(s)</td>
-                  <td>{f.publicationsCount} publications</td>
-                  <td>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "hsl(var(--color-success))", background: "hsl(var(--color-success) / 0.12)", padding: "2px 8px", borderRadius: 6 }}>
-                      VERIFIED
+                <tr
+                  key={i}
+                  style={{
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                    transition: "background 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <td style={{ padding: "14px 20px", fontWeight: 600, color: "#F8FAFC", fontSize: 13 }}>{f.name}</td>
+                  <td style={{ padding: "14px 20px", color: "#94A3B8", fontSize: 13 }}>{f.designation}</td>
+                  <td style={{ padding: "14px 20px", color: "#CBD5E1", fontSize: 13, fontFamily: "var(--font-mono)" }}>
+                    {f.serviceYears} {f.serviceYears === 1 ? "year" : "years"}
+                  </td>
+                  <td style={{ padding: "14px 20px", color: "#F59E0B", fontSize: 13, fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                    {f.publicationsCount} papers
+                  </td>
+                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontFamily: "var(--font-mono)",
+                        fontWeight: 700,
+                        color: "#22C55E",
+                        background: "rgba(34, 197, 94, 0.12)",
+                        border: "1px solid rgba(34, 197, 94, 0.25)",
+                        padding: "3px 8px",
+                        borderRadius: 4,
+                      }}
+                    >
+                      ● VERIFIED
                     </span>
                   </td>
                 </tr>
