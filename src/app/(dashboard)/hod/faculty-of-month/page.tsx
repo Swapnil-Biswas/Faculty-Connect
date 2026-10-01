@@ -40,16 +40,18 @@ export default async function FacultyOfMonthPage() {
   const pendingCurrentMonth = !currentAward;
 
   return (
-    <div className="dashboard-container" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* BMSIT High-Tech Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
         <div>
-          <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Star className="text-warning" fill="currentColor" size={28} />
-            Faculty of the Month
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "3px 10px", borderRadius: 4, background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.25)", color: "#F59E0B", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", marginBottom: 10 }}>
+            <span>●</span> DEPARTMENT SPOTLIGHT // FACULTY OF THE MONTH
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#F8FAFC", margin: "0 0 6px 0", letterSpacing: "-0.02em" }}>
+            Faculty of the Month Recognition
           </h1>
-          <p className="page-subtitle">
-            Monthly recognition spotlighting the highest-performing faculty member. Selected automatically from PointsLedger aggregates.
+          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0, fontFamily: "var(--font-mono)" }}>
+            // Algorithmic designation driven by PointsLedger aggregates, task velocity & peer ratings
           </p>
         </div>
 
@@ -58,8 +60,8 @@ export default async function FacultyOfMonthPage() {
           year={pendingCurrentMonth ? currentYear : prevYear}
           label={
             pendingCurrentMonth
-              ? `Select Faculty of Month — ${MONTHS[currentMonth - 1]} ${currentYear}`
-              : `Re-run ${MONTHS[prevMonth - 1]} ${prevYear}`
+              ? `RUN SELECTION — ${MONTHS[currentMonth - 1].toUpperCase()} ${currentYear}`
+              : `RE-RUN — ${MONTHS[prevMonth - 1].toUpperCase()} ${prevYear}`
           }
         />
       </div>
@@ -67,39 +69,56 @@ export default async function FacultyOfMonthPage() {
       {/* Current Month Spotlight */}
       {currentAward ? (
         <div
-          className="card"
           style={{
-            padding: "2rem",
-            background: "linear-gradient(135deg, hsl(45 93% 47% / 0.08), hsl(var(--color-primary) / 0.05))",
-            border: "1px solid hsl(45 93% 47% / 0.35)",
-            borderRadius: "var(--radius-xl)",
+            padding: "36px 32px",
+            background: "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(14, 18, 27, 0.95) 50%, rgba(56, 189, 248, 0.08) 100%)",
+            border: "1px solid rgba(245, 158, 11, 0.35)",
+            borderRadius: 16,
             textAlign: "center",
             position: "relative",
             overflow: "hidden",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
           }}
         >
           <div
             style={{
               position: "absolute",
-              top: "-30px",
-              right: "-30px",
-              width: "160px",
-              height: "160px",
-              background: "hsl(45 93% 47% / 0.06)",
+              top: "-50px",
+              right: "-50px",
+              width: "200px",
+              height: "200px",
+              background: "radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%)",
               borderRadius: "50%",
             }}
           />
-          <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🌟</div>
-          <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "#eab308", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>
-            {MONTHS[currentMonth - 1]} {currentYear} — Faculty of the Month
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 14px", borderRadius: 20, background: "rgba(245, 158, 11, 0.15)", border: "1px solid rgba(245, 158, 11, 0.3)", color: "#F59E0B", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", marginBottom: 14 }}>
+            ★ {MONTHS[currentMonth - 1].toUpperCase()} {currentYear} HONOREE ★
           </div>
-          <div className="avatar avatar-xl" style={{ margin: "0.75rem auto", boxShadow: "0 0 32px hsl(45 93% 47% / 0.35)" }}>
+          
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              margin: "0 auto 14px",
+              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+              color: "#0A0D14",
+              fontFamily: "var(--font-mono)",
+              fontSize: 28,
+              fontWeight: 900,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 0 30px rgba(245, 158, 11, 0.4)",
+            }}
+          >
             {getInitials(currentAward.faculty.name)}
           </div>
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 900, marginTop: "0.5rem" }}>
+
+          <h2 style={{ fontSize: 24, fontWeight: 900, color: "#F8FAFC", margin: "0 0 4px 0" }}>
             {currentAward.faculty.name}
           </h2>
-          <div style={{ fontSize: "0.9375rem", color: "hsl(var(--text-muted))", marginBottom: "1rem" }}>
+          <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 20, fontFamily: "var(--font-mono)" }}>
             {currentAward.faculty.designation ?? currentAward.faculty.email}
           </div>
 
@@ -107,12 +126,12 @@ export default async function FacultyOfMonthPage() {
           {currentAward.snapshotStats && (
             <div style={{
               display: "inline-flex",
-              gap: "1.5rem",
-              background: "hsl(var(--bg-surface) / 0.8)",
-              backdropFilter: "blur(8px)",
-              padding: "0.875rem 1.5rem",
-              borderRadius: "var(--radius-lg)",
-              border: "1px solid hsl(var(--border))",
+              gap: 24,
+              background: "rgba(7, 9, 14, 0.8)",
+              backdropFilter: "blur(12px)",
+              padding: "16px 28px",
+              borderRadius: 10,
+              border: "1px solid rgba(255, 255, 255, 0.08)",
               flexWrap: "wrap",
               justifyContent: "center",
             }}>
@@ -121,25 +140,29 @@ export default async function FacultyOfMonthPage() {
                 return (
                   <>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#eab308" }}>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
                         {stats.pointsEarned ?? "—"}
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))" }}>Points Earned</div>
+                      <div style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>POINTS EARNED</div>
                     </div>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "1.25rem", fontWeight: 800 }}>{stats.completedTasks ?? "—"}</div>
-                      <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))" }}>Tasks Completed</div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: "#38BDF8", fontFamily: "var(--font-mono)" }}>
+                        {stats.completedTasks ?? "—"}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>TASKS COMPLETED</div>
                     </div>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#16a34a" }}>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: "#22C55E", fontFamily: "var(--font-mono)" }}>
                         {stats.onTimeRate ?? "—"}%
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))" }}>On-Time Rate</div>
+                      <div style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>ON-TIME VELOCITY</div>
                     </div>
                     {typeof stats.avgEvaluation === "number" && stats.avgEvaluation > 0 && (
                       <div style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: "1.25rem", fontWeight: 800 }}>{stats.avgEvaluation} / 5</div>
-                        <div style={{ fontSize: "0.75rem", color: "hsl(var(--text-muted))" }}>Avg Evaluation</div>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: "#A855F7", fontFamily: "var(--font-mono)" }}>
+                          {stats.avgEvaluation} / 5
+                        </div>
+                        <div style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>AVG RATING</div>
                       </div>
                     )}
                   </>
@@ -150,31 +173,44 @@ export default async function FacultyOfMonthPage() {
         </div>
       ) : (
         <div
-          className="card"
           style={{
-            padding: "2.5rem",
+            padding: "48px 24px",
             textAlign: "center",
-            border: "2px dashed hsl(var(--border))",
-            borderRadius: "var(--radius-xl)",
+            background: "#0E121B",
+            border: "1px dashed rgba(255, 255, 255, 0.1)",
+            borderRadius: 12,
           }}
         >
-          <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>🏅</div>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-            {MONTHS[currentMonth - 1]} {currentYear} — Not Yet Selected
+          <div style={{ fontSize: 36, marginBottom: 12 }}>🏅</div>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#F8FAFC", margin: "0 0 8px 0" }}>
+            {MONTHS[currentMonth - 1]} {currentYear} — Selection Standby
           </h2>
-          <p style={{ color: "hsl(var(--text-muted))", maxWidth: "480px", margin: "0 auto 1.25rem" }}>
-            Click the button above to compute this month&apos;s Faculty of the Month based on current PointsLedger data.
+          <p style={{ color: "#94A3B8", maxWidth: 480, margin: "0 auto 16px", fontSize: 13 }}>
+            Click &quot;RUN SELECTION&quot; above to compute this month&apos;s Faculty of the Month based on verified PointsLedger records.
           </p>
         </div>
       )}
 
       {/* History Timeline */}
       {history.length > 0 && (
-        <div className="card" style={{ padding: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: 700, marginBottom: "1.25rem" }}>
-            Award History
-          </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: "1rem" }}>
+        <div
+          style={{
+            background: "#0E121B",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          <div style={{ marginBottom: 18, borderBottom: "1px solid rgba(255, 255, 255, 0.06)", paddingBottom: 14 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
+              // ARCHIVAL RECORD
+            </span>
+            <h2 style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: "#F8FAFC" }}>
+              Hall of Recognition & Past Honorees
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
             {history.map((award) => {
               const stats = award.snapshotStats as Record<string, number | string>;
               const isCurrentMonth = award.month === currentMonth && award.year === currentYear;
@@ -182,34 +218,45 @@ export default async function FacultyOfMonthPage() {
                 <div
                   key={award.id}
                   style={{
-                    padding: "1.25rem",
-                    borderRadius: "var(--radius-lg)",
-                    border: `1px solid ${isCurrentMonth ? "hsl(45 93% 47% / 0.4)" : "hsl(var(--border))"}`,
+                    padding: "20px 16px",
+                    borderRadius: 10,
+                    border: `1px solid ${isCurrentMonth ? "rgba(245, 158, 11, 0.4)" : "rgba(255, 255, 255, 0.06)"}`,
                     background: isCurrentMonth
-                      ? "linear-gradient(135deg, hsl(45 93% 47% / 0.08), transparent)"
-                      : "hsl(var(--bg-muted))",
+                      ? "linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, #07090E 100%)"
+                      : "#07090E",
                     textAlign: "center",
                     position: "relative",
                   }}
                 >
                   {isCurrentMonth && (
                     <span
-                      className="status-badge status-approved"
-                      style={{ position: "absolute", top: "0.5rem", right: "0.5rem", fontSize: "10px" }}
+                      style={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        fontSize: 9,
+                        fontFamily: "var(--font-mono)",
+                        fontWeight: 800,
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                        background: "rgba(245, 158, 11, 0.15)",
+                        color: "#F59E0B",
+                        border: "1px solid rgba(245, 158, 11, 0.3)",
+                      }}
                     >
-                      Current
+                      CURRENT
                     </span>
                   )}
-                  <div style={{ fontSize: "1.5rem", marginBottom: "0.25rem" }}>
+                  <div style={{ fontSize: 24, marginBottom: 6 }}>
                     {isCurrentMonth ? "🌟" : "⭐"}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: "0.9375rem" }}>{award.faculty.name}</div>
-                  <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))", marginTop: "2px" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: "#F8FAFC" }}>{award.faculty.name}</div>
+                  <div style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>
                     {MONTHS[award.month - 1]} {award.year}
                   </div>
                   {typeof stats.pointsEarned === "number" && (
-                    <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", fontWeight: 700, color: "#eab308" }}>
-                      {stats.pointsEarned} pts
+                    <div style={{ marginTop: 8, fontSize: 14, fontWeight: 800, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
+                      ★ {stats.pointsEarned} pts
                     </div>
                   )}
                 </div>
