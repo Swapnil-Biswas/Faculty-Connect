@@ -139,7 +139,7 @@ Security is enforced at **two layers** (never trust UI alone):
 | 2 | ✅ **Done** | Task management CRUD + CL/leave workflow + audit logging |
 | 3 | ✅ **Done** | Recognition engine (ledger + config) + nightly leaderboard job |
 | 4 | ✅ **Done** | Notifications polish + all dashboard features filled + cluster & research hubs |
-| 5 | 🔜 **Next** | External NBA/NAAC connectors, automated email delivery & webhooks |
+| 5 | ✅ **Done** | NBA/NAAC SSR Dossier, automated maintenance jobs, email digest dispatcher & webhooks |
 
 ---
 

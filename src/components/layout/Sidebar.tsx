@@ -6,7 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard, CheckSquare, Calendar, Star, BarChart3,
   Users, Settings, LogOut, Bell, Shield, BookOpen, Trophy,
-  ClipboardList, UserCheck
+  ClipboardList, UserCheck, Globe, Award, Clock
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import { getRoleLabel, getRoleColor, getInitials } from "@/lib/utils";
@@ -93,6 +93,7 @@ const NAV_BY_ROLE: Record<Role, { section: string; items: NavItem[] }[]> = {
       section: "Reports",
       items: [
         { href: "/hod/analytics", icon: <BarChart3 size={18} />, label: "Analytics" },
+        { href: "/hod/accreditation", icon: <Award size={18} />, label: "NBA / NAAC Dossier" },
         { href: "/hod/export", icon: <ClipboardList size={18} />, label: "Export Data" },
         { href: "/hod/audit", icon: <Shield size={18} />, label: "Audit Log" },
       ],
@@ -111,6 +112,8 @@ const NAV_BY_ROLE: Record<Role, { section: string; items: NavItem[] }[]> = {
         { href: "/admin", icon: <LayoutDashboard size={18} />, label: "Admin Dashboard" },
         { href: "/admin/users", icon: <Users size={18} />, label: "Users & Roles" },
         { href: "/admin/clusters", icon: <UserCheck size={18} />, label: "Clusters" },
+        { href: "/admin/jobs", icon: <Clock size={18} />, label: "Automated Jobs" },
+        { href: "/admin/webhooks", icon: <Globe size={18} />, label: "Webhooks & API" },
       ],
     },
     {
