@@ -9,7 +9,7 @@ import { Star, Trophy, Award, CheckCircle2, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Faculty Workspace — Recognition Ledger" };
+export const metadata: Metadata = { title: "Faculty Console // Recognition Ledger" };
 
 export default async function FacultyStarsPage() {
   const session = await auth();
@@ -53,22 +53,22 @@ export default async function FacultyStarsPage() {
   const otherPoints = totalPoints - taskPoints - evalPoints;
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Faculty Workspace", href: "/faculty" },
-          { label: "Recognition & Stars" },
+          { label: "FACULTY_CONSOLE", href: "/faculty" },
+          { label: "STARS_LEDGER" },
         ]}
-        title="Recognition & Performance Ledger"
-        subtitle="Transparent, append-only performance ledger and achievements earned across departmental activities."
+        title="Recognition & Merit Performance Ledger"
+        subtitle="Cryptographically verified, append-only performance ledger and achievements earned across departmental activities."
       />
 
       {/* 2. Top Summary Metric Blocks */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           gap: 16,
           marginBottom: 24,
         }}
@@ -78,86 +78,88 @@ export default async function FacultyStarsPage() {
           value={totalPoints.toLocaleString()}
           context="Verified append-only balance"
           trendType="positive"
-          icon={<Star size={18} />}
+          icon={<Star size={18} color="#FFD700" />}
         />
         <MetricBlock
           label="Department Standing"
           value={currentRank !== "—" ? `#${currentRank}` : "—"}
-          context={`Out of ${totalFaculty} active faculty`}
+          context={`Out of ${totalFaculty} active nodes`}
           trendType="neutral"
-          icon={<Trophy size={18} />}
+          icon={<Trophy size={18} color="#FFD700" />}
         />
         <MetricBlock
           label="Badges Unlocked"
           value={`${userBadges.length} / ${allBadges.length}`}
           context="Accredited recognitions"
           trendType="neutral"
-          icon={<Award size={18} />}
+          icon={<Award size={18} color="#38BDF8" />}
         />
         <MetricBlock
           label="On-Time Delivery Rate"
           value={`${rankEntry?.onTimeRate ?? 0}%`}
-          context={`${rankEntry?.completedTasks ?? 0} tasks completed`}
+          context={`${rankEntry?.completedTasks ?? 0} tasks verified`}
           trendType={
             (rankEntry?.onTimeRate ?? 0) >= 80 ? "positive" : "warning"
           }
-          icon={<CheckCircle2 size={18} />}
+          icon={<CheckCircle2 size={18} color="#4ADE80" />}
         />
       </div>
 
       {/* 3. Source Distribution Bar */}
       <div
+        className="tech-card"
         style={{
-          backgroundColor: "#FFFFFF",
-          border: "1px solid #E4E7EC",
-          borderRadius: 6,
-          padding: "16px 20px",
+          padding: "20px 24px",
           marginBottom: 24,
-          boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
         }}
       >
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A", marginBottom: 10 }}>
-          Points Distribution by Category
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <span className="hero-eyebrow" style={{ margin: 0 }}>
+            // POINTS DISTRIBUTION BY CATEGORY
+          </span>
+          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B" }}>
+            TOTAL: {totalPoints} PTS
+          </span>
         </div>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             gap: 16,
           }}
         >
-          <div style={{ padding: "10px 14px", backgroundColor: "#F7F8FA", borderRadius: 4, border: "1px solid #E4E7EC" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase" }}>
-              Task Delivery
+          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(14, 165, 233, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#38BDF8", textTransform: "uppercase" }}>
+              ◆ TASK DELIVERY
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#17202A", marginTop: 2 }}>
-              {taskPoints} pts
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
+              {taskPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, color: "#667085", marginTop: 2 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((taskPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
 
-          <div style={{ padding: "10px 14px", backgroundColor: "#F7F8FA", borderRadius: 4, border: "1px solid #E4E7EC" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase" }}>
-              Cluster Head Evaluations
+          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(255, 215, 0, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#FFD700", textTransform: "uppercase" }}>
+              ★ CLUSTER EVALUATIONS
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#17202A", marginTop: 2 }}>
-              {evalPoints} pts
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
+              {evalPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, color: "#667085", marginTop: 2 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((evalPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
 
-          <div style={{ padding: "10px 14px", backgroundColor: "#F7F8FA", borderRadius: 4, border: "1px solid #E4E7EC" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase" }}>
-              Research & Institutional Work
+          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(129, 140, 248, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#818CF8", textTransform: "uppercase" }}>
+              ◈ SCHOLARLY & RESEARCH
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#17202A", marginTop: 2 }}>
-              {otherPoints} pts
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
+              {otherPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, color: "#667085", marginTop: 2 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((otherPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
@@ -165,43 +167,35 @@ export default async function FacultyStarsPage() {
       </div>
 
       {/* 4. Append-Only Points Ledger Table */}
-      <div
-        style={{
-          backgroundColor: "#FFFFFF",
-          border: "1px solid #E4E7EC",
-          borderRadius: 6,
-          overflow: "hidden",
-          marginBottom: 32,
-          boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
-        }}
-      >
+      <div className="tech-card" style={{ padding: 0, overflow: "hidden", marginBottom: 32 }}>
         <div
           style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid #E4E7EC",
+            padding: "16px 24px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            backgroundColor: "rgba(7, 9, 14, 0.6)",
           }}
         >
           <div>
-            <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
-              Chronological Points Transaction Log
+            <span className="hero-eyebrow" style={{ margin: 0 }}>
+              // AUDIT LOG
+            </span>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+              Points Transaction Ledger
             </h2>
-            <p style={{ fontSize: 12, color: "#667085", margin: "2px 0 0 0" }}>
-              Append-only audit ledger of points awarded for completed tasks and reviews
-            </p>
           </div>
-          <span style={{ fontSize: 12, fontWeight: 500, color: "#667085" }}>
-            {ledger.length} transactions
+          <span className="glyph-chip glyph-chip-cyan" style={{ fontSize: 11 }}>
+            {ledger.length} TRANSACTIONS RECORDED
           </span>
         </div>
 
         {ledger.length === 0 ? (
-          <div style={{ padding: 32 }}>
+          <div style={{ padding: 40 }}>
             <EmptyState
               icon={Star}
-              title="No points transactions"
+              title="NO POINTS RECORDED"
               description="Your points transaction ledger is empty. Complete assigned tasks and submit deliverable reviews to earn star recognition."
             />
           </div>
@@ -218,19 +212,19 @@ export default async function FacultyStarsPage() {
               <thead>
                 <tr
                   style={{
-                    backgroundColor: "#F7F8FA",
-                    borderBottom: "1px solid #E4E7EC",
-                    color: "#667085",
-                    fontSize: 11.5,
-                    fontWeight: 600,
+                    backgroundColor: "rgba(255, 255, 255, 0.02)",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                    color: "#64748B",
+                    fontSize: 11,
+                    fontFamily: "var(--font-mono)",
                     textTransform: "uppercase",
-                    letterSpacing: "0.04em",
+                    letterSpacing: "0.08em",
                   }}
                 >
-                  <th style={{ padding: "10px 18px" }}>Date & Timestamp</th>
-                  <th style={{ padding: "10px 16px" }}>Event Source</th>
-                  <th style={{ padding: "10px 16px" }}>Reason & Details</th>
-                  <th style={{ padding: "10px 18px", textAlign: "right" }}>Points Earned</th>
+                  <th style={{ padding: "12px 20px" }}>Date & Timestamp</th>
+                  <th style={{ padding: "12px 18px" }}>Event Source</th>
+                  <th style={{ padding: "12px 18px" }}>Reason & Reference</th>
+                  <th style={{ padding: "12px 24px", textAlign: "right" }}>Delta</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,50 +232,48 @@ export default async function FacultyStarsPage() {
                   <tr
                     key={entry.id}
                     style={{
-                      borderBottom: idx < ledger.length - 1 ? "1px solid #F2F4F7" : "none",
+                      borderBottom: idx < ledger.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
+                      transition: "background-color 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
                     }}
                   >
-                    <td style={{ padding: "12px 18px", color: "#667085", whiteSpace: "nowrap" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <Clock size={12} />
+                    <td style={{ padding: "14px 20px", color: "#94A3B8", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Clock size={12} color="#64748B" />
                         <span>{formatDate(entry.createdAt)}</span>
                       </div>
                     </td>
 
-                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
-                      <span
-                        style={{
-                          display: "inline-block",
-                          padding: "2px 8px",
-                          borderRadius: 4,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          backgroundColor: "#EFF6FF",
-                          color: "#173B67",
-                          border: "1px solid #BFDBFE",
-                        }}
-                      >
+                    <td style={{ padding: "14px 18px", whiteSpace: "nowrap" }}>
+                      <span className="glyph-chip" style={{ fontSize: 10.5 }}>
                         {entry.source.replace("_", " ")}
                       </span>
                     </td>
 
-                    <td style={{ padding: "12px 16px", color: "#17202A" }}>
+                    <td style={{ padding: "14px 18px", color: "#F8FAFC" }}>
                       <div>{entry.reason || "Performance credit"}</div>
-                      <div style={{ fontSize: 11, color: "#667085", fontFamily: "ui-monospace, monospace", marginTop: 2 }}>
-                        Ref: {entry.id}
+                      <div style={{ fontSize: 10.5, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                        TX: {entry.id}
                       </div>
                     </td>
 
                     <td
                       style={{
-                        padding: "12px 18px",
+                        padding: "14px 24px",
                         textAlign: "right",
-                        fontWeight: 600,
-                        color: entry.amount >= 0 ? "#198754" : "#C0392B",
+                        fontWeight: 700,
+                        fontFamily: "var(--font-mono)",
+                        color: entry.amount >= 0 ? "#4ADE80" : "#FB7185",
+                        fontSize: 13.5,
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {entry.amount >= 0 ? `+${entry.amount}` : entry.amount} pts
+                      {entry.amount >= 0 ? `+${entry.amount}` : entry.amount} PTS
                     </td>
                   </tr>
                 ))}
@@ -292,29 +284,24 @@ export default async function FacultyStarsPage() {
       </div>
 
       {/* 5. Institutional Badges Catalog */}
-      <div
-        style={{
-          backgroundColor: "#FFFFFF",
-          border: "1px solid #E4E7EC",
-          borderRadius: 6,
-          padding: 20,
-          boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
-        }}
-      >
-        <div style={{ marginBottom: 16 }}>
-          <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
-            Institutional Recognition Badges
+      <div className="tech-card" style={{ padding: 24 }}>
+        <div style={{ marginBottom: 18 }}>
+          <span className="hero-eyebrow" style={{ margin: 0 }}>
+            // INSTITUTIONAL RECOGNITIONS
+          </span>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+            Faculty Merit Badges
           </h2>
-          <p style={{ fontSize: 12, color: "#667085", margin: "2px 0 0 0" }}>
-            Departmental badges unlocked through sustained punctuality, research output, and mentoring
+          <p style={{ fontSize: 12.5, color: "#94A3B8", margin: "4px 0 0 0" }}>
+            Departmental badges unlocked through sustained punctuality, research output, and peer mentoring.
           </p>
         </div>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 14,
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 16,
           }}
         >
           {allBadges.map((badge) => {
@@ -327,51 +314,57 @@ export default async function FacultyStarsPage() {
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: 12,
-                  padding: "14px 16px",
-                  borderRadius: 6,
-                  border: isEarned ? "1px solid #BBF7D0" : "1px solid #E4E7EC",
-                  backgroundColor: isEarned ? "#F0FDF4" : "#F7F8FA",
-                  opacity: isEarned ? 1 : 0.7,
+                  gap: 14,
+                  padding: "16px",
+                  borderRadius: 10,
+                  border: isEarned
+                    ? "1px solid rgba(255, 215, 0, 0.4)"
+                    : "1px solid rgba(255, 255, 255, 0.08)",
+                  backgroundColor: isEarned
+                    ? "rgba(255, 215, 0, 0.04)"
+                    : "rgba(255, 255, 255, 0.02)",
+                  opacity: isEarned ? 1 : 0.6,
+                  boxShadow: isEarned ? "0 0 16px rgba(255, 215, 0, 0.1)" : "none",
                 }}
               >
                 <div
                   style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 4,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 8,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: isEarned ? "#198754" : "#E4E7EC",
-                    color: isEarned ? "#FFFFFF" : "#667085",
+                    backgroundColor: isEarned ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 255, 255, 0.04)",
+                    border: isEarned ? "1px solid rgba(255, 215, 0, 0.4)" : "1px solid rgba(255, 255, 255, 0.08)",
+                    color: isEarned ? "#FFD700" : "#64748B",
                     flexShrink: 0,
                   }}
                 >
-                  <Award size={18} />
+                  <Award size={20} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: isEarned ? "#17202A" : "#667085",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: isEarned ? "#F8FAFC" : "#94A3B8",
                       lineHeight: 1.25,
                     }}
                   >
                     {badge.name}
                   </div>
-                  <div style={{ fontSize: 12, color: "#667085", marginTop: 4, lineHeight: 1.4 }}>
+                  <div style={{ fontSize: 12, color: "#64748B", marginTop: 4, lineHeight: 1.45 }}>
                     {badge.description}
                   </div>
-                  <div style={{ marginTop: 8, fontSize: 11, fontWeight: 500 }}>
+                  <div style={{ marginTop: 10, fontSize: 11, fontFamily: "var(--font-mono)" }}>
                     {isEarned ? (
-                      <span style={{ color: "#198754" }}>
-                        Unlocked on {formatDate(awardedAt!)}
+                      <span style={{ color: "#4ADE80", display: "flex", alignItems: "center", gap: 4 }}>
+                        <CheckCircle2 size={12} /> Unlocked on {formatDate(awardedAt!)}
                       </span>
                     ) : (
-                      <span style={{ color: "#667085" }}>
+                      <span style={{ color: "#64748B" }}>
                         Criteria: Institutional Award
                       </span>
                     )}
