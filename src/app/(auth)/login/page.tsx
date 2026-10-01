@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, GraduationCap, Sparkles, Users, BarChart3, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, CheckSquare, Award, Shield, ArrowRight, Lock } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,12 +13,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
 
-  const features = [
-    { icon: <GraduationCap size={20} />, text: "Enter Once — Sync Everywhere" },
-    { icon: <BarChart3 size={20} />, text: "Real-time Department Analytics" },
-    { icon: <Users size={20} />, text: "Cluster-based Faculty Management" },
-    { icon: <Sparkles size={20} />, text: "Recognition & Leaderboard Engine" },
-    { icon: <ShieldCheck size={20} />, text: "Full Audit Trail & RBAC" },
+  const demoAccounts = [
+    { role: "Faculty", email: "ananya@facultyconnect.edu", pass: "Faculty@123", tag: "Primary View" },
+    { role: "Cluster Head", email: "ch@facultyconnect.edu", pass: "Ch@123", tag: "Management" },
+    { role: "HOD", email: "hod@facultyconnect.edu", pass: "Hod@123", tag: "Governance" },
+    { role: "Admin", email: "admin@facultyconnect.edu", pass: "Admin@123", tag: "System" },
   ];
 
   function handleSubmit(e: React.FormEvent) {
@@ -31,7 +30,7 @@ export default function LoginPage() {
         redirect: false,
       });
       if (res?.error) {
-        setError("Invalid email or password. Please try again.");
+        setError("Invalid email or password. Please verify your credentials.");
       } else {
         router.push("/dashboard");
         router.refresh();
@@ -39,269 +38,470 @@ export default function LoginPage() {
     });
   }
 
+  function fillDemo(demoEmail: string, demoPass: string) {
+    setEmail(demoEmail);
+    setPassword(demoPass);
+    setError("");
+  }
+
+  const institutionName = process.env.NEXT_PUBLIC_INSTITUTION_NAME ?? "Academic Management Platform";
+  const deptName = process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Department of Computer Science & Engineering";
+
   return (
-    <div className="login-page">
-      {/* Left panel */}
-      <div className="login-left">
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 440, width: "100%" }}>
-          {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 48 }}>
-            <div
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: 16,
-                background: "rgba(255,255,255,0.15)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.25)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 24,
-                fontWeight: 800,
-                color: "white",
-                fontFamily: "Plus Jakarta Sans, sans-serif",
-              }}
-            >
-              FC
-            </div>
-            <div>
-              <div style={{ color: "white", fontSize: 20, fontWeight: 800, fontFamily: "Plus Jakarta Sans, sans-serif" }}>
-                Faculty Connect
-              </div>
-              <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 13 }}>
-                {process.env.NEXT_PUBLIC_INSTITUTION_NAME ?? "Academic Platform"}
-              </div>
-            </div>
-          </div>
-
-          {/* Headline */}
-          <h1
-            style={{
-              fontSize: 38,
-              fontWeight: 900,
-              color: "white",
-              lineHeight: 1.15,
-              marginBottom: 16,
-              fontFamily: "Plus Jakarta Sans, sans-serif",
-            }}
-          >
-            Your Academic
-            <br />
-            <span
-              style={{
-                background: "linear-gradient(135deg, #a78bfa, #67e8f9)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Hub Awaits
-            </span>
-          </h1>
-          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 15, lineHeight: 1.7, marginBottom: 40 }}>
-            Centralize faculty data, streamline workflows, and celebrate
-            excellence — all from one intelligent platform.
-          </p>
-
-          {/* Feature list */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {features.map((f, i) => (
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#F7F8FA",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "32px 20px",
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 980,
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: 48,
+          alignItems: "center",
+        }}
+      >
+        {/* Left column: Institutional Introduction */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24, padding: "8px 0" }}>
+          {/* Institution & Brand mark */}
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
               <div
-                key={i}
                 style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 6,
+                  backgroundColor: "#173B67",
+                  border: "1px solid #132F53",
                   display: "flex",
                   alignItems: "center",
-                  gap: 12,
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  animation: `fadeIn 0.5s ease ${i * 0.1}s forwards`,
-                  opacity: 0,
+                  justifyContent: "center",
+                  color: "#FFFFFF",
+                  fontSize: 15,
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
                 }}
               >
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: "rgba(255,255,255,0.1)",
-                    backdropFilter: "blur(8px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#a78bfa",
-                    flexShrink: 0,
-                  }}
-                >
-                  {f.icon}
-                </div>
-                {f.text}
+                FC
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontSize: 18, fontWeight: 700, color: "#17202A", lineHeight: 1.2 }}>
+                  Faculty Connect
+                </span>
+                <span style={{ fontSize: 12, color: "#667085" }}>
+                  {institutionName}
+                </span>
+              </div>
+            </div>
 
-      {/* Right panel */}
-      <div className="login-right">
-        <div className="login-form-box fade-in">
-          <div style={{ marginBottom: 32 }}>
-            <h2
+            <h1
               style={{
-                fontSize: 26,
-                fontWeight: 800,
-                color: "hsl(var(--text-primary))",
-                fontFamily: "Plus Jakarta Sans, sans-serif",
-                marginBottom: 6,
+                fontSize: 28,
+                fontWeight: 700,
+                color: "#173B67",
+                lineHeight: 1.3,
+                letterSpacing: "-0.02em",
+                margin: "16px 0 8px 0",
               }}
             >
-              Welcome back
-            </h2>
-            <p style={{ color: "hsl(var(--text-secondary))", fontSize: 14 }}>
-              Sign in to your Faculty Connect account
+              Academic Management & Recognition Platform
+            </h1>
+            <p
+              style={{
+                fontSize: 14,
+                color: "#667085",
+                lineHeight: 1.6,
+                margin: 0,
+              }}
+            >
+              A centralized workspace for academic faculty, cluster leads, and departmental leadership. Enter data once, synchronize across reporting, recognition, and compliance.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="email">
-                Email address
+          {/* Academic Features list */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              paddingTop: 8,
+              borderTop: "1px solid #E4E7EC",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 6,
+                  backgroundColor: "#EFF6FF",
+                  border: "1px solid #DBEAFE",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#2F6FED",
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              >
+                <CheckSquare size={15} />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
+                  Academic Deliverables & Workflow
+                </div>
+                <div style={{ fontSize: 12, color: "#667085", lineHeight: 1.4 }}>
+                  Transparent task queues, leave applications, and cluster progress review.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 6,
+                  backgroundColor: "#EFF6FF",
+                  border: "1px solid #DBEAFE",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#2F6FED",
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              >
+                <Award size={15} />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
+                  Merit Recognition Ledger
+                </div>
+                <div style={{ fontSize: 12, color: "#667085", lineHeight: 1.4 }}>
+                  Audited merit points, star recognitions, and publication registry.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 6,
+                  backgroundColor: "#EFF6FF",
+                  border: "1px solid #DBEAFE",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#2F6FED",
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              >
+                <Shield size={15} />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
+                  Accreditation & Compliance
+                </div>
+                <div style={{ fontSize: 12, color: "#667085", lineHeight: 1.4 }}>
+                  Direct aggregation for NBA/NAAC Criterion 5 institutional SSR dossiers.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Department footer note */}
+          <div style={{ fontSize: 12, color: "#667085" }}>
+            Governed by <strong style={{ color: "#17202A" }}>{deptName}</strong>
+          </div>
+        </div>
+
+        {/* Right column: White Authentication Panel */}
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            boxShadow: "0 4px 12px -2px rgba(16, 24, 40, 0.05), 0 2px 6px -1px rgba(16, 24, 40, 0.03)",
+            padding: "36px 32px",
+          }}
+        >
+          <div style={{ marginBottom: 24 }}>
+            <h2
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                color: "#17202A",
+                margin: "0 0 6px 0",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Sign In
+            </h2>
+            <p style={{ fontSize: 13, color: "#667085", margin: 0 }}>
+              Enter your institutional credentials to continue
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Email field */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label
+                htmlFor="email"
+                style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}
+              >
+                Academic Email
               </label>
               <input
                 id="email"
                 type="email"
-                className="form-input"
-                placeholder="you@institution.edu"
+                placeholder="name@facultyconnect.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
+                style={{
+                  height: 38,
+                  padding: "0 12px",
+                  borderRadius: 6,
+                  border: "1px solid #E4E7EC",
+                  backgroundColor: "#FFFFFF",
+                  fontSize: 13,
+                  color: "#17202A",
+                  outline: "none",
+                  transition: "border-color 0.15s ease",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#2F6FED")}
+                onBlur={(e) => (e.target.style.borderColor = "#E4E7EC")}
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="password">
-                Password
-              </label>
+            {/* Password field */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label
+                  htmlFor="password"
+                  style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}
+                >
+                  Password
+                </label>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: "#667085",
+                  }}
+                  title="Contact your department administrator to reset credentials"
+                >
+                  Forgot password?
+                </span>
+              </div>
               <div style={{ position: "relative" }}>
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  className="form-input"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  style={{ paddingRight: 44 }}
+                  style={{
+                    width: "100%",
+                    height: 38,
+                    padding: "0 38px 0 12px",
+                    borderRadius: 6,
+                    border: "1px solid #E4E7EC",
+                    backgroundColor: "#FFFFFF",
+                    fontSize: 13,
+                    color: "#17202A",
+                    outline: "none",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.15s ease",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#2F6FED")}
+                  onBlur={(e) => (e.target.style.borderColor = "#E4E7EC")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   style={{
                     position: "absolute",
-                    right: 12,
+                    right: 10,
                     top: "50%",
                     transform: "translateY(-50%)",
                     background: "none",
                     border: "none",
+                    padding: 4,
+                    color: "#667085",
                     cursor: "pointer",
-                    color: "hsl(var(--text-muted))",
                     display: "flex",
-                    alignItems: "center",
-                    padding: 0,
                   }}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
+            {/* Error Message */}
             {error && (
               <div
                 style={{
-                  background: "hsl(0 84% 60% / 0.08)",
-                  border: "1px solid hsl(0 84% 60% / 0.25)",
-                  borderRadius: 8,
-                  padding: "10px 14px",
-                  color: "hsl(0 70% 50%)",
-                  fontSize: 13,
+                  backgroundColor: "#FEF2F2",
+                  border: "1px solid #FECDCA",
+                  borderRadius: 6,
+                  padding: "9px 12px",
+                  color: "#C0392B",
+                  fontSize: 12.5,
                   fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
                 }}
               >
-                {error}
+                <Lock size={14} style={{ flexShrink: 0 }} />
+                <span>{error}</span>
               </div>
             )}
 
+            {/* Submit Button */}
             <button
               id="login-submit"
               type="submit"
-              className="btn-gradient"
               disabled={isPending}
               style={{
-                width: "100%",
-                justifyContent: "center",
-                padding: "12px 20px",
-                fontSize: 15,
+                height: 40,
+                backgroundColor: "#173B67",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 6,
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: isPending ? "not-allowed" : "pointer",
                 opacity: isPending ? 0.75 : 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                transition: "background-color 0.15s ease",
+                marginTop: 4,
+              }}
+              onMouseEnter={(e) => {
+                if (!isPending) (e.currentTarget.style.backgroundColor = "#122F53");
+              }}
+              onMouseLeave={(e) => {
+                if (!isPending) (e.currentTarget.style.backgroundColor = "#173B67");
               }}
             >
               {isPending ? (
-                <>
-                  <svg className="spin" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path d="M21 12a9 9 0 11-6.219-8.56" />
-                  </svg>
-                  Signing in…
-                </>
+                <span>Authenticating…</span>
               ) : (
-                "Sign in"
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={15} />
+                </>
               )}
             </button>
           </form>
 
-          {/* Demo credentials hint */}
+          {/* Demo Credentials Panel */}
           <div
             style={{
-              marginTop: 28,
-              padding: "14px 16px",
-              background: "hsl(var(--color-primary) / 0.06)",
-              border: "1px solid hsl(var(--color-primary) / 0.15)",
-              borderRadius: 10,
-              fontSize: 12.5,
-              color: "hsl(var(--text-secondary))",
-              lineHeight: 1.7,
-            }}
-          >
-            <div style={{ fontWeight: 700, color: "hsl(var(--text-primary))", marginBottom: 4 }}>
-              🧪 Demo Credentials
-            </div>
-            <div>Admin: <code>admin@facultyconnect.edu</code> / <code>Admin@123</code></div>
-            <div>HOD: <code>hod@facultyconnect.edu</code> / <code>Hod@123</code></div>
-            <div>Cluster Head: <code>ch@facultyconnect.edu</code> / <code>Ch@123</code></div>
-            <div>Faculty: <code>ananya@facultyconnect.edu</code> / <code>Faculty@123</code></div>
-          </div>
-
-          <p
-            style={{
               marginTop: 24,
-              textAlign: "center",
-              fontSize: 12.5,
-              color: "hsl(var(--text-muted))",
+              padding: "12px 14px",
+              backgroundColor: "#F7F8FA",
+              border: "1px solid #E4E7EC",
+              borderRadius: 6,
             }}
           >
-            Access is managed by your system administrator.
-            <br />
-            Contact Admin to request an account.
-          </p>
+            <div
+              style={{
+                fontSize: 11.5,
+                fontWeight: 600,
+                color: "#173B67",
+                marginBottom: 8,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <span>Authorized Demo Accounts</span>
+              <span style={{ fontSize: 10, color: "#667085", textTransform: "none", fontWeight: 400 }}>
+                Click to fill
+              </span>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {demoAccounts.map((acc) => (
+                <button
+                  key={acc.email}
+                  type="button"
+                  onClick={() => fillDemo(acc.email, acc.pass)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "6px 8px",
+                    borderRadius: 4,
+                    border: "1px solid #E4E7EC",
+                    backgroundColor: email === acc.email ? "#EFF6FF" : "#FFFFFF",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#2F6FED")}
+                  onMouseLeave={(e) => {
+                    if (email !== acc.email) e.currentTarget.style.borderColor = "#E4E7EC";
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: email === acc.email ? "#173B67" : "#17202A",
+                        minWidth: 74,
+                      }}
+                    >
+                      {acc.role}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: "#667085",
+                        fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                      }}
+                    >
+                      {acc.email}
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      color: email === acc.email ? "#2F6FED" : "#98A2B3",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {acc.tag}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spin { animation: spin 0.8s linear infinite; }
-      `}</style>
     </div>
   );
 }
