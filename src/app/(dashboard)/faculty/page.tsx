@@ -1,12 +1,33 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { StatCard } from "@/components/ui/StatCard";
-import { CheckSquare, Star, Calendar, Trophy, Clock, TrendingUp, Award } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { MetricBlock } from "@/components/ui/MetricBlock";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import {
+  CheckSquare,
+  Calendar,
+  Trophy,
+  Star,
+  Clock,
+  AlertTriangle,
+  Award,
+  ArrowRight,
+  ShieldAlert,
+} from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "My Dashboard" };
+export const metadata: Metadata = { title: "Faculty Workspace — Dashboard" };
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "morning";
+  if (hour < 17) return "afternoon";
+  return "evening";
+}
 
 export default async function FacultyDashboard() {
   const session = await auth();
@@ -17,173 +38,363 @@ export default async function FacultyDashboard() {
 
   const userId = session.user.id;
 
-  // Parallel data fetching
-  const [tasks, leaves, ledgerTotal, leaderboardRank, recentBadges] = await Promise.all([
-    db.task.findMany({
-      where: { assignedToId: userId, deletedAt: null },
-      orderBy: { deadline: "asc" },
-      take: 5,
-    }),
-    db.leaveApplication.findMany({
-      where: { applicantId: userId },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
-    db.pointsLedger.aggregate({
-      where: { facultyId: userId },
-      _sum: { amount: true },
-    }),
-    db.leaderboardSnapshot.findFirst({
-      where: { facultyId: userId, period: "MONTHLY" },
-      orderBy: { date: "desc" },
-    }),
-    db.userBadge.findMany({
-      where: { userId },
-      include: { badge: true },
-      orderBy: { awardedAt: "desc" },
-      take: 3,
-    }),
-  ]);
+  // Real parallel data fetching from database
+  const [tasks, leaves, ledgerTotal, leaderboardRank, recentBadges, userCluster] =
+    await Promise.all([
+      db.task.findMany({
+        where: { assignedToId: userId, deletedAt: null },
+        orderBy: { deadline: "asc" },
+        take: 6,
+      }),
+      db.leaveApplication.findMany({
+        where: { applicantId: userId },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+      }),
+      db.pointsLedger.aggregate({
+        where: { facultyId: userId },
+        _sum: { amount: true },
+      }),
+      db.leaderboardSnapshot.findFirst({
+        where: { facultyId: userId, period: "MONTHLY" },
+        orderBy: { date: "desc" },
+      }),
+      db.userBadge.findMany({
+        where: { userId },
+        include: { badge: true },
+        orderBy: { awardedAt: "desc" },
+        take: 4,
+      }),
+      db.clusterMembership.findFirst({
+        where: { userId },
+        include: { cluster: true },
+      }),
+    ]);
 
   const totalPoints = ledgerTotal._sum.amount ?? 0;
-  const openTasks = tasks.filter((t) => ["OPEN", "IN_PROGRESS"].includes(t.status)).length;
-  const completedTasks = tasks.filter((t) => t.status === "COMPLETED").length;
-  const overdueTasks = tasks.filter((t) => t.status === "OVERDUE").length;
-  const pendingLeaves = leaves.filter((l) => l.status === "PENDING").length;
+  const activeTasks = tasks.filter((t) => ["OPEN", "IN_PROGRESS"].includes(t.status));
+  const overdueTasks = tasks.filter((t) => t.status === "OVERDUE");
+  const pendingLeaves = leaves.filter((l) => l.status === "PENDING");
+  const clusterName = userCluster?.cluster?.name ?? "General Faculty";
 
   return (
-    <div>
-      {/* Page header */}
-      <div className="page-header">
-        <h2 className="page-title">
-          Good {getGreeting()},{" "}
-          <span className="text-gradient">{session.user.name.split(" ")[0]}</span> 👋
-        </h2>
-        <p className="page-subtitle">
-          Here's your activity summary for today, {formatDate(new Date())}.
-        </p>
-      </div>
+    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
+      {/* 1. Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Faculty Workspace" },
+          { label: "Dashboard" },
+        ]}
+        title={`Good ${getGreeting()}, ${session.user.name}`}
+        subtitle={`Academic profile and operational tasks for ${formatDate(new Date())} · ${clusterName}`}
+        actions={
+          <div style={{ display: "flex", gap: 8 }}>
+            <Link
+              href="/faculty/leave"
+              className="btn-outline"
+              style={{ fontSize: 13, padding: "7px 14px" }}
+            >
+              <Calendar size={14} />
+              Apply Leave
+            </Link>
+            <Link
+              href="/faculty/tasks"
+              className="btn-primary"
+              style={{ fontSize: 13, padding: "7px 14px" }}
+            >
+              <CheckSquare size={14} />
+              View Tasks
+            </Link>
+          </div>
+        }
+      />
 
-      {/* Stat cards */}
-      <div className="grid-4 fade-in" style={{ marginBottom: 28 }}>
-        <StatCard
-          label="Total Stars"
-          value={totalPoints.toFixed(0)}
-          icon={<Star size={20} />}
-          iconBg="hsl(38 92% 50% / 0.12)"
-          glowColor="hsl(38, 92%, 50%)"
-          trend={{ value: 12, label: "+12 this week" }}
+      {/* 2. SECTION A — ATTENTION AREA */}
+      {(overdueTasks.length > 0 || pendingLeaves.length > 0) && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            marginBottom: 24,
+          }}
+        >
+          {overdueTasks.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 16px",
+                backgroundColor: "#FEF2F2",
+                border: "1px solid #FECDCA",
+                borderRadius: 6,
+                gap: 12,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <ShieldAlert size={18} color="#C0392B" style={{ flexShrink: 0 }} />
+                <div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#C0392B" }}>
+                    Action Required:
+                  </span>{" "}
+                  <span style={{ fontSize: 13, color: "#17202A" }}>
+                    You have {overdueTasks.length} overdue{" "}
+                    {overdueTasks.length === 1 ? "task" : "tasks"} requiring completion.
+                  </span>
+                </div>
+              </div>
+              <Link
+                href="/faculty/tasks"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "#C0392B",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Resolve Tasks <ArrowRight size={13} />
+              </Link>
+            </div>
+          )}
+
+          {pendingLeaves.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 16px",
+                backgroundColor: "#FEFCE8",
+                border: "1px solid #FEF08A",
+                borderRadius: 6,
+                gap: 12,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Clock size={18} color="#B7791F" style={{ flexShrink: 0 }} />
+                <div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#B7791F" }}>
+                    Leave Pending Review:
+                  </span>{" "}
+                  <span style={{ fontSize: 13, color: "#17202A" }}>
+                    {pendingLeaves.length} leave application is currently awaiting review by your Cluster Head.
+                  </span>
+                </div>
+              </div>
+              <Link
+                href="/faculty/leave"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "#B7791F",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Track Status <ArrowRight size={13} />
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. SECTION C — OPERATIONAL CONTEXT METRICS */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        <MetricBlock
+          label="Total Recognition Points"
+          value={totalPoints.toLocaleString()}
+          context="Verified append-only ledger"
+          trendType="neutral"
+          icon={<Star size={18} />}
         />
-        <StatCard
+        <MetricBlock
           label="Active Tasks"
-          value={openTasks}
-          icon={<CheckSquare size={20} />}
-          iconBg="hsl(192 91% 50% / 0.12)"
-          glowColor="hsl(192, 91%, 50%)"
-          trend={overdueTasks > 0 ? { value: -1, label: `${overdueTasks} overdue` } : undefined}
+          value={activeTasks.length}
+          context={
+            overdueTasks.length > 0
+              ? `${overdueTasks.length} overdue`
+              : "All assignments on track"
+          }
+          trendType={overdueTasks.length > 0 ? "danger" : "positive"}
+          icon={<CheckSquare size={18} />}
         />
-        <StatCard
-          label="Leaderboard Rank"
+        <MetricBlock
+          label="Department Rank"
           value={leaderboardRank ? `#${leaderboardRank.rank}` : "—"}
-          icon={<Trophy size={20} />}
-          iconBg="hsl(258 90% 66% / 0.12)"
-          glowColor="hsl(258, 90%, 66%)"
+          context="Monthly institutional standing"
+          trendType="neutral"
+          icon={<Trophy size={18} />}
         />
-        <StatCard
-          label="Pending Leaves"
-          value={pendingLeaves}
-          icon={<Calendar size={20} />}
-          iconBg="hsl(142 71% 45% / 0.12)"
-          glowColor="hsl(142, 71%, 45%)"
+        <MetricBlock
+          label="Pending Leave Requests"
+          value={pendingLeaves.length}
+          context={
+            pendingLeaves.length > 0 ? "Awaiting decision" : "No active leave requests"
+          }
+          trendType={pendingLeaves.length > 0 ? "warning" : "neutral"}
+          icon={<Calendar size={18} />}
         />
       </div>
 
-      <div className="grid-2" style={{ alignItems: "start" }}>
-        {/* Tasks */}
-        <div className="card fade-in fade-in-delay-1">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>My Tasks</h3>
-            <a href="/faculty/tasks" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-              View all
-            </a>
+      {/* 4. MAIN WORKSPACE: 2-COLUMN LAYOUT */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1.6fr) minmax(0, 1fr)",
+          gap: 20,
+          alignItems: "start",
+        }}
+      >
+        {/* LEFT COLUMN: ACTIVE TASKS */}
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <div
+            style={{
+              padding: "16px 20px",
+              borderBottom: "1px solid #E4E7EC",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
+                Assigned Academic Tasks
+              </h2>
+              <p style={{ fontSize: 12, color: "#667085", margin: "2px 0 0 0" }}>
+                Mandatory tasks allocated by Department and Cluster Heads
+              </p>
+            </div>
+            <Link
+              href="/faculty/tasks"
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: "#2F6FED",
+                textDecoration: "none",
+              }}
+            >
+              View all ({tasks.length})
+            </Link>
           </div>
 
           {tasks.length === 0 ? (
-            <div className="empty-state">
-              <CheckSquare size={40} className="empty-state-icon" />
-              <div className="empty-state-title">No tasks assigned</div>
-              <div className="empty-state-desc">You have no tasks yet. Check back later.</div>
+            <div style={{ padding: 24 }}>
+              <EmptyState
+                icon={CheckSquare}
+                title="No tasks assigned"
+                description="You currently have no tasks allocated. New departmental tasks will appear here."
+              />
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {tasks.map((task) => (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {tasks.map((task, index) => (
                 <div
                   key={task.id}
                   style={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "14px 20px",
+                    borderBottom: index < tasks.length - 1 ? "1px solid #F2F4F7" : "none",
                     gap: 12,
-                    padding: "12px 14px",
-                    background: "hsl(var(--bg-subtle))",
-                    borderRadius: 10,
-                    cursor: "pointer",
-                    transition: "background 0.1s",
                   }}
                 >
-                  <div
-                    style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: "50%",
-                      background: getTaskColor(task.status),
-                      flexShrink: 0,
-                    }}
-                  />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
                         fontSize: 13.5,
-                        fontWeight: 600,
-                        color: "hsl(var(--text-primary))",
+                        fontWeight: 500,
+                        color: "#17202A",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
+                        marginBottom: 4,
                       }}
                     >
                       {task.title}
                     </div>
-                    <div style={{ fontSize: 12, color: "hsl(var(--text-muted))", display: "flex", gap: 8, marginTop: 2 }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                        <Clock size={11} /> Due {formatDate(task.deadline)}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        fontSize: 12,
+                        color: "#667085",
+                      }}
+                    >
+                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <Clock size={12} />
+                        Due {formatDate(task.deadline)}
                       </span>
+                      <span>Priority: {task.priority.toLowerCase()}</span>
                     </div>
                   </div>
-                  <span className={`status-badge status-${task.status.toLowerCase().replace("_", "-")}`}>
-                    {task.status.replace("_", " ")}
-                  </span>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                    <StatusBadge status={task.status} size="sm" />
+                    <Link
+                      href="/faculty/tasks"
+                      className="btn-outline"
+                      style={{ fontSize: 11, padding: "4px 8px" }}
+                    >
+                      Update
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Right column: Badges + Leave */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          {/* Badges */}
-          <div className="card fade-in fade-in-delay-2">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-              <h3 className="section-title" style={{ margin: 0 }}>Recent Badges</h3>
-              <a href="/faculty/stars" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-                View all
-              </a>
+        {/* RIGHT COLUMN: RECOGNITION & LEAVE STATUS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {/* BADGES / ACHIEVEMENTS */}
+          <div className="card" style={{ padding: 20 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 14,
+              }}
+            >
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
+                Recent Badges
+              </h2>
+              <Link
+                href="/faculty/stars"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "#2F6FED",
+                  textDecoration: "none",
+                }}
+              >
+                View stars ledger
+              </Link>
             </div>
 
             {recentBadges.length === 0 ? (
-              <div className="empty-state" style={{ padding: "24px" }}>
-                <Award size={36} className="empty-state-icon" />
-                <div className="empty-state-title">No badges yet</div>
-                <div className="empty-state-desc">Complete tasks and evaluations to earn badges.</div>
-              </div>
+              <EmptyState
+                icon={Award}
+                title="No badges earned yet"
+                description="Complete tasks on schedule and receive favorable evaluations to unlock institutional recognitions."
+              />
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {recentBadges.map((ub) => (
@@ -194,31 +405,48 @@ export default async function FacultyDashboard() {
                       alignItems: "center",
                       gap: 12,
                       padding: "10px 12px",
-                      background: "hsl(var(--color-primary) / 0.06)",
-                      borderRadius: 10,
-                      border: "1px solid hsl(var(--color-primary) / 0.12)",
+                      backgroundColor: "#F7F8FA",
+                      border: "1px solid #E4E7EC",
+                      borderRadius: 6,
                     }}
                   >
                     <div
                       style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 10,
-                        background: "linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-secondary)))",
+                        width: 32,
+                        height: 32,
+                        borderRadius: 4,
+                        backgroundColor: "#EFF6FF",
+                        border: "1px solid #BFDBFE",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: 18,
+                        color: "#2F6FED",
                         flexShrink: 0,
                       }}
                     >
-                      🏅
+                      <Award size={16} />
                     </div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-primary))" }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: "#17202A",
+                          lineHeight: 1.2,
+                        }}
+                      >
                         {ub.badge.name}
                       </div>
-                      <div style={{ fontSize: 11.5, color: "hsl(var(--text-secondary))" }}>
+                      <div
+                        style={{
+                          fontSize: 11.5,
+                          color: "#667085",
+                          marginTop: 2,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
                         {ub.badge.description}
                       </div>
                     </div>
@@ -228,45 +456,74 @@ export default async function FacultyDashboard() {
             )}
           </div>
 
-          {/* Leave status */}
-          <div className="card fade-in fade-in-delay-3">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-              <h3 className="section-title" style={{ margin: 0 }}>Leave Requests</h3>
-              <a href="/faculty/leave" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-                Apply
-              </a>
+          {/* RECENT LEAVE LOG */}
+          <div className="card" style={{ padding: 20 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 14,
+              }}
+            >
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: "#17202A", margin: 0 }}>
+                Recent Leave Requests
+              </h2>
+              <Link
+                href="/faculty/leave"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "#2F6FED",
+                  textDecoration: "none",
+                }}
+              >
+                Apply leave
+              </Link>
             </div>
 
             {leaves.length === 0 ? (
-              <div className="empty-state" style={{ padding: "20px" }}>
-                <Calendar size={32} className="empty-state-icon" />
-                <div className="empty-state-title">No leave requests</div>
-              </div>
+              <EmptyState
+                icon={Calendar}
+                title="No leave applications"
+                description="You have not submitted any recent leave applications."
+              />
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {leaves.map((leave) => (
                   <div
                     key={leave.id}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
                       padding: "10px 12px",
-                      background: "hsl(var(--bg-subtle))",
-                      borderRadius: 8,
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E4E7EC",
+                      borderRadius: 6,
                     }}
                   >
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "hsl(var(--text-primary))" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 4,
+                      }}
+                    >
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#17202A" }}>
                         {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
-                      </div>
-                      <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>
-                        {leave.reason.slice(0, 40)}{leave.reason.length > 40 ? "…" : ""}
-                      </div>
+                      </span>
+                      <StatusBadge status={leave.status} size="sm" />
                     </div>
-                    <span className={`status-badge status-${leave.status.toLowerCase()}`}>
-                      {leave.status}
-                    </span>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#667085",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {leave.reason || "Casual leave application"}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -276,20 +533,4 @@ export default async function FacultyDashboard() {
       </div>
     </div>
   );
-}
-
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-}
-
-function getTaskColor(status: string) {
-  switch (status) {
-    case "COMPLETED": return "hsl(var(--color-success))";
-    case "OVERDUE": return "hsl(var(--color-danger))";
-    case "IN_PROGRESS": return "hsl(var(--color-warning))";
-    default: return "hsl(var(--color-info))";
-  }
 }

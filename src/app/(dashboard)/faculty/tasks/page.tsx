@@ -1,239 +1,240 @@
-import { auth } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-import { db } from '@/lib/db'
-import { formatDate } from '@/lib/utils'
-import { UpdateTaskStatusForm } from './UpdateTaskStatusForm'
-import { CheckSquare, Clock, AlertTriangle, CheckCircle2, Circle } from 'lucide-react'
-import type { Metadata } from 'next'
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { formatDate } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { UpdateTaskStatusForm } from "./UpdateTaskStatusForm";
+import { CheckSquare, Clock, AlertTriangle, User } from "lucide-react";
+import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: 'My Tasks' }
+export const metadata: Metadata = { title: "Faculty Workspace — Tasks" };
 
-const STATUS_CONFIG = {
-  OPEN: { label: 'Open', icon: Circle, color: 'status-open' },
-  IN_PROGRESS: { label: 'In Progress', icon: Clock, color: 'status-in-progress' },
-  COMPLETED: { label: 'Completed', icon: CheckCircle2, color: 'status-completed' },
-  OVERDUE: { label: 'Overdue', icon: AlertTriangle, color: 'status-overdue' },
-}
-
-const PRIORITY_CONFIG = {
-  LOW: { label: 'Low', color: 'priority-low' },
-  MEDIUM: { label: 'Medium', color: 'priority-medium' },
-  HIGH: { label: 'High', color: 'priority-high' },
-  CRITICAL: { label: 'Critical', color: 'priority-critical' },
-}
+const PRIORITY_BADGES: Record<string, { label: string; color: string; bg: string }> = {
+  LOW: { label: "Low", color: "#667085", bg: "#F2F4F7" },
+  MEDIUM: { label: "Medium", color: "#2F6FED", bg: "#EFF6FF" },
+  HIGH: { label: "High", color: "#B7791F", bg: "#FEFCE8" },
+  CRITICAL: { label: "Critical", color: "#C0392B", bg: "#FEF2F2" },
+};
 
 export default async function FacultyTasksPage() {
-  const session = await auth()
-  if (!session) redirect('/login')
+  const session = await auth();
+  if (!session) redirect("/login");
 
-  const userId = session.user.id
+  const userId = session.user.id;
 
   const tasks = await db.task.findMany({
     where: { assignedToId: userId, deletedAt: null },
     include: { assignedBy: true },
-    orderBy: [{ status: 'asc' }, { deadline: 'asc' }],
-  })
+    orderBy: [{ status: "asc" }, { deadline: "asc" }],
+  });
 
   const counts = {
-    open: tasks.filter((t) => t.status === 'OPEN').length,
-    inProgress: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
-    completed: tasks.filter((t) => t.status === 'COMPLETED').length,
-    overdue: tasks.filter((t) => t.status === 'OVERDUE').length,
-  }
+    total: tasks.length,
+    open: tasks.filter((t) => t.status === "OPEN").length,
+    inProgress: tasks.filter((t) => t.status === "IN_PROGRESS").length,
+    completed: tasks.filter((t) => t.status === "COMPLETED").length,
+    overdue: tasks.filter((t) => t.status === "OVERDUE").length,
+  };
 
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">My Tasks</h2>
-        <p className="page-subtitle">Track and update your assigned tasks.</p>
-      </div>
+    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
+      {/* 1. Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Faculty Workspace", href: "/faculty" },
+          { label: "Tasks" },
+        ]}
+        title="Assigned Academic Tasks"
+        subtitle="Operational ledger of teaching, departmental compliance, and committee responsibilities assigned to you."
+      />
 
-      {/* Summary bar */}
+      {/* 2. Status Summary Counts Strip */}
       <div
         style={{
-          display: 'flex',
+          display: "flex",
           gap: 12,
-          marginBottom: 24,
-          flexWrap: 'wrap',
+          marginBottom: 20,
+          flexWrap: "wrap",
         }}
       >
         {[
-          { label: 'Open', count: counts.open, color: '#3B82F6' },
-          { label: 'In Progress', count: counts.inProgress, color: '#F59E0B' },
-          { label: 'Completed', count: counts.completed, color: '#22C55E' },
-          { label: 'Overdue', count: counts.overdue, color: '#EF4444' },
+          { label: "All Tasks", count: counts.total, color: "#17202A", bg: "#FFFFFF" },
+          { label: "Open", count: counts.open, color: "#2F6FED", bg: "#EFF6FF" },
+          { label: "In Progress", count: counts.inProgress, color: "#2F6FED", bg: "#EFF6FF" },
+          { label: "Completed", count: counts.completed, color: "#198754", bg: "#F0FDF4" },
+          { label: "Overdue", count: counts.overdue, color: "#C0392B", bg: "#FEF2F2" },
         ].map((s) => (
           <div
             key={s.label}
             style={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 8,
-              padding: '8px 16px',
-              background: 'hsl(var(--bg-surface))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 10,
+              padding: "8px 14px",
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E4E7EC",
+              borderRadius: 6,
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 500,
+              color: "#17202A",
             }}
           >
             <span
               style={{
-                width: 10,
-                height: 10,
-                borderRadius: '50%',
-                background: s.color,
-                display: 'inline-block',
+                padding: "1px 7px",
+                borderRadius: 4,
+                backgroundColor: s.bg,
+                color: s.color,
+                fontWeight: 600,
+                fontSize: 12,
               }}
-            />
-            {s.count} {s.label}
+            >
+              {s.count}
+            </span>
+            <span>{s.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Task list */}
+      {/* 3. Task Table */}
       {tasks.length === 0 ? (
-        <div className="card">
-          <div className="empty-state">
-            <CheckSquare size={48} className="empty-state-icon" />
-            <div className="empty-state-title">No tasks assigned</div>
-            <div className="empty-state-desc">
-              Your cluster head will assign tasks here. Check back later.
-            </div>
-          </div>
-        </div>
+        <EmptyState
+          icon={CheckSquare}
+          title="No tasks assigned"
+          description="You currently have no tasks allocated. When administrative or academic tasks are assigned, they will be listed here with deadlines."
+        />
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {tasks.map((task) => {
-            const statusCfg = STATUS_CONFIG[task.status]
-            const priorityCfg = PRIORITY_CONFIG[task.priority]
-            const isOverdue =
-              task.status !== 'COMPLETED' && new Date(task.deadline) < new Date()
-            const daysLeft = Math.ceil(
-              (new Date(task.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-            )
-
-            return (
-              <div key={task.id} className="card" style={{ padding: '20px 24px' }}>
-                <div
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 6,
+            overflow: "hidden",
+            boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
+          }}
+        >
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+                fontSize: 13.5,
+              }}
+            >
+              <thead>
+                <tr
                   style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 16,
+                    backgroundColor: "#F7F8FA",
+                    borderBottom: "1px solid #E4E7EC",
+                    color: "#667085",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
                   }}
                 >
-                  {/* Left: info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div
+                  <th style={{ padding: "12px 18px", width: "35%" }}>Task & Details</th>
+                  <th style={{ padding: "12px 16px" }}>Assigned By</th>
+                  <th style={{ padding: "12px 16px" }}>Deadline</th>
+                  <th style={{ padding: "12px 16px" }}>Priority</th>
+                  <th style={{ padding: "12px 16px" }}>Status</th>
+                  <th style={{ padding: "12px 18px", textAlign: "right" }}>Update Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task, idx) => {
+                  const priority = PRIORITY_BADGES[task.priority] ?? PRIORITY_BADGES.MEDIUM;
+                  const isOverdue = task.status === "OVERDUE";
+
+                  return (
+                    <tr
+                      key={task.id}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 10,
-                        marginBottom: 6,
-                        flexWrap: 'wrap',
+                        borderBottom: idx < tasks.length - 1 ? "1px solid #F2F4F7" : "none",
+                        backgroundColor: isOverdue ? "#FFFBFB" : "#FFFFFF",
                       }}
                     >
-                      <span
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 700,
-                          color: 'hsl(var(--text-primary))',
-                          fontFamily: 'Plus Jakarta Sans, sans-serif',
-                        }}
-                      >
-                        {task.title}
-                      </span>
-                      <span className={`status-badge ${statusCfg.color}`}>
-                        {statusCfg.label}
-                      </span>
-                      <span className={`status-badge ${priorityCfg.color}`}>
-                        {priorityCfg.label}
-                      </span>
-                    </div>
-
-                    {task.description && (
-                      <p
-                        style={{
-                          fontSize: 13.5,
-                          color: 'hsl(var(--text-secondary))',
-                          marginBottom: 10,
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        {task.description}
-                      </p>
-                    )}
-
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: 18,
-                        fontSize: 12.5,
-                        color: 'hsl(var(--text-muted))',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <Clock size={13} />
-                        Due: {formatDate(task.deadline)}
-                        {task.status !== 'COMPLETED' && (
-                          <span
+                      {/* Title & Description */}
+                      <td style={{ padding: "14px 18px", verticalAlign: "top" }}>
+                        <div style={{ fontWeight: 600, color: "#17202A", marginBottom: 3 }}>
+                          {task.title}
+                        </div>
+                        {task.description && (
+                          <div
                             style={{
-                              marginLeft: 4,
-                              color: isOverdue
-                                ? 'hsl(var(--color-danger))'
-                                : daysLeft <= 3
-                                ? 'hsl(var(--color-warning))'
-                                : 'hsl(var(--color-success))',
-                              fontWeight: 600,
+                              fontSize: 12.5,
+                              color: "#667085",
+                              lineHeight: 1.4,
+                              maxWidth: 420,
                             }}
                           >
-                            {isOverdue
-                              ? `${Math.abs(daysLeft)}d overdue`
-                              : `${daysLeft}d left`}
-                          </span>
+                            {task.description}
+                          </div>
                         )}
-                      </span>
-                      <span>Assigned by: {task.assignedBy.name}</span>
-                      {task.completedAt && (
-                        <span style={{ color: 'hsl(var(--color-success))' }}>
-                          ✓ Completed {formatDate(task.completedAt)}
+                      </td>
+
+                      {/* Assigned By */}
+                      <td style={{ padding: "14px 16px", verticalAlign: "top", color: "#17202A" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
+                          <User size={13} color="#667085" />
+                          <span>{task.assignedBy?.name ?? "Department"}</span>
+                        </div>
+                      </td>
+
+                      {/* Deadline */}
+                      <td style={{ padding: "14px 16px", verticalAlign: "top", whiteSpace: "nowrap" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 5,
+                            fontSize: 13,
+                            color: isOverdue ? "#C0392B" : "#17202A",
+                            fontWeight: isOverdue ? 600 : 400,
+                          }}
+                        >
+                          {isOverdue ? <AlertTriangle size={13} /> : <Clock size={13} color="#667085" />}
+                          <span>{formatDate(task.deadline)}</span>
+                        </div>
+                      </td>
+
+                      {/* Priority */}
+                      <td style={{ padding: "14px 16px", verticalAlign: "top" }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 8px",
+                            borderRadius: 4,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: priority.color,
+                            backgroundColor: priority.bg,
+                          }}
+                        >
+                          {priority.label}
                         </span>
-                      )}
-                    </div>
+                      </td>
 
-                    {task.remarks && (
-                      <div
-                        style={{
-                          marginTop: 10,
-                          padding: '8px 12px',
-                          background: 'hsl(var(--bg-subtle))',
-                          borderRadius: 8,
-                          fontSize: 12.5,
-                          color: 'hsl(var(--text-secondary))',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        💬 {task.remarks}
-                      </div>
-                    )}
-                  </div>
+                      {/* Status */}
+                      <td style={{ padding: "14px 16px", verticalAlign: "top" }}>
+                        <StatusBadge status={task.status} size="md" />
+                      </td>
 
-                  {/* Right: status update form */}
-                  {task.status !== 'COMPLETED' && (
-                    <div style={{ flexShrink: 0 }}>
-                      <UpdateTaskStatusForm
-                        taskId={task.id}
-                        currentStatus={task.status}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+                      {/* Action */}
+                      <td style={{ padding: "14px 18px", verticalAlign: "top", textAlign: "right" }}>
+                        <UpdateTaskStatusForm taskId={task.id} currentStatus={task.status} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
-  )
+  );
 }
