@@ -1,0 +1,245 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}</style><style>:root{color-scheme:light dark;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}}:root[data-theme="dark"]{color-scheme:dark;--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}:root[data-theme="light"]{color-scheme:light}@media print{:root,:root[data-theme="dark"]{color-scheme:light;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}}body{background:var(--md-bg);color:var(--md-text);max-width:720px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:10px;font:14px/1.55 -apple-system,BlinkMacSystemFont,'SF Pro','Segoe UI',sans-serif;overflow-wrap:break-word}body>:first-child{margin-top:0}h1,h2,h3,h4,h5,h6{margin:6px 0 0;line-height:1.25;font-weight:600;text-wrap:balance}h1{font-size:1.35em}h2{font-size:1.15em;color:var(--md-muted)}h3,h4,h5,h6{font-size:1em}p,ul,ol,blockquote,table,pre,hr{margin:0}strong{font-weight:600}a{color:var(--md-link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{display:flex;flex-direction:column;gap:6px;padding-left:22px}ul{list-style:disc}ol{list-style:decimal}:is(li,td,th)>*+:is(p,ul,ol,blockquote){margin-top:6px}blockquote{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--md-rule);padding-left:10px;color:var(--md-muted)}:not(pre)>code{background:var(--md-fill);padding:1px 3px;border-radius:4px;font:.92em 'SF Mono',ui-monospace,Menlo,Consolas,monospace}a>code{background:none;color:inherit}pre{background:var(--md-fill);padding:10px 12px;border-radius:6px;overflow-x:auto;font:12px/1.5 'SF Mono',ui-monospace,Menlo,Consolas,monospace;margin-block:4px}pre code{background:none;padding:0;font:inherit}table{width:100%;border-collapse:separate;border-spacing:2px;font:inherit}th,td{padding:6px 8px;border-radius:3px;text-align:left;vertical-align:top}th{background:var(--md-fill-strong);font-weight:600}td{background:var(--md-fill)}:is(th,td) :not(pre)>code{background:transparent}hr{border:0;border-top:1px solid var(--md-rule-strong);margin-block:10px}img{max-width:100%;height:auto;border-radius:4px}</style>
+</head><body>
+<h1>Faculty Management, Productivity &amp; Recognition Platform</h1>
+<h3>Product Requirements Document (PRD) — v1.0</h3>
+<p><strong>Base concept:</strong> Intelligent Academic Data Synchronization Platform — <em>&quot;Enter Once – Use Everywhere&quot;</em>
+<strong>Status:</strong> Greenfield build (no existing code) · <strong>Stack confirmed:</strong> Next.js, React, TypeScript, Node.js, PostgreSQL, Prisma, Redis + BullMQ, Tailwind CSS
+<strong>Document status:</strong> Living document — new feature sets will be appended as new sections/versions as they're provided.</p>
+<hr>
+<h2>1. Vision &amp; Problem Statement</h2>
+<p>Faculty in engineering departments re-enter the same academic data across ERP portals, spreadsheets, accreditation files, and departmental records. This wastes time and creates inconsistent records. The platform centralizes academic data entry once and propagates it everywhere it's needed — reports, accreditation (NBA/NAAC), analytics, and now, faculty management itself.</p>
+<p>This PRD extends that core sync engine with a full <strong>Faculty Management, Productivity, Engagement, Notification, and Analytics layer</strong>, organized around a department hierarchy (HOD → Cluster Head → Faculty).</p>
+<h2>2. Goals</h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Success Metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Eliminate duplicate data entry</td>
+<td>Every fact (publication, task, leave, evaluation) is stored once, referenced everywhere</td>
+</tr>
+<tr>
+<td>Give faculty visible recognition</td>
+<td>Daily leaderboard refresh, monthly Faculty-of-the-Month, no more than one notification per meaningful event</td>
+</tr>
+<tr>
+<td>Give Cluster Heads real management tools</td>
+<td>Task assignment, leave approval, evaluation — all in one dashboard</td>
+</tr>
+<tr>
+<td>Give HOD department-wide analytics</td>
+<td>Drill-down navigation: Department → Cluster → Faculty</td>
+</tr>
+<tr>
+<td>Keep scoring fair and non-gameable</td>
+<td>Weighting formula is admin-configurable, not hardcoded; combines automatic + manual factors</td>
+</tr>
+<tr>
+<td>Preserve auditability</td>
+<td>Every approval, evaluation, and score change is logged with actor + timestamp</td>
+</tr>
+</tbody>
+</table>
+<h2>3. Roles &amp; Permission Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th style="text-align:center">Faculty</th>
+<th style="text-align:center">Cluster Head</th>
+<th style="text-align:center">HOD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View own dashboard/tasks/stars</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">✅</td>
+</tr>
+<tr>
+<td>Apply for CL</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">✅</td>
+</tr>
+<tr>
+<td>Approve/reject CL</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">Own cluster only</td>
+<td style="text-align:center">Any (visibility, override)</td>
+</tr>
+<tr>
+<td>Assign tasks</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">Own cluster only</td>
+<td style="text-align:center">Department-wide</td>
+</tr>
+<tr>
+<td>Evaluate faculty (ratings)</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">Own cluster only</td>
+<td style="text-align:center">Any</td>
+</tr>
+<tr>
+<td>View cluster analytics</td>
+<td style="text-align:center">Self only</td>
+<td style="text-align:center">Own cluster</td>
+<td style="text-align:center">All clusters</td>
+</tr>
+<tr>
+<td>Export data</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">Own cluster only</td>
+<td style="text-align:center">Department-wide</td>
+</tr>
+<tr>
+<td>Configure scoring weights</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">—</td>
+<td style="text-align:center">✅ (admin)</td>
+</tr>
+<tr>
+<td>View audit log</td>
+<td style="text-align:center">Own actions</td>
+<td style="text-align:center">Own cluster's actions</td>
+<td style="text-align:center">All</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Enforcement:</strong> role + cluster-membership checked at the API/service layer on every request (not just UI-hidden) — critical for export and evaluation endpoints since a Cluster Head must never reach another cluster's data via direct API calls.</p>
+<h2>4. System Architecture Overview</h2>
+<pre><code>Next.js (App Router) — SSR dashboards, React Server Components for data-heavy views
+   │
+   ├─ API layer (Node.js, REST or tRPC) — auth, RBAC middleware, business logic
+   │
+   ├─ PostgreSQL (Prisma ORM) — single source of truth, one schema, no duplicate tables per feature
+   │
+   ├─ Redis + BullMQ — queues for: daily leaderboard recompute, notification dispatch,
+   │      monthly Faculty-of-the-Month job, scheduled deadline/overdue checks, export generation
+   │
+   └─ Sync Engine (core, pre-existing concept) — central write path; every module writes through
+          it so &#34;enter once&#34; facts (publications, task completions, leave outcomes) fan out to
+          Faculty Dashboard, Cluster Dashboard, HOD Dashboard, Leaderboard, Analytics, Exports
+          without being re-entered.
+</code></pre>
+<p><strong>Key architectural decision:</strong> the Sync Engine is not a separate microservice for v1 — it's a service-layer module (<code>syncEngine.ts</code>) that every domain service (tasks, leave, recognition, publications) calls after a write, which then invalidates/updates derived views (leaderboard cache, dashboard aggregates, notification triggers). This keeps the &quot;modular monolith&quot; simple to build with a 2-person team while preserving the single-write-fans-out principle. Can be split into real services later if scale demands it.</p>
+<h2>5. Functional Modules</h2>
+<h3>5.1 Faculty Hierarchy &amp; RBAC</h3>
+<ul>
+<li>Entities: <code>Department</code>, <code>Cluster</code>, <code>User</code> (role: HOD/ClusterHead/Faculty), <code>ClusterMembership</code>.</li>
+<li>HOD is department-scoped (singleton per department in v1). Cluster Head belongs to one cluster; Faculty belongs to exactly one cluster.</li>
+<li>Seed/admin flow needed: HOD provisions Cluster Heads, Cluster Heads add Faculty — no self-signup.</li>
+</ul>
+<h3>5.2 CL / Leave Application</h3>
+<ul>
+<li>States: <code>PENDING → APPROVED | REJECTED</code>, plus <code>CANCELLED</code> (faculty-initiated, only while pending).</li>
+<li><code>LeaveApplication</code>: dates, reason, remarks (Cluster Head), decidedBy, decidedAt.</li>
+<li>Every state transition fires a notification event and an audit entry.</li>
+</ul>
+<h3>5.3 Task Management</h3>
+<ul>
+<li><code>Task</code>: title, description, assignedTo, assignedBy, priority, deadline, status (<code>OPEN/IN_PROGRESS/COMPLETED/OVERDUE</code>), completedAt, remarks, qualityRating.</li>
+<li>Derived (computed, not stored redundantly): <code>completedBeforeDeadline</code>, <code>daysToComplete</code> — calculated from <code>deadline</code>/<code>completedAt</code> at read time or cached on completion.</li>
+<li>Scheduled job flags tasks <code>OVERDUE</code> daily and triggers a notification.</li>
+</ul>
+<h3>5.4 Recognition Engine (Stars/Points)</h3>
+<ul>
+<li><strong>Automatic factors</strong> (computed by system): on-time completion, early completion, completion rate, deadline adherence, consistency streak.</li>
+<li><strong>Manual factors</strong> (Cluster Head/HOD input): Quality (1–5), Contribution (1–5), Initiative (1–5), Overall (1–5), free-text remarks.</li>
+<li><code>ScoringConfig</code> table: admin-editable weight per factor (e.g., <code>onTimeWeight: 0.3</code>, <code>qualityRatingWeight: 0.25</code>, …), versioned so historical scores remain explainable even if weights change later.</li>
+<li><code>PointsLedger</code>: append-only log of every point-earning event (source, amount, reason, timestamp) — the faculty's total is a sum, never a mutable field, so &quot;how did I earn my stars&quot; is always answerable.</li>
+</ul>
+<h3>5.5 Leaderboard</h3>
+<ul>
+<li>Recomputed nightly via BullMQ job from <code>PointsLedger</code> + task/eval data; snapshot stored in <code>LeaderboardSnapshot</code> (date, faculty, rank, points) for weekly/monthly/semester/year views without recomputation.</li>
+<li>Notification only on meaningful rank changes (configurable threshold, e.g., entering/exiting top 5) — not on every micro-shift.</li>
+</ul>
+<h3>5.6 Faculty of the Month</h3>
+<ul>
+<li>Scheduled job on month rollover: scores against <code>ScoringConfig</code>-weighted criteria over the prior month's window, picks winner, writes to <code>FacultyOfTheMonth</code> (month, year, facultyId, snapshotStats) — <strong>append-only, never overwritten</strong>, so history is browsable.</li>
+</ul>
+<h3>5.7 Encouragement / Gamification Layer</h3>
+<ul>
+<li><code>Badge</code>, <code>Achievement</code>, <code>Milestone</code> tables — rule-evaluated (e.g., &quot;10 tasks completed early&quot; → badge) by the same nightly job that recomputes the leaderboard, to avoid real-time overhead.</li>
+<li>Framing note for UI copy: progress and recognition language, not surveillance language (per the source spec) — this is a UX/content guideline to carry into design, not a schema concern.</li>
+</ul>
+<h3>5.8 Notification System</h3>
+<ul>
+<li>Event-driven: domain services emit events (<code>task.assigned</code>, <code>leave.approved</code>, <code>stars.awarded</code>, <code>leaderboard.refreshed</code>, …) → a notification service consumes them → writes <code>Notification</code> row + optionally pushes via existing in-app channel.</li>
+<li><code>NotificationRule</code> table lets HOD configure which events actually notify (avoids spam on trivial rank shifts).</li>
+<li>In-app requirements: bell icon, unread count, panel, read/unread state, timestamp, deep-link to the relevant record.</li>
+</ul>
+<h3>5.9 Dashboards</h3>
+<ul>
+<li><strong>Faculty:</strong> tasks, deadlines, leave status, stars, badges, rank, recent notifications, monthly progress.</li>
+<li><strong>Cluster Head:</strong> cluster roster, task/leave queues, evaluations, cluster leaderboard, export.</li>
+<li><strong>HOD:</strong> all clusters, department analytics, Faculty of the Month, drill-down navigation (Dept → Cluster → Faculty).</li>
+<li>Built as Next.js Server Components pulling pre-aggregated data (not raw joins per request) for performance.</li>
+</ul>
+<h3>5.10 CSV/Excel Export</h3>
+<ul>
+<li>Single export service, parameterized by scope (<code>cluster</code> | <code>department</code> | <code>selectedFaculty</code> | <code>dateRange</code>), enforces the RBAC matrix in §3 server-side before query execution — never trust a client-supplied scope.</li>
+<li>Generates from live DB query at request time (BullMQ job for large exports to avoid blocking the request).</li>
+</ul>
+<h3>5.11 Research &amp; Achievement Data</h3>
+<ul>
+<li><code>Publication</code>, <code>StudentAchievement</code> entities feed both the original accreditation/reporting flow and the recognition engine — one entry point, consumed by both (this is the clearest &quot;enter once&quot; case in the new scope).</li>
+</ul>
+<h3>5.12 Audit &amp; History</h3>
+<ul>
+<li><code>AuditLog</code>: actorId, action, entityType, entityId, beforeState/afterState (jsonb), timestamp. Written by a single audit-logging middleware/service wrapper around all mutating operations — not scattered <code>console.log</code>-style calls — so coverage is consistent.</li>
+</ul>
+<h2>6. Non-Functional Requirements</h2>
+<ul>
+<li><strong>RBAC enforced server-side</strong> on every endpoint, not just hidden in UI.</li>
+<li><strong>Idempotent scheduled jobs</strong> (BullMQ) — safe to re-run if a nightly job fails partway.</li>
+<li><strong>Explainability:</strong> every score/rank must be traceable to ledger entries and the scoring config version active at the time.</li>
+<li><strong>No duplicate entry:</strong> any new field added later must ask &quot;does this already exist somewhere?&quot; before creating a new input surface.</li>
+</ul>
+<h2>7. Suggested Delivery Phasing (maps onto the original 12-month grant plan)</h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Auth, roles/hierarchy, core Postgres schema, Sync Engine skeleton</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Task management + CL/leave workflow + audit logging</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Recognition engine (ledger + config) + nightly leaderboard job</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Notifications + dashboards (Faculty → Cluster Head → HOD)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Faculty of the Month + CSV/Excel export + badges/achievements polish</td>
+</tr>
+</tbody>
+</table>
+<h2>8. Open Questions (to resolve before/while building)</h2>
+<ul>
+<li>Single department only in v1, or multi-department from day one? (affects whether <code>Department</code> needs to be first-class now)</li>
+<li>Expected faculty count per cluster/department — affects whether nightly leaderboard job needs pagination/batching now or can be deferred.</li>
+<li>Auth approach (NextAuth/Auth.js vs custom) — not yet specified.</li>
+</ul>
+<h2>9. Pending Additions</h2>
+<p><em>(Reserved — next feature sets you send will be appended here as new sections, then merged into the appropriate module above.)</em></p>
+<hr>
+
+</body></html>
