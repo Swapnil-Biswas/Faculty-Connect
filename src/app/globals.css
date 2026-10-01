@@ -3,55 +3,55 @@
 
 @import "tailwindcss";
 
-/* ─── Design Tokens ────────────────────────────────────────────────────────── */
+/* ─── Design Tokens (Step 4A Institutional Design System) ────── */
 :root {
   /* Brand Colors */
-  --color-primary: 258 90% 66%;       /* #7C3AED → purple */
-  --color-primary-light: 258 90% 76%;
-  --color-secondary: 192 91% 50%;     /* #06B6D4 → cyan */
-  --color-accent: 326 100% 65%;       /* #FF4DA6 → pink accent */
+  --color-primary: 213 63% 25%;       /* #173B67 → Institutional Navy */
+  --color-primary-light: 213 55% 35%;
+  --color-secondary: 220 83% 55%;     /* #2F6FED → Action Blue */
+  --color-accent: 220 83% 55%;        /* #2F6FED */
 
-  /* Gradient stops */
-  --gradient-from: hsl(258, 90%, 66%);
-  --gradient-to: hsl(192, 91%, 50%);
+  /* Gradient stops — restrained institutional transition */
+  --gradient-from: #173B67;
+  --gradient-to: #2F6FED;
 
   /* Light mode surfaces */
-  --bg-base: 220 20% 97%;
-  --bg-surface: 0 0% 100%;
-  --bg-elevated: 220 20% 98%;
-  --bg-subtle: 220 14% 94%;
+  --bg-base: 220 20% 98%;             /* #F7F8FA → Neutral Canvas */
+  --bg-surface: 0 0% 100%;            /* #FFFFFF → Pure White Surface */
+  --bg-elevated: 0 0% 100%;
+  --bg-subtle: 220 18% 96%;           /* #F2F4F7 → Subtle Border / Row */
 
   /* Light mode text */
-  --text-primary: 222 47% 11%;
-  --text-secondary: 215 16% 47%;
-  --text-muted: 215 14% 65%;
+  --text-primary: 213 29% 13%;        /* #17202A → High Contrast WCAG AAA */
+  --text-secondary: 220 13% 46%;      /* #667085 → WCAG AA 4.75:1 */
+  --text-muted: 218 15% 65%;          /* #98A2B3 → Non-essential/border only */
 
   /* Light mode borders */
-  --border: 220 13% 91%;
-  --border-strong: 220 13% 82%;
+  --border: 216 16% 91%;              /* #E4E7EC → 1px Hairline */
+  --border-strong: 216 16% 82%;
 
   /* Status */
-  --color-success: 142 71% 45%;
-  --color-warning: 38 92% 50%;
-  --color-danger: 0 84% 60%;
-  --color-info: 199 89% 48%;
+  --color-success: 152 69% 31%;       /* #198754 → Success Green */
+  --color-warning: 36 71% 41%;        /* #B7791F → Warning Ochre */
+  --color-danger: 6 63% 46%;          /* #C0392B → Error Red */
+  --color-info: 220 83% 55%;          /* #2F6FED → Info Blue */
 
   /* Sidebar */
-  --sidebar-w: 260px;
+  --sidebar-w: 240px;
 
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
+  /* Radius (Institutional Sharp) */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
 
-  /* Shadow */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
-  --shadow-glow: 0 0 20px hsl(var(--color-primary) / 0.25);
+  /* Shadow (Borders over Shadows) */
+  --shadow-sm: 0 1px 2px 0 rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 2px 6px -1px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, 0.08);
+  --shadow-xl: 0 12px 24px -4px rgba(16, 24, 40, 0.08);
+  --shadow-glow: none;
 }
 
 .dark {
@@ -136,18 +136,18 @@ body {
 }
 
 .sidebar-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background-color: #173B67;
+  border: 1px solid #E4E7EC;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   flex-shrink: 0;
-  box-shadow: var(--shadow-glow);
 }
 
 .sidebar-brand-text {
@@ -211,8 +211,8 @@ body {
 }
 
 .sidebar-item.active {
-  background: linear-gradient(135deg, hsl(var(--color-primary) / 0.12), hsl(var(--color-secondary) / 0.08));
-  color: hsl(var(--color-primary));
+  background-color: #EFF6FF;
+  color: #173B67;
   font-weight: 600;
 }
 
@@ -220,10 +220,10 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  top: 20%;
-  height: 60%;
+  top: 15%;
+  height: 70%;
   width: 3px;
-  background: linear-gradient(to bottom, var(--gradient-from), var(--gradient-to));
+  background-color: #2F6FED;
   border-radius: 0 2px 2px 0;
 }
 
@@ -334,124 +334,119 @@ body {
   margin-top: 4px;
 }
 
-/* ─── Cards ──────────────────────────────────────────────────────────────────  */
+/* ─── Cards (Step 4A Institutional Minimal) ──────────────────────  */
 .card {
-  background-color: hsl(var(--bg-surface));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius-lg);
+  background-color: #FFFFFF;
+  border: 1px solid #E4E7EC;
+  border-radius: var(--radius-md);
   padding: 20px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
+  border-color: #D0D5DD;
 }
 
 .card-glass {
-  background: hsl(var(--bg-surface) / 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  border: 1px solid #E4E7EC;
+  border-radius: var(--radius-md);
   padding: 20px;
 }
 
 .stat-card {
-  background-color: hsl(var(--bg-surface));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius-lg);
-  padding: 20px 22px;
+  background-color: #FFFFFF;
+  border: 1px solid #E4E7EC;
+  border-radius: var(--radius-md);
+  padding: 20px;
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: hsl(var(--border-strong));
+  border-color: #D0D5DD;
 }
 
 .stat-card-glow {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  opacity: 0.15;
+  display: none !important;
 }
 
 .stat-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .stat-card-value {
-  font-size: 28px;
-  font-weight: 800;
-  color: hsl(var(--text-primary));
-  font-family: "Plus Jakarta Sans", sans-serif;
-  line-height: 1;
+  font-size: 26px;
+  font-weight: 700;
+  color: #17202A;
+  font-family: "Inter", sans-serif;
+  line-height: 1.1;
   margin-bottom: 4px;
 }
 
 .stat-card-label {
-  font-size: 13px;
-  color: hsl(var(--text-secondary));
+  font-size: 12px;
+  color: #667085;
   font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .stat-card-trend {
   font-size: 12px;
-  font-weight: 600;
-  margin-top: 10px;
+  font-weight: 500;
+  margin-top: 8px;
 }
 
-.trend-up { color: hsl(var(--color-success)); }
-.trend-down { color: hsl(var(--color-danger)); }
+.trend-up { color: #198754; }
+.trend-down { color: #C0392B; }
 
-/* ─── Gradient Text ──────────────────────────────────────────────────────────  */
+/* ─── Text & Buttons (Institutional) ─────────────────────────  */
 .gradient-text {
-  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #173B67;
+  font-weight: 600;
 }
 
-/* ─── Gradient Button ────────────────────────────────────────────────────────  */
-.btn-gradient {
-  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 10px 20px;
-  font-size: 14px;
+.text-gradient {
+  color: #173B67;
   font-weight: 600;
+}
+
+.btn-gradient,
+.btn-primary {
+  background: #2F6FED;
+  color: #FFFFFF;
+  border: 1px solid #2F6FED;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  box-shadow: 0 4px 14px hsl(var(--color-primary) / 0.35);
 }
 
-.btn-gradient:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px hsl(var(--color-primary) / 0.45);
+.btn-gradient:hover,
+.btn-primary:hover {
+  background: #1D58D8;
+  border-color: #1D58D8;
 }
 
-.btn-gradient:active {
-  transform: translateY(0);
+.btn-gradient:active,
+.btn-primary:active {
+  background: #1545B0;
+  border-color: #1545B0;
 }
 
 .btn-outline {
