@@ -1,19 +1,20 @@
-'use client'
+"use client";
 
-import { useTransition } from 'react'
-import { cancelLeave } from '@/actions/leave'
-import { useRouter } from 'next/navigation'
+import { useTransition } from "react";
+import { cancelLeave } from "@/actions/leave";
+import { useRouter } from "next/navigation";
 
 export function CancelLeaveButton({ leaveId }: { leaveId: string }) {
-  const [isPending, startTransition] = useTransition()
-  const router = useRouter()
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   function handleCancel() {
-    if (!confirm('Are you sure you want to cancel this leave request?')) return
+    if (!confirm("Are you sure you want to cancel this leave application?")) return;
     startTransition(async () => {
-      const res = await cancelLeave(leaveId)
-      if (res.success) router.refresh()
-    })
+      const res = await cancelLeave(leaveId);
+      if (res.success) router.refresh();
+      else alert(res.error || "Failed to cancel leave request.");
+    });
   }
 
   return (
@@ -22,15 +23,16 @@ export function CancelLeaveButton({ leaveId }: { leaveId: string }) {
       disabled={isPending}
       className="btn-outline"
       style={{
-        padding: '6px 14px',
+        padding: "4px 10px",
         fontSize: 12,
-        color: 'hsl(var(--color-danger))',
-        borderColor: 'hsl(var(--color-danger) / 0.3)',
-        flexShrink: 0,
+        color: "#C0392B",
+        borderColor: "#FECDCA",
+        backgroundColor: "#FFFFFF",
+        cursor: isPending ? "not-allowed" : "pointer",
         opacity: isPending ? 0.6 : 1,
       }}
     >
-      {isPending ? 'Cancelling…' : 'Cancel'}
+      {isPending ? "Cancelling..." : "Cancel"}
     </button>
-  )
+  );
 }
