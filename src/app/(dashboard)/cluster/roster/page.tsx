@@ -99,8 +99,8 @@ export default async function ClusterRosterPage() {
   });
 
   return (
-    <div className="page-content">
-      {/* Header */}
+    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto" }}>
+      {/* BMSIT High-Tech Header */}
       <div
         style={{
           display: "flex",
@@ -112,84 +112,147 @@ export default async function ClusterRosterPage() {
         }}
       >
         <div>
-          <h1 className="page-title">{cluster.name} — Faculty Roster</h1>
-          <p className="page-subtitle">
-            {cluster.description ?? "Active faculty members, workload distribution, and performance metrics."}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "3px 10px", borderRadius: 4, background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.25)", color: "#F59E0B", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", marginBottom: 10 }}>
+            <span>●</span> CLUSTER DIRECTORY // {cluster.name.toUpperCase()}
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#F8FAFC", margin: "0 0 6px 0", letterSpacing: "-0.02em" }}>
+            {cluster.name} — Faculty Roster
+          </h1>
+          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0, fontFamily: "var(--font-mono)" }}>
+            // {cluster.description ?? "Active faculty members, workload distribution & performance metrics"}
           </p>
         </div>
 
         <div style={{ display: "flex", gap: 10 }}>
-          <Link href="/cluster/tasks" className="btn-gradient" style={{ fontSize: 13, textDecoration: "none" }}>
-            <Plus size={16} />
-            Assign Task
+          <Link
+            href="/cluster/tasks"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "9px 18px",
+              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+              border: "none",
+              borderRadius: 8,
+              color: "#0A0D14",
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              fontWeight: 800,
+              textDecoration: "none",
+              boxShadow: "0 0 16px rgba(245, 158, 11, 0.35)",
+            }}
+          >
+            <Plus size={15} /> ASSIGN TASK
           </Link>
-          <Link href="/cluster/evaluations" className="btn-outline" style={{ fontSize: 13, textDecoration: "none" }}>
-            <Star size={16} />
-            Conduct Evaluation
+          <Link
+            href="/cluster/evaluations"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "9px 16px",
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: 8,
+              color: "#E2E8F0",
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            <Star size={15} style={{ color: "#F59E0B" }} /> CONDUCT EVALUATION
           </Link>
         </div>
       </div>
 
       {/* Summary stats */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-primary) / 0.12)", color: "hsl(var(--color-primary))" }}>
-            <Users size={22} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, marginBottom: 28 }}>
+        <div style={{ background: "#0E121B", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 10, padding: "18px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>ACTIVE FACULTY</span>
+            <Users size={16} style={{ color: "#38BDF8" }} />
           </div>
-          <div className="stat-card-value">{members.length}</div>
-          <div className="stat-card-label">Active Faculty Members</div>
+          <div style={{ fontSize: 32, fontWeight: 900, color: "#F8FAFC", fontFamily: "var(--font-mono)" }}>{members.length}</div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-info) / 0.12)", color: "hsl(var(--color-info))" }}>
-            <CheckSquare size={22} />
+        <div style={{ background: "#0E121B", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 10, padding: "18px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>TASKS IN PROGRESS</span>
+            <CheckSquare size={16} style={{ color: "#F59E0B" }} />
           </div>
-          <div className="stat-card-value">
+          <div style={{ fontSize: 32, fontWeight: 900, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
             {members.reduce((acc: number, m: any) => acc + m.pendingTasks, 0)}
           </div>
-          <div className="stat-card-label">Active Tasks In Progress</div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-success) / 0.12)", color: "hsl(var(--color-success))" }}>
-            <Award size={22} />
+        <div style={{ background: "#0E121B", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 10, padding: "18px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>TASKS COMPLETED</span>
+            <Award size={16} style={{ color: "#22C55E" }} />
           </div>
-          <div className="stat-card-value">
+          <div style={{ fontSize: 32, fontWeight: 900, color: "#22C55E", fontFamily: "var(--font-mono)" }}>
             {members.reduce((acc: number, m: any) => acc + m.completedTasks, 0)}
           </div>
-          <div className="stat-card-label">Total Tasks Completed</div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#F59E0B" }}>
-            <Star size={22} />
+        <div style={{ background: "#0E121B", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 10, padding: "18px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>CLUSTER STARS</span>
+            <Star size={16} style={{ color: "#F59E0B" }} />
           </div>
-          <div className="stat-card-value">
-            {Math.round(members.reduce((acc: number, m: any) => acc + m.totalPoints, 0))}
+          <div style={{ fontSize: 32, fontWeight: 900, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
+            ★ {Math.round(members.reduce((acc: number, m: any) => acc + m.totalPoints, 0))}
           </div>
-          <div className="stat-card-label">Cumulative Cluster Stars</div>
         </div>
       </div>
 
       {/* Roster Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 18 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: 20 }}>
         {members.map((faculty) => (
           <div
             key={faculty.id}
-            className="card"
             style={{
-              padding: "22px 24px",
+              background: "#0E121B",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: 12,
+              padding: "24px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: 16,
-              transition: "transform 0.15s ease, box-shadow 0.15s ease",
+              gap: 18,
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+              transition: "border-color 0.2s ease, transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             {/* Header info */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-                <div className="avatar avatar-md" style={{ width: 46, height: 46, fontSize: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 10,
+                    background: "rgba(245, 158, 11, 0.12)",
+                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    color: "#F59E0B",
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 800,
+                    fontSize: 16,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
                   {getInitials(faculty.name)}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -197,7 +260,7 @@ export default async function ClusterRosterPage() {
                     style={{
                       fontSize: 16,
                       fontWeight: 700,
-                      color: "hsl(var(--text-primary))",
+                      color: "#F8FAFC",
                       margin: 0,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -206,20 +269,21 @@ export default async function ClusterRosterPage() {
                   >
                     {faculty.name}
                   </h3>
-                  <div style={{ fontSize: 12.5, color: "hsl(var(--text-muted))" }}>
+                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
                     {faculty.designation}
                   </div>
                   <div
                     style={{
-                      fontSize: 12,
-                      color: "hsl(var(--text-secondary))",
+                      fontSize: 11,
+                      color: "#64748B",
+                      fontFamily: "var(--font-mono)",
                       display: "flex",
                       alignItems: "center",
                       gap: 4,
                       marginTop: 2,
                     }}
                   >
-                    <Mail size={12} />
+                    <Mail size={11} />
                     <span>{faculty.email}</span>
                   </div>
                 </div>
@@ -230,42 +294,47 @@ export default async function ClusterRosterPage() {
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: 10,
-                  background: "hsl(var(--bg-subtle))",
-                  padding: "12px",
-                  borderRadius: "var(--radius-sm)",
+                  gap: 8,
+                  background: "#07090E",
+                  padding: "12px 10px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
                   textAlign: "center",
                 }}
               >
                 <div>
-                  <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>TASKS</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginTop: 2, color: "hsl(var(--text-primary))" }}>
+                  <div style={{ fontSize: 10, color: "#64748B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>TASKS</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: "#F8FAFC", fontFamily: "var(--font-mono)" }}>
                     {faculty.completedTasks}/{faculty.totalTasks}
                   </div>
-                  {faculty.overdueTasks > 0 && (
-                    <div style={{ fontSize: 10, color: "hsl(var(--color-danger))", fontWeight: 700 }}>
-                      {faculty.overdueTasks} overdue
+                  {faculty.overdueTasks > 0 ? (
+                    <div style={{ fontSize: 9.5, color: "#F43F5E", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+                      ▲ {faculty.overdueTasks} OVERDUE
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 9.5, color: "#22C55E", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+                      ● ON TRACK
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>STARS</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginTop: 2, color: "#F59E0B" }}>
+                  <div style={{ fontSize: 10, color: "#64748B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>STARS</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
                     ★ {Math.round(faculty.totalPoints)}
                   </div>
-                  <div style={{ fontSize: 10, color: "hsl(var(--text-muted))" }}>
-                    {faculty.badgesCount} badges
+                  <div style={{ fontSize: 9.5, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+                    {faculty.badgesCount} BADGES
                   </div>
                 </div>
 
                 <div>
-                  <div style={{ fontSize: 11, color: "hsl(var(--text-muted))", fontWeight: 600 }}>RATING</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginTop: 2, color: faculty.latestRating ? "hsl(var(--color-primary))" : "hsl(var(--text-muted))" }}>
+                  <div style={{ fontSize: 10, color: "#64748B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>RATING</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: faculty.latestRating ? "#38BDF8" : "#64748B", fontFamily: "var(--font-mono)" }}>
                     {faculty.latestRating ? `${faculty.latestRating}/5` : "N/A"}
                   </div>
-                  <div style={{ fontSize: 10, color: "hsl(var(--text-muted))" }}>
-                    {faculty.latestEvalPeriod ?? "No eval"}
+                  <div style={{ fontSize: 9.5, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+                    {faculty.latestEvalPeriod ?? "NO EVAL"}
                   </div>
                 </div>
               </div>
@@ -277,28 +346,46 @@ export default async function ClusterRosterPage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                paddingTop: 12,
-                borderTop: "1px solid hsl(var(--border))",
+                paddingTop: 14,
+                borderTop: "1px solid rgba(255, 255, 255, 0.06)",
               }}
             >
-              <span style={{ fontSize: 11.5, color: "hsl(var(--text-muted))" }}>
-                Member since {new Date(faculty.joinedAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}
+              <span style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+                ENROLLED {new Date(faculty.joinedAt).toLocaleDateString(undefined, { month: "short", year: "numeric" }).toUpperCase()}
               </span>
 
               <div style={{ display: "flex", gap: 8 }}>
                 <Link
                   href={`/cluster/tasks?facultyId=${faculty.id}`}
-                  className="btn-outline"
-                  style={{ fontSize: 12, padding: "5px 10px", textDecoration: "none" }}
+                  style={{
+                    fontSize: 11,
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
+                    padding: "5px 10px",
+                    borderRadius: 6,
+                    background: "rgba(255, 255, 255, 0.04)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: "#E2E8F0",
+                    textDecoration: "none",
+                  }}
                 >
-                  Tasks
+                  TASKS
                 </Link>
                 <Link
                   href={`/cluster/evaluations?facultyId=${faculty.id}`}
-                  className="btn-outline"
-                  style={{ fontSize: 12, padding: "5px 10px", textDecoration: "none" }}
+                  style={{
+                    fontSize: 11,
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
+                    padding: "5px 10px",
+                    borderRadius: 6,
+                    background: "rgba(245, 158, 11, 0.1)",
+                    border: "1px solid rgba(245, 158, 11, 0.25)",
+                    color: "#F59E0B",
+                    textDecoration: "none",
+                  }}
                 >
-                  Evaluate
+                  EVALUATE
                 </Link>
               </div>
             </div>
