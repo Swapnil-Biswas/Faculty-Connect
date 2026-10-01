@@ -5,6 +5,8 @@ import { Bell, Sun, Moon, Monitor, X, Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import { formatDate } from "@/lib/utils";
 
+import { markNotificationAsRead, markAllNotificationsAsRead } from "@/actions/notifications";
+
 interface Notification {
   id: string;
   title: string;
@@ -36,6 +38,10 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
   const [localNotifs, setLocalNotifs] = useState(notifications);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setLocalNotifs(notifications);
+  }, [notifications]);
+
   const unread = localNotifs.filter((n) => !n.isRead).length;
 
   useEffect(() => {
@@ -48,8 +54,18 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  function markAllRead() {
+  async function markAllRead() {
     setLocalNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    await markAllNotificationsAsRead();
+  }
+
+  async function handleNotificationClick(id: string, isRead: boolean) {
+    if (!isRead) {
+      setLocalNotifs((prev) =>
+        prev.map((x) => (x.id === id ? { ...x, isRead: true } : x))
+      );
+      await markNotificationAsRead(id);
+    }
   }
 
   const themeIcon =
@@ -146,11 +162,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                     <div
                       key={n.id}
                       className={`notif-item ${n.isRead ? "" : "unread"}`}
-                      onClick={() =>
-                        setLocalNotifs((prev) =>
-                          prev.map((x) => (x.id === n.id ? { ...x, isRead: true } : x))
-                        )
-                      }
+                      onClick={() => handleNotificationClick(n.id, n.isRead)}
                     >
                       <div
                         style={{

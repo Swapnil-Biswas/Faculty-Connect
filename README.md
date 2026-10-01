@@ -136,10 +136,10 @@ Security is enforced at **two layers** (never trust UI alone):
 | Phase | Status | Scope |
 |---|---|---|
 | 1 | ✅ **Done** | Auth, RBAC, Schema, Sync Engine, Admin seed, Dashboards |
-| 2 | 🔜 Next | Task management CRUD + CL/leave workflow + audit logging |
-| 3 | 📅 Planned | Recognition engine (ledger + config) + nightly leaderboard job |
-| 4 | 📅 Planned | Notifications polish + all dashboard features filled |
-| 5 | 📅 Planned | Faculty of Month + CSV/Excel export + badges/achievements |
+| 2 | ✅ **Done** | Task management CRUD + CL/leave workflow + audit logging |
+| 3 | ✅ **Done** | Recognition engine (ledger + config) + nightly leaderboard job |
+| 4 | ✅ **Done** | Notifications polish + all dashboard features filled + cluster & research hubs |
+| 5 | 🔜 **Next** | External NBA/NAAC connectors, automated email delivery & webhooks |
 
 ---
 
