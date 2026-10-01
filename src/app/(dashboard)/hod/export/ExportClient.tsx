@@ -105,30 +105,43 @@ export function ExportClient({ data }: ExportDataProps) {
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 18 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: 20 }}>
         {exportOptions.map((opt) => {
           const isDone = downloaded[opt.id];
 
           return (
             <div
               key={opt.id}
-              className="card"
               style={{
+                background: "#0E121B",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: 12,
                 padding: "24px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                gap: 16,
+                gap: 20,
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                transition: "border-color 0.2s ease, transform 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 14 }}>
                   <div
                     style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: `${opt.color}15`,
+                      width: 46,
+                      height: 46,
+                      borderRadius: 10,
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: `1px solid ${opt.color}35`,
                       color: opt.color,
                       display: "flex",
                       alignItems: "center",
@@ -139,47 +152,73 @@ export function ExportClient({ data }: ExportDataProps) {
                     {opt.icon}
                   </div>
                   <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{opt.title}</h3>
-                    <div style={{ fontSize: 12, color: "hsl(var(--text-muted))" }}>
-                      {opt.count} {opt.unit} available
+                    <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 4px 0", color: "#F8FAFC" }}>{opt.title}</h3>
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 11,
+                        color: opt.color,
+                        background: "rgba(255, 255, 255, 0.03)",
+                        padding: "2px 8px",
+                        borderRadius: 4,
+                        border: "1px solid rgba(255, 255, 255, 0.06)",
+                      }}
+                    >
+                      <span>●</span> {opt.count} {opt.unit} verified
                     </div>
                   </div>
                 </div>
 
-                <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
                   {opt.desc}
                 </p>
               </div>
 
               <div
                 style={{
-                  paddingTop: 14,
-                  borderTop: "1px solid hsl(var(--border))",
+                  paddingTop: 16,
+                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
                   display: "flex",
-                  justifyContent: "flex-end",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
+                <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B" }}>
+                  FORMAT: RFC 4180
+                </span>
                 <button
                   onClick={opt.action}
-                  className={isDone ? "btn-outline" : "btn-gradient"}
                   style={{
-                    fontSize: 13,
-                    padding: "8px 16px",
-                    gap: 6,
-                    background: isDone ? "hsl(var(--color-success) / 0.1)" : undefined,
-                    color: isDone ? "hsl(var(--color-success))" : undefined,
-                    borderColor: isDone ? "hsl(var(--color-success) / 0.3)" : undefined,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    fontSize: 12,
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
+                    padding: "9px 16px",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    background: isDone
+                      ? "rgba(34, 197, 94, 0.15)"
+                      : "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)",
+                    color: isDone ? "#22C55E" : "#F59E0B",
+                    border: isDone
+                      ? "1px solid rgba(34, 197, 94, 0.35)"
+                      : "1px solid rgba(245, 158, 11, 0.3)",
+                    boxShadow: isDone ? "none" : "0 0 12px rgba(245, 158, 11, 0.15)",
+                    transition: "all 0.2s ease",
                   }}
                 >
                   {isDone ? (
                     <>
-                      <Check size={16} />
-                      Downloaded!
+                      <Check size={14} /> EXPORTED (.CSV)
                     </>
                   ) : (
                     <>
-                      <Download size={16} />
-                      Export to CSV
+                      <Download size={14} /> EXPORT TO CSV
                     </>
                   )}
                 </button>
