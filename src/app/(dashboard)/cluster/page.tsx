@@ -310,15 +310,10 @@ export default async function ClusterDashboard() {
                 members.map((m) => (
                   <tr
                     key={m.userId}
+                    className="cyber-row-hover"
                     style={{
                       borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
                       transition: "background-color 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
                     }}
                   >
                     <td style={{ padding: "14px 20px" }}>

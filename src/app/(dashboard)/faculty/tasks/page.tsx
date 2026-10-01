@@ -146,16 +146,10 @@ export default async function FacultyTasksPage() {
                   return (
                     <tr
                       key={task.id}
+                      className="cyber-row-hover"
                       style={{
                         borderBottom: idx < tasks.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
                         backgroundColor: isOverdue ? "rgba(244, 63, 94, 0.04)" : "transparent",
-                        transition: "background-color 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = isOverdue ? "rgba(244, 63, 94, 0.08)" : "rgba(255, 255, 255, 0.02)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = isOverdue ? "rgba(244, 63, 94, 0.04)" : "transparent";
                       }}
                     >
                       {/* Title & Description */}

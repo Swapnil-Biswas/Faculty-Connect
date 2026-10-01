@@ -231,15 +231,9 @@ export default async function FacultyStarsPage() {
                 {ledger.map((entry, idx) => (
                   <tr
                     key={entry.id}
+                    className="cyber-row-hover"
                     style={{
                       borderBottom: idx < ledger.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
-                      transition: "background-color 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
                     }}
                   >
                     <td style={{ padding: "14px 20px", color: "#94A3B8", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>

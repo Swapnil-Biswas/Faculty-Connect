@@ -63,16 +63,10 @@ export function PageHeader({
                 ) : (
                   <Link
                     href={b.href}
+                    className="cyber-link-hover"
                     style={{
                       color: "#94A3B8",
                       textDecoration: "none",
-                      transition: "color 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "#F8FAFC";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "#94A3B8";
                     }}
                   >
                     {b.label}

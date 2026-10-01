@@ -215,12 +215,11 @@ export default async function AdminUsersPage({
                   users.map((u) => (
                     <tr
                       key={u.id}
+                      className="cyber-row-hover"
                       style={{
                         borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
                         transition: 'background 0.15s ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

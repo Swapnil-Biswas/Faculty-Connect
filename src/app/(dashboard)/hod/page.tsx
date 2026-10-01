@@ -123,16 +123,8 @@ export default async function HodDashboard() {
                     borderRadius: 10,
                     textDecoration: "none",
                     border: "1px solid rgba(255, 255, 255, 0.07)",
-                    transition: "all 0.18s ease",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.07)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                  }}
+                  className="cyber-card-hover"
                 >
                   <div
                     style={{
@@ -270,16 +262,8 @@ export default async function HodDashboard() {
                     color: "#F8FAFC",
                     fontSize: 13,
                     fontWeight: 500,
-                    transition: "all 0.15s ease",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.3)";
-                    e.currentTarget.style.color = "#FFD700";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)";
-                    e.currentTarget.style.color = "#F8FAFC";
-                  }}
+                  className="cyber-card-hover"
                 >
                   <span style={{ color: "#FFD700" }}>{a.icon}</span>
                   <span style={{ flex: 1 }}>{a.label}</span>

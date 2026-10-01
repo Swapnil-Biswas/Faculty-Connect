@@ -339,6 +339,7 @@ export default async function AdminDashboard() {
             <a
               key={a.href}
               href={a.href}
+              className="cyber-card-hover"
               style={{
                 padding: "16px",
                 borderRadius: 10,
@@ -349,14 +350,6 @@ export default async function AdminDashboard() {
                 display: "flex",
                 flexDirection: "column",
                 gap: 8,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.transform = "none";
               }}
             >
               <div

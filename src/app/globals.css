@@ -58,6 +58,30 @@
 .dark {
   /* Obsidian dark tokens (100% parity with root) */
   --bg-base: 228 28% 5%;
+
+/* ─── Cyber Hover Utilities (Pure CSS for Server Components) ────────── */
+.cyber-card-hover {
+  transition: border-color 0.2s ease, transform 0.2s ease !important;
+}
+.cyber-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-2px) !important;
+}
+
+.cyber-row-hover {
+  transition: background 0.15s ease !important;
+}
+.cyber-row-hover:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.cyber-link-hover {
+  transition: color 0.15s ease !important;
+}
+.cyber-link-hover:hover {
+  color: #F8FAFC !important;
+}
+
   --bg-surface: 225 24% 9%;
   --bg-elevated: 224 22% 13%;
   --bg-subtle: 223 20% 16%;

@@ -323,14 +323,8 @@ export default async function FacultyDashboard() {
                     padding: "14px 22px",
                     borderBottom: index < tasks.length - 1 ? "1px solid rgba(255, 255, 255, 0.05)" : "none",
                     gap: 14,
-                    transition: "background-color 0.15s ease",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
+                  className="cyber-row-hover"
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div

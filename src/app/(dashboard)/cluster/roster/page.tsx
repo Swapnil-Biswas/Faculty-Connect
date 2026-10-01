@@ -212,6 +212,7 @@ export default async function ClusterRosterPage() {
         {members.map((faculty) => (
           <div
             key={faculty.id}
+            className="cyber-card-hover"
             style={{
               background: "#0E121B",
               border: "1px solid rgba(255, 255, 255, 0.08)",
@@ -223,14 +224,6 @@ export default async function ClusterRosterPage() {
               gap: 18,
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
               transition: "border-color 0.2s ease, transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             {/* Header info */}

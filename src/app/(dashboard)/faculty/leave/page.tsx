@@ -174,15 +174,10 @@ export default async function FacultyLeavePage() {
                     return (
                       <tr
                         key={leave.id}
+                        className="cyber-row-hover"
                         style={{
                           borderBottom: idx < leaves.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
                           transition: "background-color 0.15s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
                         }}
                       >
                         <td style={{ padding: "14px 20px", verticalAlign: "top" }}>

@@ -169,6 +169,7 @@ export default async function ClusterTasksPage() {
               {tasks.map((task) => (
                 <div
                   key={task.id}
+                  className="cyber-card-hover"
                   style={{
                     background: '#07090E',
                     border: '1px solid rgba(255, 255, 255, 0.06)',
@@ -176,8 +177,6 @@ export default async function ClusterTasksPage() {
                     padding: '16px 18px',
                     transition: 'border-color 0.15s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)')}
                 >
                   <div
                     style={{
