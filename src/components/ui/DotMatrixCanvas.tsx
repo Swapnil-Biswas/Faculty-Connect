@@ -56,13 +56,14 @@ const FONT_5X7: Record<string, number[]> = {
   "+": [0x00, 0x04, 0x04, 0x1f, 0x04, 0x04, 0x00],
   ":": [0x00, 0x0c, 0x0c, 0x00, 0x0c, 0x0c, 0x00],
   ".": [0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x0c],
+  "/": [0x01, 0x02, 0x04, 0x08, 0x10, 0x00, 0x00],
   "&": [0x0c, 0x12, 0x14, 0x08, 0x15, 0x12, 0x0d],
   " ": [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
 };
 
 export function DotMatrixCanvas({
   text,
-  fontSize = 32,
+  fontSize = 44,
   dotRadius,
   dotGap,
   color = "#FFD700",
@@ -81,12 +82,13 @@ export function DotMatrixCanvas({
 
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
-    const gap = dotGap || Math.max(3.5, fontSize / 7);
-    const radius = dotRadius || gap * 0.28;
+    // Prominent, highly legible dot sizing
+    const gap = dotGap || Math.max(6, Math.round(fontSize / 6.5));
+    const radius = dotRadius || Math.max(1.8, gap * 0.32);
 
     const charWidth = 5;
     const charHeight = 7;
-    const charSpacing = 0.5;
+    const charSpacing = 0.8;
 
     const upperText = text.toUpperCase();
     const len = upperText.length;
@@ -99,7 +101,7 @@ export function DotMatrixCanvas({
       col: number;
     }
     const dots: InteractiveDot[] = [];
-    const padDots = 1.5;
+    const padDots = 1.0;
     let currentCol = padDots;
 
     for (let charIdx = 0; charIdx < len; charIdx++) {
@@ -148,16 +150,13 @@ export function DotMatrixCanvas({
     }
 
     const totalCols = currentCol - charSpacing + padDots;
-    const w = totalCols * gap;
-    const h = (charHeight + padDots * 2) * gap;
-
-    const availableWidth = canvas.parentElement?.clientWidth ?? w;
-    const displayScale = typeof window !== "undefined" && window.innerWidth <= 768 ? Math.min(1, availableWidth / w) : 1;
+    const w = Math.ceil(totalCols * gap);
+    const h = Math.ceil((charHeight + padDots * 2) * gap);
 
     canvas.width = w * dpr;
     canvas.height = h * dpr;
-    canvas.style.width = `${w * displayScale}px`;
-    canvas.style.height = `${h * displayScale}px`;
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
     ctx.scale(dpr, dpr);
 
     if (dots.length === 0) return;
@@ -178,16 +177,16 @@ export function DotMatrixCanvas({
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
 
-    const hoverRadius = 45;
-    const maxDisplacement = 14;
-    const easeSpeed = 0.12;
+    const hoverRadius = 55;
+    const maxDisplacement = 18;
+    const easeSpeed = 0.14;
 
     const startTime = performance.now() + animDelay;
     let animId: number;
 
     const draw = (now: number) => {
       ctx.clearRect(0, 0, w, h);
-      const elapsed = now - startTime;
+      const elapsed = Math.max(0, now - startTime);
 
       for (const d of dots) {
         let targetX = d.ox;
@@ -209,22 +208,34 @@ export function DotMatrixCanvas({
         d.x += (targetX - d.x) * easeSpeed;
         d.y += (targetY - d.y) * easeSpeed;
 
-        const dotDelay = d.col * 10;
-        if (animate && elapsed < dotDelay) {
-          continue;
-        }
+        const dotDelay = d.col * 8;
+        const opacity = animate
+          ? elapsed < dotDelay
+            ? 0
+            : Math.min(1, (elapsed - dotDelay) / 200)
+          : 1;
 
-        const opacity = animate ? Math.min(1, (elapsed - dotDelay) / 250) : 1;
-        const scale = animate ? 0.6 + opacity * 0.4 : 1;
+        if (opacity <= 0.01) continue;
 
         ctx.beginPath();
-        ctx.arc(d.x, d.y, radius * scale, 0, Math.PI * 2);
-        ctx.fillStyle = color.startsWith("rgba")
-          ? color
-          : color === "#FFD700"
-            ? `rgba(255, 215, 0, ${opacity * 0.9})`
-            : `rgba(248, 250, 252, ${opacity * 0.85})`;
+        ctx.arc(d.x, d.y, radius, 0, Math.PI * 2);
+
+        // Luminous glowing dot matrix aesthetic
+        if (color === "#FFD700" || color.includes("255, 215, 0")) {
+          ctx.fillStyle = `rgba(255, 215, 0, ${opacity * 0.95})`;
+          ctx.shadowColor = "rgba(255, 215, 0, 0.4)";
+          ctx.shadowBlur = 5;
+        } else if (color === "#38BDF8" || color.includes("56, 189, 248")) {
+          ctx.fillStyle = `rgba(56, 189, 248, ${opacity * 0.95})`;
+          ctx.shadowColor = "rgba(56, 189, 248, 0.4)";
+          ctx.shadowBlur = 5;
+        } else {
+          ctx.fillStyle = color;
+          ctx.shadowBlur = 0;
+        }
+
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
 
       animId = requestAnimationFrame(draw);
@@ -243,7 +254,12 @@ export function DotMatrixCanvas({
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ display: "block", cursor: "pointer", ...style }}
+      style={{
+        display: "block",
+        cursor: "crosshair",
+        maxWidth: "100%",
+        ...style,
+      }}
       aria-label={text}
       role="img"
     />

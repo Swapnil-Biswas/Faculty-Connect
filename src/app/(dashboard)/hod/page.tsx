@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { DotMatrixHero } from "@/components/dashboard/DotMatrixHero";
 import { Users, CheckSquare, Calendar, Trophy, BarChart3, Star, ArrowRight, Award, Shield } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -52,6 +53,20 @@ export default async function HodDashboard() {
             <span style={{ color: "#F8FAFC", fontWeight: 700 }}>EXECUTIVE DISPATCH ACTIVE</span>
           </div>
         }
+      />
+
+      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      <DotMatrixHero
+        titleLine1="HOD COMMAND"
+        titleLine2="CENTER"
+        eyebrow={`// GOVERNANCE NODE · ${deptName.toUpperCase()} · BMSIT`}
+        tagline="Comprehensive departmental cluster monitoring, accreditation synthesis, and faculty merit governance."
+        stats={[
+          { label: "FACULTY ACTIVE", value: totalFaculty, color: "#38BDF8" },
+          { label: "CLUSTERS ONLINE", value: clusters.length, color: "#FFD700" },
+          { label: "TASKS DISPATCHED", value: totalTasks, color: "#22C55E" },
+          { label: "PENDING LEAVE", value: pendingLeaves, color: "#F59E0B" },
+        ]}
       />
 
       {/* Cyber Executive Stats */}

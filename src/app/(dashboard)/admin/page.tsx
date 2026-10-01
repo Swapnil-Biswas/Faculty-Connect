@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
 import { RoleBadge } from "@/components/ui/RoleBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { DotMatrixHero } from "@/components/dashboard/DotMatrixHero";
 import { Users, Shield, Settings, BarChart3, AlertTriangle, Clock, Activity, Cpu, Database } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import { Role } from "@prisma/client";
@@ -71,6 +72,20 @@ export default async function AdminDashboard() {
             <span style={{ color: "#F8FAFC", fontWeight: 700 }}>CLUSTER STATE: HEALTHY</span>
           </div>
         }
+      />
+
+      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      <DotMatrixHero
+        titleLine1="ADMIN"
+        titleLine2="GOVERNANCE"
+        eyebrow="// ROOT INFRASTRUCTURE · BMSIT CSE ENGINE"
+        tagline="Autonomous multi-cluster orchestration, scoring heuristics calibration, and cryptographic audit registry."
+        stats={[
+          { label: "USER ACCOUNTS", value: totalUsers, color: "#38BDF8" },
+          { label: "CLUSTER UNITS", value: totalClusters, color: "#FFD700" },
+          { label: "AUDIT LOGS", value: recentAuditLogs.length, color: "#22C55E" },
+          { label: "SCORING RULES", value: `v${scoringConfig?.version ?? 1}.0`, color: "#F59E0B" },
+        ]}
       />
 
       {/* Cyber System Telemetry Stat Cards */}

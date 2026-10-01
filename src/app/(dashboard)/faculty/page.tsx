@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricBlock } from "@/components/ui/MetricBlock";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { DotMatrixHero } from "@/components/dashboard/DotMatrixHero";
 import {
   CheckSquare,
   Calendar,
@@ -108,6 +109,20 @@ export default async function FacultyDashboard() {
             </Link>
           </div>
         }
+      />
+
+      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      <DotMatrixHero
+        titleLine1="FACULTY"
+        titleLine2="WORKSPACE"
+        eyebrow={`// OPERATIONAL NODE · ${clusterName.toUpperCase()} · BMSIT CSE`}
+        tagline="Realtime academic activity logging, peer recognition, and automated NAAC/NBA criteria dossier synchronization."
+        stats={[
+          { label: "MERIT STARS", value: totalPoints, color: "#FFD700" },
+          { label: "LEADERBOARD", value: leaderboardRank ? `#${leaderboardRank.rank}` : "UNRANKED", color: "#38BDF8" },
+          { label: "ACTIVE TASKS", value: activeTasks.length, color: "#22C55E" },
+          { label: "BADGES HELD", value: recentBadges.length, color: "#F59E0B" },
+        ]}
       />
 
       {/* 2. Cyber Attention Alert Ribbons */}

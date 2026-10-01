@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, Lock, Terminal, Shield, CheckSquare, Award } from "lucide-react";
 import { DotMatrixCanvas } from "@/components/ui/DotMatrixCanvas";
+import { DotMatrixPattern } from "@/components/ui/DotMatrixPattern";
 import { Ticker } from "@/components/ui/Ticker";
 import { GlyphDivider } from "@/components/ui/GlyphDivider";
 
@@ -105,13 +106,20 @@ export default function LoginPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           {/* Brand header */}
           <div>
-            <DotMatrixCanvas
-              text="FACULTY CONNECT"
-              fontSize={28}
-              color="#FFD700"
-              animate={true}
-              style={{ marginBottom: 16 }}
-            />
+            {/* BMSIT 5x7 Dot Matrix Display */}
+            <div style={{ marginBottom: 18 }}>
+              <DotMatrixCanvas
+                text="FACULTY"
+                fontSize={44}
+                color="#FFD700"
+                style={{ marginBottom: 4 }}
+              />
+              <DotMatrixCanvas
+                text="CONNECT"
+                fontSize={44}
+                color="#38BDF8"
+              />
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
               <div
                 style={{
@@ -657,6 +665,31 @@ export default function LoginPage() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Interactive 3D Dot Matrix Sphere Visualizer */}
+          <div
+            style={{
+              borderRadius: 12,
+              backgroundColor: "rgba(14, 18, 27, 0.6)",
+              border: "1px solid rgba(255, 215, 0, 0.18)",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, color: "#FFD700", letterSpacing: "0.14em", fontWeight: 600 }}>
+                // INTERACTIVE 3D FIBONACCI SPHERE
+              </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9.5, color: "#64748B" }}>
+                DRAG TO ROTATE
+              </span>
+            </div>
+            <div style={{ height: 200, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <DotMatrixPattern style={{ height: 200, width: "100%" }} color="#FFD700" accentColor="#38BDF8" />
             </div>
           </div>
         </div>

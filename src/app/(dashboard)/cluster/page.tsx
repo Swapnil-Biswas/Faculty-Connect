@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { DotMatrixHero } from "@/components/dashboard/DotMatrixHero";
 import { Users, CheckSquare, Calendar, AlertTriangle, Clock, ArrowRight } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -69,6 +70,20 @@ export default async function ClusterDashboard() {
             <span style={{ color: "#F8FAFC", fontWeight: 700 }}>CLUSTER ACTIVE // {totalMembers} NODES</span>
           </div>
         }
+      />
+
+      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      <DotMatrixHero
+        titleLine1="CLUSTER"
+        titleLine2="MANAGEMENT"
+        eyebrow={`// SUB-NODE · ${(cluster?.name ?? "CLUSTER").toUpperCase()} · BMSIT CSE`}
+        tagline="Manage faculty workgroups, evaluate criterion deliverables, and synchronize cluster activities."
+        stats={[
+          { label: "FACULTY MEMBERS", value: totalMembers, color: "#38BDF8" },
+          { label: "ACTIVE TASKS", value: openTasks, color: "#FFD700" },
+          { label: "OVERDUE TASKS", value: overdueTasks, color: overdueTasks > 0 ? "#F43F5E" : "#22C55E" },
+          { label: "PENDING LEAVE", value: pendingLeaves.length, color: "#F59E0B" },
+        ]}
       />
 
       {/* Cyber Stats */}
