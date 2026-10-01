@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, Lock, Terminal, Shield, CheckSquare, Award } from "lucide-react";
+import { DotMatrixCanvas } from "@/components/ui/DotMatrixCanvas";
+import { Ticker } from "@/components/ui/Ticker";
+import { GlyphDivider } from "@/components/ui/GlyphDivider";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -102,6 +105,13 @@ export default function LoginPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           {/* Brand header */}
           <div>
+            <DotMatrixCanvas
+              text="FACULTY CONNECT"
+              fontSize={28}
+              color="#FFD700"
+              animate={true}
+              style={{ marginBottom: 16 }}
+            />
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
               <div
                 style={{
@@ -543,6 +553,8 @@ export default function LoginPage() {
             </button>
           </form>
 
+          <GlyphDivider label="DEMO ACCESS MATRIX" variant="compact" />
+
           {/* Quick-Switch Demo Accounts */}
           <div
             style={{
@@ -648,6 +660,21 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* BMSIT Live Continuous Telemetry Ticker */}
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
+        <Ticker
+          items={[
+            "BMS INSTITUTE OF TECHNOLOGY & MANAGEMENT",
+            "DEPT OF COMPUTER SCIENCE & ENGINEERING",
+            "AUTONOMOUS ACADEMIC OPERATING SYSTEM",
+            "NBA & NAAC ACCREDITATION Dossier Engine",
+            "FACULTY CONNECT v2.4",
+            "ENTER ONCE · USE EVERYWHERE",
+          ]}
+          speed={20}
+        />
       </div>
     </div>
   );

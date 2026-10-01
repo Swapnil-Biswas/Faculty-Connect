@@ -32,7 +32,7 @@ export function EmptyState({
         position: "relative",
       }}
     >
-      {Icon && (
+      {Icon ? (
         <div
           style={{
             width: 48,
@@ -49,6 +49,14 @@ export function EmptyState({
           }}
         >
           <Icon size={22} />
+        </div>
+      ) : (
+        <div className="empty-glyph" style={{ display: "flex", gap: 6, marginBottom: 18 }} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
         </div>
       )}
 

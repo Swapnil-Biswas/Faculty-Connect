@@ -58,6 +58,22 @@
 .dark {
   /* Obsidian dark tokens (100% parity with root) */
   --bg-base: 228 28% 5%;
+  --bg-surface: 225 24% 9%;
+  --bg-elevated: 224 22% 13%;
+  --bg-subtle: 223 20% 16%;
+
+  --text-primary: 210 40% 98%;
+  --text-secondary: 217 19% 72%;
+  --text-muted: 217 15% 52%;
+
+  --border: 220 18% 18%;
+  --border-strong: 220 20% 26%;
+  --border-gold: 48 100% 50%;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.75);
+}
 
 /* ─── Cyber Hover Utilities (Pure CSS for Server Components) ────────── */
 .cyber-card-hover {
@@ -80,23 +96,6 @@
 }
 .cyber-link-hover:hover {
   color: #F8FAFC !important;
-}
-
-  --bg-surface: 225 24% 9%;
-  --bg-elevated: 224 22% 13%;
-  --bg-subtle: 223 20% 16%;
-
-  --text-primary: 210 40% 98%;
-  --text-secondary: 217 19% 72%;
-  --text-muted: 217 15% 52%;
-
-  --border: 220 18% 18%;
-  --border-strong: 220 20% 26%;
-  --border-gold: 48 100% 50%;
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.75);
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
@@ -1415,4 +1414,252 @@ tbody tr:hover {
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-}
+}
+
+/* ─── BMSIT Coding Club Micro-Animations ────────────────────────────────────── */
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes glyphPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes ledBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@keyframes ringPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
+  100% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── Ticker Component Styles ──────────────────────────────────────────────── */
+.ticker {
+  width: 100%;
+  overflow: hidden;
+  background: #07090E;
+  color: #F8FAFC;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 0;
+  position: relative;
+}
+
+.ticker::before,
+.ticker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ticker::before {
+  left: 0;
+  background: linear-gradient(to right, #07090E, transparent);
+}
+
+.ticker::after {
+  right: 0;
+  background: linear-gradient(to left, #07090E, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: tickerScroll linear infinite;
+  gap: 0;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker-sep {
+  color: #FFD700;
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* ─── Glyph Divider Styles ─────────────────────────────────────────────────── */
+.glyph-divider {
+  display: flex;
+  justify-content: center;
+  padding: 24px 32px;
+}
+
+.glyph-divider-compact {
+  padding: 14px 24px;
+}
+
+.glyph-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.glyph-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.15s ease;
+}
+
+.glyph-dot:hover {
+  background: #FFD700;
+}
+
+.glyph-dot.glyph-tiny {
+  width: 3px;
+  height: 3px;
+}
+
+.glyph-dot.glyph-long {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.glyph-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #64748B;
+  text-transform: uppercase;
+  padding: 0 12px;
+}
+
+/* ─── Scroll Progress (Apple/Nothing Style) ────────────────────────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #FFD700, #38BDF8);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  transition: width 80ms linear;
+}
+
+/* ─── Ghost Typography & Eyebrows ─────────────────────────────────────────── */
+.page-title .ghost {
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(255, 215, 0, 0.65);
+  font-style: italic;
+  font-weight: 800;
+}
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FFD700;
+}
+
+/* ─── Empty State Pulsing Glyphs ───────────────────────────────────────────── */
+.empty-glyph {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.empty-glyph span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.4);
+  animation: glyphPulse 2s ease-in-out infinite;
+}
+
+.empty-glyph span:nth-child(2) { animation-delay: 0.2s; }
+.empty-glyph span:nth-child(3) { animation-delay: 0.4s; }
+.empty-glyph span:nth-child(4) { animation-delay: 0.6s; }
+.empty-glyph span:nth-child(5) { animation-delay: 0.8s; }
+
+/* ─── Pill Tabs (BMSIT Coding Club) ────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #0E121B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.tab {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  border-radius: 100px;
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: #F8FAFC;
+}
+
+.tab.is-active {
+  background: #141A26;
+  color: #FFD700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+}
+
+.tab-count {
+  font-size: 9px;
+  margin-left: 6px;
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 10px;
+}
+

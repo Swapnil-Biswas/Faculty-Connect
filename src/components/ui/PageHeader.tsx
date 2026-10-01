@@ -11,6 +11,8 @@ interface PageHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
   title: string;
   subtitle?: string;
+  eyebrow?: string;
+  ghost?: string;
   actions?: React.ReactNode;
   className?: string;
 }
@@ -19,6 +21,8 @@ export function PageHeader({
   breadcrumbs,
   title,
   subtitle,
+  eyebrow,
+  ghost,
   actions,
   className = "",
 }: PageHeaderProps) {
@@ -88,7 +92,25 @@ export function PageHeader({
         }}
       >
         <div style={{ flex: 1, minWidth: 260 }}>
+          {eyebrow && (
+            <span
+              className="section-eyebrow"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "rgba(255, 215, 0, 0.75)",
+                display: "block",
+                marginBottom: 4,
+              }}
+            >
+              {eyebrow}
+            </span>
+          )}
           <h1
+            className="page-title"
             style={{
               fontSize: 24,
               fontWeight: 800,
@@ -98,7 +120,7 @@ export function PageHeader({
               letterSpacing: "-0.02em",
             }}
           >
-            {title}
+            {title} {ghost && <span className="ghost">{ghost}</span>}
           </h1>
 
           {subtitle && (
