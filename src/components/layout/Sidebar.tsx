@@ -18,125 +18,147 @@ type NavItem = {
   badge?: number;
 };
 
-const NAV_BY_ROLE: Record<Role, { section: string; items: NavItem[] }[]> = {
+const NAV_BY_ROLE: Record<Role, { section: string; code: string; items: NavItem[] }[]> = {
   FACULTY: [
     {
       section: "Overview",
+      code: "// 01 WORKSPACE",
       items: [
-        { href: "/faculty", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
-        { href: "/faculty/tasks", icon: <CheckSquare size={18} />, label: "My Tasks" },
-        { href: "/faculty/leave", icon: <Calendar size={18} />, label: "Leave" },
+        { href: "/faculty", icon: <LayoutDashboard size={17} />, label: "Dashboard" },
+        { href: "/faculty/tasks", icon: <CheckSquare size={17} />, label: "My Tasks" },
+        { href: "/faculty/leave", icon: <Calendar size={17} />, label: "Leave Requests" },
       ],
     },
     {
       section: "Recognition",
+      code: "// 02 RECOGNITION",
       items: [
-        { href: "/faculty/stars", icon: <Star size={18} />, label: "My Stars" },
-        { href: "/faculty/leaderboard", icon: <Trophy size={18} />, label: "Leaderboard" },
+        { href: "/faculty/stars", icon: <Star size={17} />, label: "My Stars & Badges" },
+        { href: "/faculty/leaderboard", icon: <Trophy size={17} />, label: "Leaderboard" },
       ],
     },
     {
       section: "Research",
+      code: "// 03 SCHOLARLY",
       items: [
-        { href: "/faculty/publications", icon: <BookOpen size={18} />, label: "Publications" },
+        { href: "/faculty/publications", icon: <BookOpen size={17} />, label: "Publications" },
       ],
     },
     {
       section: "Communication",
+      code: "// 04 COMMS",
       items: [
-        { href: "/faculty/notifications", icon: <Bell size={18} />, label: "Notifications" },
+        { href: "/faculty/notifications", icon: <Bell size={17} />, label: "Notifications" },
       ],
     },
   ],
   CLUSTER_HEAD: [
     {
       section: "Overview",
+      code: "// 01 OVERVIEW",
       items: [
-        { href: "/cluster", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
-        { href: "/cluster/tasks", icon: <CheckSquare size={18} />, label: "Tasks" },
-        { href: "/cluster/leave", icon: <Calendar size={18} />, label: "Leave Requests" },
+        { href: "/cluster", icon: <LayoutDashboard size={17} />, label: "Cluster Console" },
+        { href: "/cluster/tasks", icon: <CheckSquare size={17} />, label: "Tasks Matrix" },
+        { href: "/cluster/leave", icon: <Calendar size={17} />, label: "Leave Approvals" },
       ],
     },
     {
       section: "Management",
+      code: "// 02 MANAGEMENT",
       items: [
-        { href: "/cluster/roster", icon: <Users size={18} />, label: "Faculty Roster" },
-        { href: "/cluster/evaluations", icon: <UserCheck size={18} />, label: "Evaluations" },
-        { href: "/cluster/leaderboard", icon: <Trophy size={18} />, label: "Leaderboard" },
+        { href: "/cluster/roster", icon: <Users size={17} />, label: "Faculty Roster" },
+        { href: "/cluster/evaluations", icon: <UserCheck size={17} />, label: "Evaluations" },
+        { href: "/cluster/leaderboard", icon: <Trophy size={17} />, label: "Leaderboard" },
       ],
     },
     {
       section: "Reports",
+      code: "// 03 ANALYTICS",
       items: [
-        { href: "/cluster/analytics", icon: <BarChart3 size={18} />, label: "Analytics" },
+        { href: "/cluster/analytics", icon: <BarChart3 size={17} />, label: "Cluster Analytics" },
       ],
     },
     {
-      section: "My Profile",
+      section: "Personal",
+      code: "// 04 PERSONAL",
       items: [
-        { href: "/faculty", icon: <Star size={18} />, label: "My Dashboard" },
+        { href: "/faculty", icon: <Star size={17} />, label: "My Profile Dashboard" },
       ],
     },
   ],
   HOD: [
     {
       section: "Overview",
+      code: "// 01 EXECUTIVE",
       items: [
-        { href: "/hod", icon: <LayoutDashboard size={18} />, label: "Department Dashboard" },
-        { href: "/hod/clusters", icon: <Users size={18} />, label: "Clusters" },
-        { href: "/hod/tasks", icon: <CheckSquare size={18} />, label: "Tasks" },
-        { href: "/hod/leave", icon: <Calendar size={18} />, label: "Leave Overview" },
+        { href: "/hod", icon: <LayoutDashboard size={17} />, label: "Dept Overview" },
+        { href: "/hod/clusters", icon: <Users size={17} />, label: "Cluster Nodes" },
+        { href: "/hod/tasks", icon: <CheckSquare size={17} />, label: "All Tasks" },
+        { href: "/hod/leave", icon: <Calendar size={17} />, label: "Leave Pipeline" },
       ],
     },
     {
       section: "Recognition",
+      code: "// 02 RECOGNITION",
       items: [
-        { href: "/hod/leaderboard", icon: <Trophy size={18} />, label: "Leaderboard" },
-        { href: "/hod/faculty-of-month", icon: <Star size={18} />, label: "Faculty of Month" },
+        { href: "/hod/leaderboard", icon: <Trophy size={17} />, label: "Dept Leaderboard" },
+        { href: "/hod/faculty-of-month", icon: <Star size={17} />, label: "Faculty of Month" },
       ],
     },
     {
       section: "Reports",
+      code: "// 03 COMPLIANCE",
       items: [
-        { href: "/hod/analytics", icon: <BarChart3 size={18} />, label: "Analytics" },
-        { href: "/hod/accreditation", icon: <Award size={18} />, label: "NBA / NAAC Dossier" },
-        { href: "/hod/export", icon: <ClipboardList size={18} />, label: "Export Data" },
-        { href: "/hod/audit", icon: <Shield size={18} />, label: "Audit Log" },
+        { href: "/hod/analytics", icon: <BarChart3 size={17} />, label: "Dept Analytics" },
+        { href: "/hod/accreditation", icon: <Award size={17} />, label: "NBA / NAAC Dossier" },
+        { href: "/hod/export", icon: <ClipboardList size={17} />, label: "Export Archive" },
+        { href: "/hod/audit", icon: <Shield size={17} />, label: "Audit Ledger" },
       ],
     },
     {
       section: "Config",
+      code: "// 04 GOVERNANCE",
       items: [
-        { href: "/hod/scoring", icon: <Settings size={18} />, label: "Scoring Config" },
+        { href: "/hod/scoring", icon: <Settings size={17} />, label: "Scoring Engine" },
       ],
     },
   ],
   ADMIN: [
     {
       section: "System",
+      code: "// 01 INFRASTRUCTURE",
       items: [
-        { href: "/admin", icon: <LayoutDashboard size={18} />, label: "Admin Dashboard" },
-        { href: "/admin/users", icon: <Users size={18} />, label: "Users & Roles" },
-        { href: "/admin/clusters", icon: <UserCheck size={18} />, label: "Clusters" },
-        { href: "/admin/jobs", icon: <Clock size={18} />, label: "Automated Jobs" },
-        { href: "/admin/webhooks", icon: <Globe size={18} />, label: "Webhooks & API" },
+        { href: "/admin", icon: <LayoutDashboard size={17} />, label: "System Console" },
+        { href: "/admin/users", icon: <Users size={17} />, label: "User Directory" },
+        { href: "/admin/clusters", icon: <UserCheck size={17} />, label: "Cluster Units" },
+        { href: "/admin/jobs", icon: <Clock size={17} />, label: "Cron & Automations" },
+        { href: "/admin/webhooks", icon: <Globe size={17} />, label: "Webhooks & API" },
       ],
     },
     {
       section: "Configuration",
+      code: "// 02 CONFIGURATION",
       items: [
-        { href: "/admin/scoring", icon: <Star size={18} />, label: "Scoring Defaults" },
-        { href: "/admin/notifications", icon: <Bell size={18} />, label: "Notification Rules" },
-        { href: "/admin/badges", icon: <Trophy size={18} />, label: "Badges" },
+        { href: "/admin/scoring", icon: <Star size={17} />, label: "Global Scoring" },
+        { href: "/admin/notifications", icon: <Bell size={17} />, label: "Dispatch Rules" },
+        { href: "/admin/badges", icon: <Trophy size={17} />, label: "Badge Registry" },
       ],
     },
     {
-      section: "Audit & History",
+      section: "Audit",
+      code: "// 03 AUDIT & LOGS",
       items: [
-        { href: "/admin/audit", icon: <Shield size={18} />, label: "Full Audit Log" },
+        { href: "/admin/audit", icon: <Shield size={17} />, label: "Security Audit" },
       ],
     },
   ],
+};
+
+const ROLE_GLYPHS: Record<Role, string> = {
+  FACULTY: "◆",
+  CLUSTER_HEAD: "▣",
+  HOD: "◈",
+  ADMIN: "★",
 };
 
 export function Sidebar() {
@@ -147,24 +169,36 @@ export function Sidebar() {
 
   const role = session.user.role;
   const navGroups = NAV_BY_ROLE[role] ?? [];
-  const deptName = process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Department";
+  const deptName = process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Dept. of Computer Science & Engineering";
 
   return (
     <aside className="sidebar" aria-label="Main navigation">
-      {/* Brand */}
+      {/* Brand Header with BMSIT Coding Club Tech Console Style */}
       <div className="sidebar-brand">
         <div className="sidebar-logo">FC</div>
         <div className="sidebar-brand-text">
-          <span className="sidebar-brand-name">Faculty Connect</span>
-          <span className="sidebar-brand-dept" title={deptName}>{deptName}</span>
+          <div className="sidebar-brand-name">
+            <span>FACULTY CONNECT</span>
+          </div>
+          <div className="sidebar-brand-dept" title={deptName}>
+            BMSIT // {deptName.includes("Computer") ? "CSE" : "INSTITUTE"}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <span className="tech-led led-green" />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "#22C55E", letterSpacing: "0.06em", fontWeight: 600 }}>
+              SYSTEM ONLINE
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Nav */}
+      {/* Nav with Monospace Eyebrow Headers */}
       <nav className="sidebar-nav" aria-label="Primary navigation">
         {navGroups.map((group) => (
-          <div key={group.section}>
-            <div className="sidebar-section-label">{group.section}</div>
+          <div key={group.section} style={{ marginBottom: 6 }}>
+            <div className="sidebar-section-label">
+              <span>{group.code}</span>
+            </div>
             {group.items.map((item) => {
               const isActive =
                 item.href === `/${role.toLowerCase().replace("_", "")}` ||
@@ -179,7 +213,7 @@ export function Sidebar() {
                   aria-current={isActive ? "page" : undefined}
                 >
                   <span className="sidebar-item-icon">{item.icon}</span>
-                  {item.label}
+                  <span style={{ flex: 1 }}>{item.label}</span>
                   {item.badge != null && item.badge > 0 && (
                     <span className="sidebar-item-badge">{item.badge}</span>
                   )}
@@ -190,17 +224,38 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
+      {/* User Cyber Console Footer */}
       <div className="sidebar-footer">
         <div className="sidebar-user" title={`${session.user.name} — ${getRoleLabel(role)}`}>
-          <div className={`avatar avatar-sm`}>
+          <div 
+            className="avatar avatar-sm" 
+            style={{ 
+              background: "#0E121B", 
+              border: "1.5px solid #FFD700", 
+              color: "#FFD700",
+              fontWeight: 700,
+              boxShadow: "0 0 10px rgba(255, 215, 0, 0.2)"
+            }}
+          >
             {getInitials(session.user.name)}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="sidebar-user-name">{session.user.name}</div>
-            <div className="sidebar-user-role">
-              <span className={`role-badge ${getRoleColor(role)}`} style={{ fontSize: 10, padding: "1px 7px" }}>
-                {getRoleLabel(role)}
+            <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
+              <span 
+                style={{ 
+                  fontFamily: "var(--font-mono)", 
+                  fontSize: 10, 
+                  fontWeight: 600,
+                  color: "#FFD700",
+                  letterSpacing: "0.04em",
+                  background: "rgba(255, 215, 0, 0.1)",
+                  border: "1px solid rgba(255, 215, 0, 0.25)",
+                  padding: "1px 6px",
+                  borderRadius: 4
+                }}
+              >
+                {ROLE_GLYPHS[role]} {getRoleLabel(role)}
               </span>
             </div>
           </div>
@@ -209,6 +264,20 @@ export function Sidebar() {
             className="btn-ghost"
             title="Sign out"
             aria-label="Sign out"
+            style={{
+              padding: 6,
+              borderRadius: 6,
+              color: "#94A3B8",
+              transition: "all 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#F43F5E";
+              e.currentTarget.style.background = "rgba(244, 63, 94, 0.12)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "#94A3B8";
+              e.currentTarget.style.background = "transparent";
+            }}
           >
             <LogOut size={16} />
           </button>
