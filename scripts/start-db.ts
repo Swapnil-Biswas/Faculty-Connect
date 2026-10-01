@@ -26,6 +26,7 @@ async function main() {
   const isRunning = await isPortOpen(5432);
   if (isRunning) {
     console.log("PostgreSQL server is already running on port 5432.");
+    setInterval(() => {}, 1000 * 60 * 60);
     return;
   }
 
