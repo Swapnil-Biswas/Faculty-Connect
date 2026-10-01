@@ -41,6 +41,12 @@ const NAV_BY_ROLE: Record<Role, { section: string; items: NavItem[] }[]> = {
         { href: "/faculty/publications", icon: <BookOpen size={18} />, label: "Publications" },
       ],
     },
+    {
+      section: "Communication",
+      items: [
+        { href: "/faculty/notifications", icon: <Bell size={18} />, label: "Notifications" },
+      ],
+    },
   ],
   CLUSTER_HEAD: [
     {
