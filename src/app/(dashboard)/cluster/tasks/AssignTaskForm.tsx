@@ -17,23 +17,33 @@ export function AssignTaskForm({ faculty }: { faculty: FacultyOption[] }) {
     return (
       <div
         style={{
-          padding: '20px',
-          background: 'hsl(142 71% 45% / 0.08)',
-          border: '1px solid hsl(142 71% 45% / 0.2)',
-          borderRadius: 12,
+          padding: '24px',
+          background: 'rgba(34, 197, 94, 0.08)',
+          border: '1px solid rgba(34, 197, 94, 0.25)',
+          borderRadius: 8,
           textAlign: 'center',
         }}
       >
         <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'hsl(142 60% 35%)' }}>
-          Task Assigned!
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#22C55E', fontFamily: 'var(--font-mono)' }}>
+          TASK ASSIGNED SUCCESSFULLY
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="btn-outline"
-          style={{ marginTop: 14, fontSize: 13 }}
+          style={{
+            marginTop: 14,
+            fontSize: 12,
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 700,
+            padding: '8px 16px',
+            borderRadius: 6,
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            color: '#E2E8F0',
+            cursor: 'pointer',
+          }}
         >
-          Assign another
+          ASSIGN ANOTHER TASK
         </button>
       </div>
     )
@@ -41,42 +51,73 @@ export function AssignTaskForm({ faculty }: { faculty: FacultyOption[] }) {
 
   return (
     <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div className="form-group">
-        <label className="form-label" htmlFor="task-title">Title</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#CBD5E1' }} htmlFor="task-title">
+          TASK TITLE
+        </label>
         <input
           id="task-title"
           name="title"
           type="text"
-          className="form-input"
-          placeholder="e.g. Prepare NBA documentation"
+          placeholder="e.g. Prepare NBA Criterion 5 documentation"
           required
           minLength={3}
+          style={{
+            background: '#07090E',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#F8FAFC',
+            fontSize: 13,
+            outline: 'none',
+          }}
         />
         {state.fieldErrors?.title && (
-          <span className="form-error">{state.fieldErrors.title[0]}</span>
+          <span style={{ color: '#F43F5E', fontSize: 11, fontFamily: 'var(--font-mono)' }}>{state.fieldErrors.title[0]}</span>
         )}
       </div>
 
-      <div className="form-group">
-        <label className="form-label" htmlFor="task-desc">Description</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#CBD5E1' }} htmlFor="task-desc">
+          DESCRIPTION (OPTIONAL)
+        </label>
         <textarea
           id="task-desc"
           name="description"
-          className="form-input"
           rows={3}
-          placeholder="Optional: describe what needs to be done…"
-          style={{ resize: 'vertical' }}
+          placeholder="Describe deliverables, required artifacts, or submission details…"
+          style={{
+            background: '#07090E',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#F8FAFC',
+            fontSize: 13,
+            outline: 'none',
+            resize: 'vertical',
+          }}
         />
       </div>
 
-      <div className="form-group">
-        <label className="form-label" htmlFor="task-assignee">Assign To</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#CBD5E1' }} htmlFor="task-assignee">
+          ASSIGN TO FACULTY
+        </label>
         <select
           id="task-assignee"
           name="assignedToId"
-          className="form-input"
           required
           defaultValue=""
+          style={{
+            background: '#07090E',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#F8FAFC',
+            fontSize: 13,
+            fontFamily: 'var(--font-mono)',
+            outline: 'none',
+          }}
         >
           <option value="" disabled>Select faculty member…</option>
           {faculty.map((f) => (
@@ -86,18 +127,29 @@ export function AssignTaskForm({ faculty }: { faculty: FacultyOption[] }) {
           ))}
         </select>
         {state.fieldErrors?.assignedToId && (
-          <span className="form-error">{state.fieldErrors.assignedToId[0]}</span>
+          <span style={{ color: '#F43F5E', fontSize: 11, fontFamily: 'var(--font-mono)' }}>{state.fieldErrors.assignedToId[0]}</span>
         )}
       </div>
 
-      <div className="grid-2" style={{ gap: 12 }}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="task-priority">Priority</label>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#CBD5E1' }} htmlFor="task-priority">
+            PRIORITY
+          </label>
           <select
             id="task-priority"
             name="priority"
-            className="form-input"
             defaultValue="MEDIUM"
+            style={{
+              background: '#07090E',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: 8,
+              padding: '10px 14px',
+              color: '#F8FAFC',
+              fontSize: 13,
+              fontFamily: 'var(--font-mono)',
+              outline: 'none',
+            }}
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -106,18 +158,29 @@ export function AssignTaskForm({ faculty }: { faculty: FacultyOption[] }) {
           </select>
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="task-deadline">Deadline</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#CBD5E1' }} htmlFor="task-deadline">
+            DEADLINE
+          </label>
           <input
             id="task-deadline"
             name="deadline"
             type="date"
-            className="form-input"
             required
             min={new Date().toISOString().split('T')[0]}
+            style={{
+              background: '#07090E',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: 8,
+              padding: '10px 14px',
+              color: '#F8FAFC',
+              fontSize: 13,
+              fontFamily: 'var(--font-mono)',
+              outline: 'none',
+            }}
           />
           {state.fieldErrors?.deadline && (
-            <span className="form-error">{state.fieldErrors.deadline[0]}</span>
+            <span style={{ color: '#F43F5E', fontSize: 11, fontFamily: 'var(--font-mono)' }}>{state.fieldErrors.deadline[0]}</span>
           )}
         </div>
       </div>
@@ -126,18 +189,35 @@ export function AssignTaskForm({ faculty }: { faculty: FacultyOption[] }) {
         <div
           style={{
             padding: '10px 14px',
-            background: 'hsl(0 84% 60% / 0.08)',
-            border: '1px solid hsl(0 84% 60% / 0.2)',
+            background: 'rgba(244, 63, 94, 0.1)',
+            border: '1px solid rgba(244, 63, 94, 0.3)',
             borderRadius: 8,
-            fontSize: 13,
-            color: 'hsl(0 70% 50%)',
+            fontSize: 12,
+            fontFamily: 'var(--font-mono)',
+            color: '#F43F5E',
           }}
         >
           {state.error}
         </div>
       )}
 
-      <SubmitButton label="Assign Task" pendingLabel="Assigning…" />
+      <SubmitButton
+        label="ASSIGN TASK"
+        pendingLabel="ASSIGNING…"
+        style={{
+          background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+          color: '#0A0D14',
+          border: 'none',
+          borderRadius: 8,
+          padding: '10px 18px',
+          fontFamily: 'var(--font-mono)',
+          fontSize: 12,
+          fontWeight: 800,
+          cursor: 'pointer',
+          boxShadow: '0 0 16px rgba(245, 158, 11, 0.35)',
+          marginTop: 4,
+        }}
+      />
     </form>
   )
 }
