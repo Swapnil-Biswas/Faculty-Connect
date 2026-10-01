@@ -7,7 +7,6 @@ import {
   Check,
   CheckCheck,
   Trash2,
-  ExternalLink,
   CheckSquare,
   Calendar,
   Star,
@@ -41,76 +40,86 @@ interface Props {
 
 const EVENT_CONFIG: Record<
   string,
-  { label: string; icon: React.ReactNode; color: string; bg: string; category: string }
+  { label: string; icon: React.ReactNode; color: string; bg: string; border: string; category: string }
 > = {
   TASK_ASSIGNED: {
-    label: "Task Assignment",
-    icon: <CheckSquare size={16} />,
-    color: "#2F6FED",
-    bg: "#EFF6FF",
+    label: "TASK ASSIGNED",
+    icon: <CheckSquare size={15} />,
+    color: "#38BDF8",
+    bg: "rgba(14, 165, 233, 0.1)",
+    border: "rgba(14, 165, 233, 0.3)",
     category: "tasks",
   },
   TASK_COMPLETED: {
-    label: "Task Completed",
-    icon: <Check size={16} />,
-    color: "#198754",
-    bg: "#F0FDF4",
+    label: "TASK COMPLETED",
+    icon: <Check size={15} />,
+    color: "#4ADE80",
+    bg: "rgba(34, 197, 94, 0.1)",
+    border: "rgba(34, 197, 94, 0.3)",
     category: "tasks",
   },
   TASK_OVERDUE: {
-    label: "Task Overdue",
-    icon: <AlertTriangle size={16} />,
-    color: "#C0392B",
-    bg: "#FEF2F2",
+    label: "TASK OVERDUE",
+    icon: <AlertTriangle size={15} />,
+    color: "#FB7185",
+    bg: "rgba(244, 63, 94, 0.1)",
+    border: "rgba(244, 63, 94, 0.35)",
     category: "tasks",
   },
   LEAVE_APPLIED: {
-    label: "Leave Application",
-    icon: <Calendar size={16} />,
-    color: "#B7791F",
-    bg: "#FEFCE8",
+    label: "LEAVE APPLIED",
+    icon: <Calendar size={15} />,
+    color: "#FCD34D",
+    bg: "rgba(245, 158, 11, 0.1)",
+    border: "rgba(245, 158, 11, 0.3)",
     category: "leave",
   },
   LEAVE_APPROVED: {
-    label: "Leave Approved",
-    icon: <CheckCheck size={16} />,
-    color: "#198754",
-    bg: "#F0FDF4",
+    label: "LEAVE APPROVED",
+    icon: <CheckCheck size={15} />,
+    color: "#4ADE80",
+    bg: "rgba(34, 197, 94, 0.1)",
+    border: "rgba(34, 197, 94, 0.3)",
     category: "leave",
   },
   LEAVE_REJECTED: {
-    label: "Leave Rejected",
-    icon: <AlertTriangle size={16} />,
-    color: "#C0392B",
-    bg: "#FEF2F2",
+    label: "LEAVE DECLINED",
+    icon: <AlertTriangle size={15} />,
+    color: "#FB7185",
+    bg: "rgba(244, 63, 94, 0.1)",
+    border: "rgba(244, 63, 94, 0.35)",
     category: "leave",
   },
   STARS_AWARDED: {
-    label: "Points Credited",
-    icon: <Star size={16} />,
-    color: "#173B67",
-    bg: "#EFF6FF",
+    label: "POINTS CREDITED",
+    icon: <Star size={15} />,
+    color: "#FFD700",
+    bg: "rgba(255, 215, 0, 0.1)",
+    border: "rgba(255, 215, 0, 0.35)",
     category: "recognition",
   },
   BADGE_EARNED: {
-    label: "Badge Unlocked",
-    icon: <Award size={16} />,
-    color: "#7E22CE",
-    bg: "#F3E8FF",
+    label: "BADGE UNLOCKED",
+    icon: <Award size={15} />,
+    color: "#A78BFA",
+    bg: "rgba(129, 140, 248, 0.1)",
+    border: "rgba(129, 140, 248, 0.3)",
     category: "recognition",
   },
   EVALUATION_RECEIVED: {
-    label: "Evaluation Submitted",
-    icon: <Sparkles size={16} />,
-    color: "#2F6FED",
-    bg: "#EFF6FF",
+    label: "EVALUATION LOGGED",
+    icon: <Sparkles size={15} />,
+    color: "#38BDF8",
+    bg: "rgba(14, 165, 233, 0.1)",
+    border: "rgba(14, 165, 233, 0.3)",
     category: "recognition",
   },
   ROLE_CHANGED: {
-    label: "System Notice",
-    icon: <Bell size={16} />,
-    color: "#667085",
-    bg: "#F2F4F7",
+    label: "SYSTEM NOTICE",
+    icon: <Bell size={15} />,
+    color: "#94A3B8",
+    bg: "rgba(100, 116, 139, 0.1)",
+    border: "rgba(100, 116, 139, 0.25)",
     category: "system",
   },
 };
@@ -162,18 +171,18 @@ export function NotificationsClient({ initialNotifications }: Props) {
           alignItems: "center",
           justifyContent: "space-between",
           gap: 16,
-          marginBottom: 20,
+          marginBottom: 24,
           flexWrap: "wrap",
         }}
       >
         {/* Category Tabs */}
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {[
-            { id: "all", label: "All", count: notifications.length },
-            { id: "unread", label: "Unread", count: unreadCount, isUrgent: unreadCount > 0 },
-            { id: "tasks", label: "Tasks", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "tasks").length },
-            { id: "leave", label: "Leave", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "leave").length },
-            { id: "recognition", label: "Recognition", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "recognition").length },
+            { id: "all", label: "ALL", count: notifications.length },
+            { id: "unread", label: "UNREAD", count: unreadCount, isUrgent: unreadCount > 0 },
+            { id: "tasks", label: "TASKS", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "tasks").length },
+            { id: "leave", label: "LEAVE", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "leave").length },
+            { id: "recognition", label: "RECOGNITION", count: notifications.filter((n) => EVENT_CONFIG[n.eventType]?.category === "recognition").length },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -181,37 +190,39 @@ export function NotificationsClient({ initialNotifications }: Props) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 style={{
-                  height: 32,
+                  height: 34,
                   padding: "0 12px",
-                  borderRadius: 4,
-                  fontSize: 12.5,
-                  fontWeight: isActive ? 600 : 500,
-                  border: isActive ? "1px solid #173B67" : "1px solid #E4E7EC",
-                  backgroundColor: isActive ? "#173B67" : "#FFFFFF",
-                  color: isActive ? "#FFFFFF" : "#667085",
+                  borderRadius: 6,
+                  fontSize: 11.5,
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: isActive ? 700 : 500,
+                  border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
+                  backgroundColor: isActive ? "rgba(255, 215, 0, 0.1)" : "rgba(255, 255, 255, 0.02)",
+                  color: isActive ? "#FFD700" : "#94A3B8",
                   cursor: "pointer",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
+                  transition: "all 0.15s ease",
                 }}
               >
                 <span>{tab.label}</span>
                 <span
                   style={{
-                    fontSize: 11,
-                    padding: "0 5px",
-                    borderRadius: 10,
+                    fontSize: 10,
+                    padding: "1px 5px",
+                    borderRadius: 4,
                     backgroundColor: isActive
-                      ? "rgba(255, 255, 255, 0.2)"
+                      ? "rgba(255, 215, 0, 0.25)"
                       : tab.isUrgent
-                      ? "#FEF2F2"
-                      : "#F2F4F7",
+                      ? "rgba(244, 63, 94, 0.2)"
+                      : "rgba(255, 255, 255, 0.06)",
                     color: isActive
-                      ? "#FFFFFF"
+                      ? "#FFD700"
                       : tab.isUrgent
-                      ? "#C0392B"
-                      : "#667085",
-                    fontWeight: 600,
+                      ? "#FB7185"
+                      : "#64748B",
+                    fontWeight: 700,
                   }}
                 >
                   {tab.count}
@@ -228,17 +239,17 @@ export function NotificationsClient({ initialNotifications }: Props) {
             disabled={isPending}
             className="btn-outline"
             style={{
-              height: 32,
-              padding: "0 12px",
-              fontSize: 12,
-              fontWeight: 500,
+              height: 34,
+              padding: "0 14px",
+              fontSize: 11.5,
+              fontFamily: "var(--font-mono)",
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
             }}
           >
-            <CheckCheck size={14} />
-            <span>Mark all read</span>
+            <CheckCheck size={14} color="#38BDF8" />
+            <span>MARK ALL READ</span>
           </button>
         )}
       </div>
@@ -247,29 +258,22 @@ export function NotificationsClient({ initialNotifications }: Props) {
       {filtered.length === 0 ? (
         <EmptyState
           icon={Bell}
-          title="No notifications in this view"
+          title="NO NOTIFICATIONS RECORDED"
           description={
             activeTab === "unread"
-              ? "All your notifications have been marked as read. New institutional alerts will appear here."
+              ? "All your notifications have been marked as read. New institutional alerts will appear here in real time."
               : "No notification records found in this category."
           }
         />
       ) : (
-        <div
-          style={{
-            backgroundColor: "#FFFFFF",
-            border: "1px solid #E4E7EC",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
-          }}
-        >
+        <div className="tech-card" style={{ padding: 0, overflow: "hidden" }}>
           {filtered.map((item, idx) => {
             const config = EVENT_CONFIG[item.eventType] || {
               label: item.eventType.replace("_", " "),
-              icon: <Bell size={16} />,
-              color: "#667085",
-              bg: "#F2F4F7",
+              icon: <Bell size={15} />,
+              color: "#94A3B8",
+              bg: "rgba(100, 116, 139, 0.1)",
+              border: "rgba(100, 116, 139, 0.25)",
               category: "system",
             };
 
@@ -280,20 +284,27 @@ export function NotificationsClient({ initialNotifications }: Props) {
                   display: "flex",
                   alignItems: "flex-start",
                   gap: 14,
-                  padding: "16px 20px",
-                  borderBottom: idx < filtered.length - 1 ? "1px solid #F2F4F7" : "none",
-                  backgroundColor: item.isRead ? "#FFFFFF" : "#EFF6FF",
-                  borderLeft: item.isRead ? "3px solid transparent" : "3px solid #2F6FED",
+                  padding: "16px 22px",
+                  borderBottom: idx < filtered.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
+                  backgroundColor: item.isRead ? "transparent" : "rgba(255, 215, 0, 0.03)",
+                  borderLeft: item.isRead ? "3px solid transparent" : "3px solid #FFD700",
                   transition: "background-color 0.15s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = item.isRead ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 215, 0, 0.06)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = item.isRead ? "transparent" : "rgba(255, 215, 0, 0.03)";
                 }}
               >
                 {/* Event Category Icon */}
                 <div
                   style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 4,
+                    width: 34,
+                    height: 34,
+                    borderRadius: 6,
                     backgroundColor: config.bg,
+                    border: `1px solid ${config.border}`,
                     color: config.color,
                     display: "flex",
                     alignItems: "center",
@@ -318,31 +329,22 @@ export function NotificationsClient({ initialNotifications }: Props) {
                   >
                     <span
                       style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.03em",
+                        fontSize: 10.5,
+                        fontWeight: 700,
+                        fontFamily: "var(--font-mono)",
+                        letterSpacing: "0.05em",
                         color: config.color,
                       }}
                     >
                       {config.label}
                     </span>
-                    <span style={{ fontSize: 11, color: "#98A2B3" }}>•</span>
-                    <span style={{ fontSize: 12, color: "#667085", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                    <span style={{ fontSize: 10, color: "#475569" }}>//</span>
+                    <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B", display: "inline-flex", alignItems: "center", gap: 4 }}>
                       <Clock size={11} />
                       {formatDate(item.createdAt)}
                     </span>
                     {!item.isRead && (
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 700,
-                          backgroundColor: "#BFDBFE",
-                          color: "#173B67",
-                          padding: "1px 6px",
-                          borderRadius: 4,
-                        }}
-                      >
+                      <span className="glyph-chip glyph-chip-gold" style={{ fontSize: 9.5, padding: "1px 5px" }}>
                         NEW
                       </span>
                     )}
@@ -350,9 +352,9 @@ export function NotificationsClient({ initialNotifications }: Props) {
 
                   <div
                     style={{
-                      fontSize: 13.5,
-                      fontWeight: item.isRead ? 500 : 600,
-                      color: "#17202A",
+                      fontSize: 14,
+                      fontWeight: item.isRead ? 500 : 700,
+                      color: item.isRead ? "#94A3B8" : "#F8FAFC",
                       lineHeight: 1.35,
                       marginBottom: 3,
                     }}
@@ -360,7 +362,7 @@ export function NotificationsClient({ initialNotifications }: Props) {
                     {item.title}
                   </div>
 
-                  <div style={{ fontSize: 13, color: "#667085", lineHeight: 1.45 }}>
+                  <div style={{ fontSize: 12.5, color: "#94A3B8", lineHeight: 1.45 }}>
                     {item.message}
                   </div>
 
@@ -371,17 +373,17 @@ export function NotificationsClient({ initialNotifications }: Props) {
                         href={item.deepLink}
                         onClick={() => !item.isRead && handleMarkOne(item.id)}
                         style={{
-                          fontSize: 12,
-                          fontWeight: 500,
-                          color: "#2F6FED",
+                          fontSize: 11.5,
+                          fontFamily: "var(--font-mono)",
+                          fontWeight: 600,
+                          color: "#FFD700",
                           textDecoration: "none",
                           display: "inline-flex",
                           alignItems: "center",
                           gap: 4,
                         }}
-                        className="hover:underline"
                       >
-                        <span>View Details</span>
+                        <span>VIEW EVENT DETAILS</span>
                         <ArrowRight size={12} />
                       </Link>
                     </div>
@@ -396,20 +398,31 @@ export function NotificationsClient({ initialNotifications }: Props) {
                       title="Mark as read"
                       style={{
                         height: 28,
-                        padding: "0 8px",
-                        fontSize: 11.5,
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid #E4E7EC",
+                        padding: "0 10px",
+                        fontSize: 11,
+                        fontFamily: "var(--font-mono)",
+                        fontWeight: 600,
+                        backgroundColor: "rgba(255, 255, 255, 0.04)",
+                        border: "1px solid rgba(255, 255, 255, 0.12)",
                         borderRadius: 4,
-                        color: "#17202A",
+                        color: "#F8FAFC",
                         cursor: "pointer",
                         display: "inline-flex",
                         alignItems: "center",
                         gap: 4,
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#FFD700";
+                        e.currentTarget.style.color = "#FFD700";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)";
+                        e.currentTarget.style.color = "#F8FAFC";
                       }}
                     >
-                      <Check size={12} />
-                      <span>Read</span>
+                      <Check size={11} />
+                      <span>READ</span>
                     </button>
                   )}
 
@@ -422,13 +435,21 @@ export function NotificationsClient({ initialNotifications }: Props) {
                       borderRadius: 4,
                       border: "none",
                       backgroundColor: "transparent",
-                      color: "#667085",
+                      color: "#64748B",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      transition: "all 0.15s ease",
                     }}
-                    className="hover:text-red-600"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#F43F5E";
+                      e.currentTarget.style.backgroundColor = "rgba(244, 63, 94, 0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#64748B";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
                   >
                     <Trash2 size={14} />
                   </button>
