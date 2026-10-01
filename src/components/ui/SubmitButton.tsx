@@ -8,6 +8,7 @@ interface SubmitButtonProps {
   pendingLabel?: string
   className?: string
   variant?: 'gradient' | 'outline' | 'danger'
+  icon?: React.ReactNode
 }
 
 export function SubmitButton({
@@ -15,6 +16,7 @@ export function SubmitButton({
   pendingLabel,
   className,
   variant = 'gradient',
+  icon,
 }: SubmitButtonProps) {
   const { pending } = useFormStatus()
 
@@ -30,12 +32,18 @@ export function SubmitButton({
       type="submit"
       disabled={pending}
       className={cn(variantClass, className)}
-      style={{ opacity: pending ? 0.7 : 1, cursor: pending ? 'not-allowed' : 'pointer' }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        opacity: pending ? 0.7 : 1,
+        cursor: pending ? 'not-allowed' : 'pointer',
+      }}
     >
       {pending ? (
         <>
           <svg
-            style={{ animation: 'spin 0.8s linear infinite' }}
+            style={{ animation: 'spin 0.8s linear infinite', flexShrink: 0 }}
             width={16}
             height={16}
             viewBox="0 0 24 24"
@@ -48,7 +56,10 @@ export function SubmitButton({
           {pendingLabel ?? label}
         </>
       ) : (
-        label
+        <>
+          {icon && <span style={{ flexShrink: 0 }}>{icon}</span>}
+          {label}
+        </>
       )}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </button>

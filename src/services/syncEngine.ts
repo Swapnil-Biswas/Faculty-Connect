@@ -1,31 +1,72 @@
 /**
- * Sync Engine � "Enter Once, Use Everywhere"
+ * Sync Engine - "Enter Once, Use Everywhere"
  *
  * Every domain service (tasks, leave, recognition, publications) calls through
  * this module after a write. The engine then invalidates/updates:
- *   - Leaderboard cache
- *   - Dashboard aggregates
+ *   - Leaderboard cache & aggregates
  *   - Notification triggers
  *   - Audit log entries
- *
- * Phase 1: skeleton with event bus pattern. Real implementations added per phase.
- * Phase 2+: BullMQ queues replace the synchronous fan-out below.
+ *   - Points Ledger & Badges
  */
 
 import { db } from "@/lib/db";
 import { NotificationEventType } from "@prisma/client";
+import {
+  getActiveScoringConfig,
+  calculateTaskPoints,
+  calculateEvaluationPoints,
+  evaluateAndAwardBadges,
+} from "@/services/recognition";
 
 // --- Event Types --------------------------------------------------------------
 
 export type SyncEvent =
-  | { type: "TASK_ASSIGNED"; taskId: string; assignedToId: string; assignedById: string }
-  | { type: "TASK_COMPLETED"; taskId: string; facultyId: string; completedAt: Date; deadline: Date }
+  | {
+      type: "TASK_ASSIGNED";
+      taskId: string;
+      assignedToId: string;
+      assignedById: string;
+    }
+  | {
+      type: "TASK_COMPLETED";
+      taskId: string;
+      facultyId: string;
+      completedAt: Date;
+      deadline: Date;
+      qualityRating?: number | null;
+    }
   | { type: "TASK_OVERDUE"; taskId: string; facultyId: string }
   | { type: "LEAVE_APPLIED"; leaveId: string; applicantId: string }
-  | { type: "LEAVE_DECIDED"; leaveId: string; applicantId: string; status: "APPROVED" | "REJECTED" }
-  | { type: "EVALUATION_CREATED"; evaluationId: string; facultyId: string }
-  | { type: "POINTS_AWARDED"; facultyId: string; amount: number; source: string; reason: string }
-  | { type: "ROLE_CHANGED"; userId: string; actorId: string; oldRole: string; newRole: string };
+  | {
+      type: "LEAVE_DECIDED";
+      leaveId: string;
+      applicantId: string;
+      status: "APPROVED" | "REJECTED";
+    }
+  | {
+      type: "EVALUATION_CREATED";
+      evaluationId: string;
+      facultyId: string;
+      quality: number;
+      contribution: number;
+      initiative: number;
+      overallRating: number;
+    }
+  | {
+      type: "POINTS_AWARDED";
+      facultyId: string;
+      amount: number;
+      source: string;
+      reason: string;
+      metadata?: object;
+    }
+  | {
+      type: "ROLE_CHANGED";
+      userId: string;
+      actorId: string;
+      oldRole: string;
+      newRole: string;
+    };
 
 // --- Audit Logging ------------------------------------------------------------
 
@@ -57,9 +98,11 @@ export async function auditLog(params: {
 
 // --- Notification Dispatch ----------------------------------------------------
 
-async function isNotificationEnabled(eventType: NotificationEventType): Promise<boolean> {
+async function isNotificationEnabled(
+  eventType: NotificationEventType
+): Promise<boolean> {
   const rule = await db.notificationRule.findUnique({ where: { eventType } });
-  return rule?.enabled ?? true; // default: enabled
+  return rule?.enabled ?? true;
 }
 
 export async function dispatchNotification(params: {
@@ -110,10 +153,14 @@ export async function awardPoints(params: {
   await dispatchNotification({
     userId: params.facultyId,
     eventType: "STARS_AWARDED",
-    title: "Points Awarded! ?",
-    message: `You earned ${params.amount} points � ${params.reason}`,
+    title: "Stars Awarded! ⭐",
+    message: `You earned ${params.amount} points — ${params.reason}`,
+    deepLink: "/faculty/stars",
     metadata: { amount: params.amount, source: params.source },
   });
+
+  // Evaluate badge unlocks
+  await evaluateAndAwardBadges(params.facultyId);
 
   return entry;
 }
@@ -128,34 +175,36 @@ export async function sync(event: SyncEvent): Promise<void> {
         eventType: "TASK_ASSIGNED",
         title: "New Task Assigned",
         message: "You have been assigned a new task.",
-        deepLink: `/faculty/tasks/${event.taskId}`,
+        deepLink: `/faculty/tasks`,
         metadata: { taskId: event.taskId },
       });
       break;
     }
 
     case "TASK_COMPLETED": {
-      const isOnTime = event.completedAt <= event.deadline;
-      const isEarly =
-        event.deadline.getTime() - event.completedAt.getTime() > 24 * 60 * 60 * 1000;
-
-      // Get active scoring config
-      const config = await db.scoringConfig.findFirst({
-        where: { isActive: true },
-        orderBy: { version: "desc" },
+      const config = await getActiveScoringConfig();
+      const calc = calculateTaskPoints({
+        completedAt: event.completedAt,
+        deadline: event.deadline,
+        qualityRating: event.qualityRating,
+        config,
       });
-
-      let points = 10; // base points
-      if (isOnTime) points += config ? config.onTimeWeight * 100 : 20;
-      if (isEarly) points += config ? config.earlyWeight * 100 : 10;
 
       await awardPoints({
         facultyId: event.facultyId,
         source: "TASK_COMPLETED",
-        amount: points,
-        reason: `Task completed${isEarly ? " early" : isOnTime ? " on time" : " late"}`,
-        metadata: { taskId: event.taskId, isOnTime, isEarly },
-        scoringConfigVersion: config?.version,
+        amount: calc.totalPoints,
+        reason: `Task completed${
+          calc.isEarly ? " early (+bonus)" : calc.isOnTime ? " on time" : " late"
+        }`,
+        metadata: {
+          taskId: event.taskId,
+          base: calc.basePoints,
+          onTime: calc.onTimePoints,
+          early: calc.earlyPoints,
+          quality: calc.qualityPoints,
+        },
+        scoringConfigVersion: config.version,
       });
       break;
     }
@@ -164,39 +213,74 @@ export async function sync(event: SyncEvent): Promise<void> {
       await dispatchNotification({
         userId: event.facultyId,
         eventType: "TASK_OVERDUE",
-        title: "Task Overdue ??",
+        title: "Task Overdue ⚠️",
         message: "A task has passed its deadline and is now marked overdue.",
-        deepLink: `/faculty/tasks/${event.taskId}`,
+        deepLink: `/faculty/tasks`,
         metadata: { taskId: event.taskId },
       });
       break;
     }
 
     case "LEAVE_APPLIED": {
-      // Notify cluster head � Phase 2 will resolve cluster head from task assignment
       break;
     }
 
     case "LEAVE_DECIDED": {
       await dispatchNotification({
         userId: event.applicantId,
-        eventType: event.status === "APPROVED" ? "LEAVE_APPROVED" : "LEAVE_REJECTED",
-        title: event.status === "APPROVED" ? "Leave Approved ?" : "Leave Rejected",
+        eventType:
+          event.status === "APPROVED" ? "LEAVE_APPROVED" : "LEAVE_REJECTED",
+        title: event.status === "APPROVED" ? "Leave Approved ✅" : "Leave Rejected",
         message: `Your leave application has been ${event.status.toLowerCase()}.`,
-        deepLink: `/faculty/leave/${event.leaveId}`,
+        deepLink: `/faculty/leave`,
         metadata: { leaveId: event.leaveId },
       });
       break;
     }
 
     case "EVALUATION_CREATED": {
+      const config = await getActiveScoringConfig();
+      const points = calculateEvaluationPoints({
+        quality: event.quality,
+        contribution: event.contribution,
+        initiative: event.initiative,
+        overallRating: event.overallRating,
+        config,
+      });
+
+      await awardPoints({
+        facultyId: event.facultyId,
+        source: "EVALUATION",
+        amount: points,
+        reason: `Received performance evaluation (${event.overallRating}/5 rating)`,
+        metadata: {
+          evaluationId: event.evaluationId,
+          quality: event.quality,
+          contribution: event.contribution,
+          initiative: event.initiative,
+          overallRating: event.overallRating,
+        },
+        scoringConfigVersion: config.version,
+      });
+
       await dispatchNotification({
         userId: event.facultyId,
         eventType: "EVALUATION_RECEIVED",
-        title: "New Evaluation",
-        message: "You have received a new performance evaluation.",
-        deepLink: `/faculty/evaluations`,
+        title: "New Evaluation Received ⭐",
+        message: `You received an evaluation with an overall score of ${event.overallRating}/5 (${points} points awarded).`,
+        deepLink: `/faculty/stars`,
         metadata: { evaluationId: event.evaluationId },
+      });
+      break;
+    }
+
+    case "POINTS_AWARDED": {
+      await awardPoints({
+        facultyId: event.facultyId,
+        source: event.source,
+        amount: event.amount,
+        reason: event.reason,
+        metadata: event.metadata,
       });
       break;
     }
@@ -206,7 +290,7 @@ export async function sync(event: SyncEvent): Promise<void> {
         userId: event.userId,
         eventType: "ROLE_CHANGED",
         title: "Role Updated",
-        message: `Your role has been changed from ${event.oldRole} to ${event.newRole}.`,
+        message: `Your role has been updated from ${event.oldRole} to ${event.newRole}.`,
       });
       break;
     }

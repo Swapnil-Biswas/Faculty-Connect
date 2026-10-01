@@ -221,6 +221,7 @@ export async function updateTaskStatus(
       facultyId: existing.assignedToId,
       completedAt: completedAt!,
       deadline: existing.deadline,
+      qualityRating,
     })
   }
 

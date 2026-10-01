@@ -1009,3 +1009,187 @@ tbody tr:hover {
 @media (max-width: 900px) {
   .grid-3 { grid-template-columns: 1fr; }
 }
+/* — Recognition & Gamification Styles — */
+.podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .podium-grid {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+.podium-card {
+  position: relative;
+  background-color: hsl(var(--bg-surface));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.podium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.podium-rank-1 {
+  border-color: hsl(45 93% 47% / 0.5);
+  background: linear-gradient(180deg, hsl(45 93% 47% / 0.08) 0%, hsl(var(--bg-surface)) 100%);
+  transform: scale(1.04);
+}
+
+.podium-rank-2 {
+  border-color: hsl(215 25% 65% / 0.4);
+  background: linear-gradient(180deg, hsl(215 25% 65% / 0.06) 0%, hsl(var(--bg-surface)) 100%);
+}
+
+.podium-rank-3 {
+  border-color: hsl(25 80% 50% / 0.4);
+  background: linear-gradient(180deg, hsl(25 80% 50% / 0.06) 0%, hsl(var(--bg-surface)) 100%);
+}
+
+.podium-medal {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--shadow-md);
+}
+
+.medal-gold {
+  background: linear-gradient(135deg, #ffd700, #ffae00);
+  color: #5c3800;
+}
+
+.medal-silver {
+  background: linear-gradient(135deg, #e0e7ee, #9aa8b8);
+  color: #1e293b;
+}
+
+.medal-bronze {
+  background: linear-gradient(135deg, #f6a27e, #b8603d);
+  color: #3e1b0c;
+}
+
+.badge-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--bg-surface));
+  transition: all 0.2s ease;
+}
+
+.badge-unlocked {
+  border-color: hsl(var(--color-primary) / 0.35);
+  background: linear-gradient(135deg, hsl(var(--color-primary) / 0.06), hsl(var(--bg-surface)));
+}
+
+.badge-locked {
+  opacity: 0.55;
+  filter: grayscale(80%);
+}
+
+.badge-icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+}
+
+.badge-unlocked .badge-icon-box {
+  background: linear-gradient(135deg, hsl(var(--color-primary) / 0.2), hsl(var(--color-secondary) / 0.2));
+  color: hsl(var(--color-primary));
+  box-shadow: 0 0 16px hsl(var(--color-primary) / 0.25);
+}
+
+.badge-locked .badge-icon-box {
+  background: hsl(var(--bg-muted));
+  color: hsl(var(--text-muted));
+}
+
+.star-rating-interactive {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.star-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  transition: transform 0.15s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+}
+/* -- Extra avatar sizes -- */
+.avatar-xs {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-secondary)));
+  color: white;
+  font-weight: 700;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.avatar-xl {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-secondary)));
+  color: white;
+  font-weight: 800;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.avatar-lg {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-secondary)));
+  color: white;
+  font-weight: 700;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.text-warning { color: #eab308; }
+.text-primary { color: hsl(var(--color-primary)); }
