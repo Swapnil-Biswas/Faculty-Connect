@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "build": "next build",
-        "dev": "concurrently -k -p \"[{name}]\" -n \"DB,NEXT\" -c \"magenta,cyan\" \"npm run db:start\" \"next dev\"",
+        "dev": "concurrently --kill-others-on-fail -p \"[{name}]\" -n \"DB,NEXT\" -c \"magenta,cyan\" \"npm run db:start\" \"next dev\"",
         "dev:next": "next dev",
         "db:start": "tsx scripts/start-db.ts",
         "lint": "eslint",

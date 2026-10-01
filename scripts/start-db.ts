@@ -61,7 +61,7 @@ async function main() {
   console.log("Press Ctrl+C to stop.");
 
   // Keep process alive
-  await new Promise(() => {});
+  setInterval(() => {}, 1000 * 60 * 60);
 }
 
 main().catch((err) => {
