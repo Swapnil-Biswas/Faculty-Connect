@@ -45,75 +45,157 @@ export function WebhooksClient() {
   return (
     <div>
       {/* Integrations Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 18, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 20, marginBottom: 28 }}>
         {integrations.map((itg, i) => (
-          <div key={i} className="card" style={{ padding: "20px 22px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div
+          <div
+            key={i}
+            style={{
+              background: "#0E121B",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: 12,
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 16,
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+              transition: "border-color 0.2s ease, transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 10,
+                      background: "rgba(56, 189, 248, 0.1)",
+                      border: "1px solid rgba(56, 189, 248, 0.25)",
+                      color: "#38BDF8",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Server size={18} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: "#F8FAFC" }}>{itg.name}</h3>
+                    <span style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)" }}>CONNECTOR NODE</span>
+                  </div>
+                </div>
+                <span
                   style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: "hsl(var(--color-primary) / 0.12)",
-                    color: "hsl(var(--color-primary))",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "#22C55E",
+                    background: "rgba(34, 197, 94, 0.12)",
+                    border: "1px solid rgba(34, 197, 94, 0.25)",
+                    padding: "3px 8px",
+                    borderRadius: 4,
                   }}
                 >
-                  <Server size={18} />
-                </div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>{itg.name}</h3>
+                  ● {itg.status.toUpperCase()}
+                </span>
               </div>
-              <span className="role-badge" style={{ background: "hsl(var(--color-success) / 0.12)", color: "hsl(var(--color-success))", fontSize: 11 }}>
-                {itg.status}
-              </span>
+
+              <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
+                {itg.desc}
+              </p>
             </div>
 
-            <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", lineHeight: 1.5, marginBottom: 14 }}>
-              {itg.desc}
-            </p>
-
-            <div style={{ fontSize: 11.5, color: "hsl(var(--text-muted))", borderTop: "1px solid hsl(var(--border))", paddingTop: 10 }}>
-              <strong>Subscribed Events:</strong> <code>{itg.events}</code>
+            <div style={{ fontSize: 11, color: "#64748B", borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: 12, fontFamily: "var(--font-mono)" }}>
+              <span style={{ color: "#94A3B8" }}>EVENTS: </span>
+              <code style={{ color: "#F59E0B", background: "rgba(245, 158, 11, 0.08)", padding: "2px 6px", borderRadius: 4 }}>
+                {itg.events}
+              </code>
             </div>
           </div>
         ))}
       </div>
 
       {/* Webhook Dispatch Tester Card */}
-      <div className="card" style={{ maxWidth: 760 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-          <Zap size={20} style={{ color: "#F59E0B" }} />
-          <h2 style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>Live Webhook Simulator & Delivery Test</h2>
+      <div
+        style={{
+          background: "#0E121B",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: 12,
+          padding: 28,
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+          maxWidth: 860,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 8, background: "rgba(245, 158, 11, 0.15)", border: "1px solid rgba(245, 158, 11, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Zap size={18} style={{ color: "#F59E0B" }} />
+          </div>
+          <div>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
+              // DISPATCH SIMULATOR
+            </span>
+            <h2 style={{ fontSize: 17, fontWeight: 800, margin: "2px 0 0", color: "#F8FAFC" }}>
+              Live Webhook Simulator & Delivery Test
+            </h2>
+          </div>
         </div>
-        <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 20 }}>
+        <p style={{ fontSize: 13, color: "#94A3B8", margin: "0 0 24px 0" }}>
           Dispatch an authenticated JSON test payload signed with an HMAC SHA-256 header to test your external listener.
         </p>
 
-        <form onSubmit={handleTest} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="endpointUrl">Endpoint Destination URL</label>
+        <form onSubmit={handleTest} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", color: "#CBD5E1" }} htmlFor="endpointUrl">
+              ENDPOINT DESTINATION URL
+            </label>
             <input
               id="endpointUrl"
               type="url"
-              className="form-input"
               value={endpointUrl}
               onChange={(e) => setEndpointUrl(e.target.value)}
               placeholder="https://your-domain.edu/api/webhook"
               required
+              style={{
+                background: "#07090E",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: 8,
+                padding: "10px 14px",
+                color: "#F8FAFC",
+                fontSize: 13,
+                fontFamily: "var(--font-mono)",
+                outline: "none",
+              }}
             />
           </div>
 
-          <div className="grid-2">
-            <div className="form-group">
-              <label className="form-label" htmlFor="eventType">Simulated Event Type</label>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", color: "#CBD5E1" }} htmlFor="eventType">
+                SIMULATED EVENT TYPE
+              </label>
               <select
                 id="eventType"
-                className="form-input"
                 value={selectedEvent}
                 onChange={(e) => setSelectedEvent(e.target.value)}
+                style={{
+                  background: "#07090E",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  borderRadius: 8,
+                  padding: "10px 14px",
+                  color: "#F8FAFC",
+                  fontSize: 13,
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                }}
               >
                 <option value="TASK_COMPLETED">TASK_COMPLETED (High Priority)</option>
                 <option value="LEAVE_APPROVED">LEAVE_APPROVED (Sanction Event)</option>
@@ -123,27 +205,56 @@ export function WebhooksClient() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="secretToken">HMAC Signing Secret</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", color: "#CBD5E1" }} htmlFor="secretToken">
+                HMAC SIGNING SECRET
+              </label>
               <input
                 id="secretToken"
                 type="text"
-                className="form-input"
                 value={secretToken}
                 onChange={(e) => setSecretToken(e.target.value)}
+                style={{
+                  background: "#07090E",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  borderRadius: 8,
+                  padding: "10px 14px",
+                  color: "#F59E0B",
+                  fontSize: 13,
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                }}
               />
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
-            <button type="submit" disabled={isPending} className="btn-gradient" style={{ gap: 6 }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+            <button
+              type="submit"
+              disabled={isPending}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 20px",
+                background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+                border: "none",
+                borderRadius: 8,
+                color: "#0A0D14",
+                fontFamily: "var(--font-mono)",
+                fontSize: 12,
+                fontWeight: 800,
+                cursor: isPending ? "not-allowed" : "pointer",
+                boxShadow: "0 0 16px rgba(245, 158, 11, 0.35)",
+              }}
+            >
               {isPending ? (
                 <>
-                  <RefreshCw size={16} className="spin" /> Dispatching Test Payload…
+                  <RefreshCw size={14} className="spin" /> DISPATCHING TEST PAYLOAD...
                 </>
               ) : (
                 <>
-                  <Send size={16} /> Send Test Webhook
+                  <Send size={14} /> SEND TEST WEBHOOK
                 </>
               )}
             </button>
@@ -154,31 +265,36 @@ export function WebhooksClient() {
         {result && (
           <div
             style={{
-              marginTop: 20,
-              padding: 16,
-              borderRadius: "var(--radius-sm)",
-              background: result.success ? "hsl(var(--color-success) / 0.08)" : "hsl(var(--color-danger) / 0.08)",
-              border: `1px solid ${result.success ? "hsl(var(--color-success) / 0.25)" : "hsl(var(--color-danger) / 0.25)"}`,
+              marginTop: 24,
+              padding: 18,
+              borderRadius: 8,
+              background: result.success ? "rgba(34, 197, 94, 0.06)" : "rgba(244, 63, 94, 0.06)",
+              border: `1px solid ${result.success ? "rgba(34, 197, 94, 0.3)" : "rgba(244, 63, 94, 0.3)"}`,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               {result.success ? (
-                <CheckCircle2 size={18} style={{ color: "hsl(var(--color-success))" }} />
+                <CheckCircle2 size={18} style={{ color: "#22C55E" }} />
               ) : (
-                <AlertCircle size={18} style={{ color: "hsl(var(--color-danger))" }} />
+                <AlertCircle size={18} style={{ color: "#F43F5E" }} />
               )}
-              <strong style={{ fontSize: 14 }}>{result.message}</strong>
+              <strong style={{ fontSize: 14, color: "#F8FAFC", fontFamily: "var(--font-mono)" }}>
+                {result.message}
+              </strong>
             </div>
 
             {result.payload && (
               <pre
                 style={{
-                  background: "hsl(var(--bg-base))",
-                  padding: 12,
+                  background: "#07090E",
+                  padding: 14,
                   borderRadius: 6,
                   fontSize: 12,
+                  fontFamily: "var(--font-mono)",
+                  color: "#38BDF8",
                   overflowX: "auto",
                   marginTop: 10,
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
                 }}
               >
                 {JSON.stringify(result.payload, null, 2)}
