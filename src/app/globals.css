@@ -1,103 +1,104 @@
-/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+/* ─── Google Fonts (Inter + Fira Code for Tech Terminal Aesthetic) ────────── */
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 @import "tailwindcss";
 
-/* ─── Design Tokens (Step 4A Institutional Design System) ────── */
+/* ─── BMSIT Coding Club Tech Design System Tokens ───────────────────────── */
 :root {
-  /* Brand Colors */
-  --color-primary: 213 63% 25%;       /* #173B67 → Institutional Navy */
-  --color-primary-light: 213 55% 35%;
-  --color-secondary: 220 83% 55%;     /* #2F6FED → Action Blue */
-  --color-accent: 220 83% 55%;        /* #2F6FED */
+  /* Tech Canvas & Surfaces (Obsidian Slate) */
+  --bg-base: 228 28% 5%;             /* #07090E → Deep Space Dark Canvas */
+  --bg-surface: 225 24% 9%;          /* #0E121B → Tech Card Surface */
+  --bg-elevated: 224 22% 13%;        /* #141A26 → Elevated Panel */
+  --bg-subtle: 223 20% 16%;          /* #1A2230 → Hover / Row Subtle */
 
-  /* Gradient stops — restrained institutional transition */
-  --gradient-from: #173B67;
-  --gradient-to: #2F6FED;
+  /* High Contrast Tech Text */
+  --text-primary: 210 40% 98%;       /* #F8FAFC → Pure Crisp Text */
+  --text-secondary: 217 19% 72%;     /* #A1ADC0 → Clean Technical Grey */
+  --text-muted: 217 15% 52%;         /* #6B7A90 → Monospace Meta / Glyphs */
 
-  /* Light mode surfaces */
-  --bg-base: 220 20% 98%;             /* #F7F8FA → Neutral Canvas */
-  --bg-surface: 0 0% 100%;            /* #FFFFFF → Pure White Surface */
-  --bg-elevated: 0 0% 100%;
-  --bg-subtle: 220 18% 96%;           /* #F2F4F7 → Subtle Border / Row */
+  /* Precise Tech Borders (Hairline Glass) */
+  --border: 220 18% 18%;             /* rgba(255,255,255,0.09) */
+  --border-strong: 220 20% 26%;      /* rgba(255,255,255,0.18) */
+  --border-gold: 48 100% 50%;        /* #FFD700 Gold Accent */
 
-  /* Light mode text */
-  --text-primary: 213 29% 13%;        /* #17202A → High Contrast WCAG AAA */
-  --text-secondary: 220 13% 46%;      /* #667085 → WCAG AA 4.75:1 */
-  --text-muted: 218 15% 65%;          /* #98A2B3 → Non-essential/border only */
+  /* Signature Accents (BMSIT Coding Club Inspired) */
+  --color-primary: 48 100% 50%;      /* #FFD700 → BMSIT Gold Signature */
+  --color-primary-light: 48 100% 65%;/* #FFE247 */
+  --color-secondary: 199 89% 48%;    /* #0EA5E9 → Cyber Blue */
+  --color-accent: 250 92% 70%;       /* #818CF8 → Electric Indigo */
 
-  /* Light mode borders */
-  --border: 216 16% 91%;              /* #E4E7EC → 1px Hairline */
-  --border-strong: 216 16% 82%;
+  /* Semantic Status Indicators */
+  --color-success: 142 71% 45%;      /* #22C55E → System Online Green */
+  --color-warning: 38 92% 50%;       /* #F59E0B → Alert Gold */
+  --color-danger: 350 89% 60%;       /* #F43F5E → Critical Red */
+  --color-info: 199 89% 48%;         /* #0EA5E9 → Cyan Info */
 
-  /* Status */
-  --color-success: 152 69% 31%;       /* #198754 → Success Green */
-  --color-warning: 36 71% 41%;        /* #B7791F → Warning Ochre */
-  --color-danger: 6 63% 46%;          /* #C0392B → Error Red */
-  --color-info: 220 83% 55%;          /* #2F6FED → Info Blue */
+  /* Font Families */
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Sidebar */
-  --sidebar-w: 240px;
+  --sidebar-w: 254px;
 
-  /* Radius (Institutional Sharp) */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 8px;
-  --radius-2xl: 8px;
+  /* Corner Radius (Modern Precision) */
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
 
-  /* Shadow (Borders over Shadows) */
-  --shadow-sm: 0 1px 2px 0 rgba(16, 24, 40, 0.04);
-  --shadow-md: 0 2px 6px -1px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, 0.08);
-  --shadow-xl: 0 12px 24px -4px rgba(16, 24, 40, 0.08);
-  --shadow-glow: none;
+  /* Elevation & Glows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.65);
+  --shadow-gold: 0 0 16px 2px rgba(255, 215, 0, 0.25);
+  --shadow-cyan: 0 0 16px 2px rgba(14, 165, 233, 0.25);
 }
 
 .dark {
-  /* Dark mode surfaces — deep navy/slate */
-  --bg-base: 222 47% 7%;
-  --bg-surface: 222 47% 10%;
-  --bg-elevated: 222 47% 13%;
-  --bg-subtle: 222 40% 16%;
+  /* Obsidian dark tokens (100% parity with root) */
+  --bg-base: 228 28% 5%;
+  --bg-surface: 225 24% 9%;
+  --bg-elevated: 224 22% 13%;
+  --bg-subtle: 223 20% 16%;
 
-  /* Dark mode text */
-  --text-primary: 210 40% 96%;
-  --text-secondary: 215 20% 65%;
-  --text-muted: 215 16% 47%;
+  --text-primary: 210 40% 98%;
+  --text-secondary: 217 19% 72%;
+  --text-muted: 217 15% 52%;
 
-  /* Dark mode borders */
-  --border: 217 32% 18%;
-  --border-strong: 217 32% 25%;
+  --border: 220 18% 18%;
+  --border-strong: 220 20% 26%;
+  --border-gold: 48 100% 50%;
 
-  /* Darker shadows */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.75);
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  font-family: "Inter", "Plus Jakarta Sans", sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
   background-color: hsl(var(--bg-base));
   color: hsl(var(--text-primary));
   min-height: 100dvh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 /* ─── App Layout ────────────────────────────────────────────────────────────── */
 .app-layout {
   display: flex;
   min-height: 100dvh;
+  background-color: hsl(var(--bg-base));
 }
 
 .main-content {
@@ -107,17 +108,18 @@ body {
   flex-direction: column;
   min-height: 100dvh;
   overflow-x: hidden;
+  background-color: hsl(var(--bg-base));
 }
 
-/* ─── Sidebar ───────────────────────────────────────────────────────────────── */
+/* ─── Cyber Console Sidebar ─────────────────────────────────────────────────── */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: var(--sidebar-w);
   height: 100dvh;
-  background-color: hsl(var(--bg-surface));
-  border-right: 1px solid hsl(var(--border));
+  background-color: #090C12;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   z-index: 40;
@@ -130,24 +132,28 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 22px 20px 20px;
-  border-bottom: 1px solid hsl(var(--border));
+  gap: 12px;
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(14, 18, 27, 0.6);
 }
 
 .sidebar-logo {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
-  background-color: #173B67;
-  border: 1px solid #E4E7EC;
+  background: #07090E;
+  border: 1.5px solid #FFD700;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 14px;
+  color: #FFD700;
+  font-size: 13px;
   font-weight: 700;
+  font-family: var(--font-mono);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
   flex-shrink: 0;
+  letter-spacing: 0.05em;
 }
 
 .sidebar-brand-text {
@@ -156,38 +162,47 @@ body {
 }
 
 .sidebar-brand-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  color: hsl(var(--text-primary));
+  color: #F8FAFC;
   line-height: 1.2;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sidebar-brand-dept {
-  font-size: 11px;
-  color: hsl(var(--text-muted));
-  line-height: 1.2;
+  font-size: 10.5px;
+  color: #64748B;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 170px;
+  margin-top: 2px;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 10px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .sidebar-section-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: hsl(var(--text-muted));
-  padding: 14px 10px 6px;
+  color: #64748B;
+  font-family: var(--font-mono);
+  padding: 16px 12px 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sidebar-item {
@@ -195,79 +210,92 @@ body {
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  color: hsl(var(--text-secondary));
+  border-radius: var(--radius-md);
+  color: #94A3B8;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   text-decoration: none;
   position: relative;
+  border: 1px solid transparent;
 }
 
 .sidebar-item:hover {
-  background-color: hsl(var(--bg-subtle));
-  color: hsl(var(--text-primary));
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #F8FAFC;
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-item.active {
-  background-color: #EFF6FF;
-  color: #173B67;
+  background: rgba(255, 215, 0, 0.08);
+  color: #FFD700;
   font-weight: 600;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  box-shadow: inset 0 0 16px rgba(255, 215, 0, 0.06);
 }
 
 .sidebar-item.active::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 15%;
-  height: 70%;
+  top: 20%;
+  height: 60%;
   width: 3px;
-  background-color: #2F6FED;
+  background-color: #FFD700;
   border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px #FFD700;
 }
 
 .sidebar-item-icon {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.sidebar-item:hover .sidebar-item-icon {
+  transform: scale(1.08);
 }
 
 .sidebar-item-badge {
   margin-left: auto;
-  background: hsl(var(--color-primary));
-  color: white;
+  background: rgba(255, 215, 0, 0.15);
+  color: #FFD700;
+  border: 1px solid rgba(255, 215, 0, 0.35);
   font-size: 10px;
   font-weight: 700;
-  padding: 1px 6px;
+  font-family: var(--font-mono);
+  padding: 1px 7px;
   border-radius: 100px;
   min-width: 18px;
   text-align: center;
 }
 
 .sidebar-footer {
-  padding: 12px 10px;
-  border-top: 1px solid hsl(var(--border));
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(14, 18, 27, 0.6);
 }
 
 .sidebar-user {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .sidebar-user:hover {
-  background-color: hsl(var(--bg-subtle));
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .sidebar-user-name {
   font-size: 13px;
   font-weight: 600;
-  color: hsl(var(--text-primary));
+  color: #F8FAFC;
   line-height: 1.2;
   max-width: 130px;
   white-space: nowrap;
@@ -277,7 +305,8 @@ body {
 
 .sidebar-user-role {
   font-size: 11px;
-  color: hsl(var(--text-muted));
+  color: #64748B;
+  font-family: var(--font-mono);
 }
 
 /* ─── Topbar ─────────────────────────────────────────────────────────────────  */
@@ -285,29 +314,34 @@ body {
   position: sticky;
   top: 0;
   z-index: 30;
-  height: 64px;
-  background-color: hsl(var(--bg-surface) / 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid hsl(var(--border));
+  height: 60px;
+  background-color: rgba(7, 9, 14, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 28px;
   gap: 16px;
 }
 
 .topbar-title {
   flex: 1;
-  font-size: 16px;
-  font-weight: 700;
-  color: hsl(var(--text-primary));
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #F8FAFC;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 /* ─── Page Content ───────────────────────────────────────────────────────────  */
@@ -321,132 +355,136 @@ body {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
-  color: hsl(var(--text-primary));
-  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #F8FAFC;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
 .page-subtitle {
-  font-size: 14px;
-  color: hsl(var(--text-secondary));
+  font-size: 13.5px;
+  color: #94A3B8;
   margin-top: 4px;
 }
 
-/* ─── Cards (Step 4A Institutional Minimal) ──────────────────────  */
-.card {
-  background-color: #FFFFFF;
-  border: 1px solid #E4E7EC;
-  border-radius: var(--radius-md);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease;
+/* ─── Tech Cards (BMSIT Coding Club Aesthetic) ──────────────────────────────  */
+.card,
+.tech-card {
+  background-color: #0E121B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
-.card:hover {
-  border-color: #D0D5DD;
+.card:hover,
+.tech-card:hover {
+  border-color: rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 215, 0, 0.1);
 }
 
 .card-glass {
-  background: #FFFFFF;
-  border: 1px solid #E4E7EC;
-  border-radius: var(--radius-md);
-  padding: 20px;
+  background: rgba(14, 18, 27, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 22px;
 }
 
 .stat-card {
-  background-color: #FFFFFF;
-  border: 1px solid #E4E7EC;
-  border-radius: var(--radius-md);
+  background-color: #0E121B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
   padding: 20px;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-  border-color: #D0D5DD;
-}
-
-.stat-card-glow {
-  display: none !important;
+  border-color: rgba(14, 165, 233, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(14, 165, 233, 0.12);
 }
 
 .stat-card-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .stat-card-value {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
-  color: #17202A;
-  font-family: "Inter", sans-serif;
+  color: #F8FAFC;
+  font-family: var(--font-mono);
   line-height: 1.1;
   margin-bottom: 4px;
+  letter-spacing: -0.02em;
 }
 
 .stat-card-label {
-  font-size: 12px;
-  color: #667085;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-size: 11.5px;
+  color: #64748B;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .stat-card-trend {
   font-size: 12px;
-  font-weight: 500;
-  margin-top: 8px;
-}
-
-.trend-up { color: #198754; }
-.trend-down { color: #C0392B; }
-
-/* ─── Text & Buttons (Institutional) ─────────────────────────  */
-.gradient-text {
-  color: #173B67;
   font-weight: 600;
+  font-family: var(--font-mono);
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.text-gradient {
-  color: #173B67;
-  font-weight: 600;
-}
+.trend-up { color: #22C55E; }
+.trend-down { color: #F43F5E; }
 
-.btn-gradient,
-.btn-primary {
-  background: #2F6FED;
-  color: #FFFFFF;
-  border: 1px solid #2F6FED;
+/* ─── Buttons (BMSIT Coding Club Inspired) ───────────────────────────────────  */
+.btn-primary,
+.btn-gradient {
+  background: linear-gradient(135deg, #FFD700 0%, #F59E0B 100%);
+  color: #07090E;
+  border: 1px solid #FFD700;
   border-radius: var(--radius-md);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
 }
 
-.btn-gradient:hover,
-.btn-primary:hover {
-  background: #1D58D8;
-  border-color: #1D58D8;
+.btn-primary:hover,
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #FFE247 0%, #FFB020 100%);
+  box-shadow: 0 4px 18px rgba(255, 215, 0, 0.4);
+  transform: translateY(-1px);
 }
 
-.btn-gradient:active,
-.btn-primary:active {
-  background: #1545B0;
-  border-color: #1545B0;
+.btn-primary:active,
+.btn-gradient:active {
+  transform: translateY(0);
 }
 
 .btn-outline {
@@ -1186,5 +1224,171 @@ tbody tr:hover {
   text-transform: uppercase;
 }
 
-.text-warning { color: #eab308; }
-.text-primary { color: hsl(var(--color-primary)); }
+.text-warning { color: #F59E0B; }
+.text-primary { color: #FFD700; }
+.text-cyan { color: #0EA5E9; }
+
+/* ─── BMSIT Coding Club Cyber Utilities ─────────────────────────────────────── */
+
+/* Pulsing LED Status Dot */
+.tech-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tech-led::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  opacity: 0.75;
+  animation: led-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.led-green {
+  background-color: #22C55E;
+}
+.led-green::after {
+  background-color: #22C55E;
+}
+
+.led-gold {
+  background-color: #FFD700;
+}
+.led-gold::after {
+  background-color: #FFD700;
+}
+
+.led-cyan {
+  background-color: #0EA5E9;
+}
+.led-cyan::after {
+  background-color: #0EA5E9;
+}
+
+.led-red {
+  background-color: #F43F5E;
+}
+.led-red::after {
+  background-color: #F43F5E;
+}
+
+@keyframes led-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Tech Eyebrow (e.g. // 01 — Overview) */
+.hero-eyebrow,
+.tech-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: #FFD700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* Live Telemetry Ticker Ribbon */
+.tech-ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #94A3B8;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.04em;
+}
+
+/* Unicode Glyph Chips (bmsitcodingclub.space style) */
+.glyph-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #E2E8F0;
+  letter-spacing: 0.04em;
+}
+
+.glyph-chip-gold {
+  background: rgba(255, 215, 0, 0.08);
+  border-color: rgba(255, 215, 0, 0.3);
+  color: #FFD700;
+}
+
+.glyph-chip-cyan {
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(14, 165, 233, 0.3);
+  color: #38BDF8;
+}
+
+.glyph-chip-green {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ADE80;
+}
+
+/* Monospace Numbers */
+.mono-number {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cyber Terminal Box */
+.terminal-box {
+  background: #07090E;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #94A3B8;
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Subtle Grid Background Pattern */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
