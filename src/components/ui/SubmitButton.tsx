@@ -9,6 +9,7 @@ interface SubmitButtonProps {
   className?: string
   variant?: 'gradient' | 'outline' | 'danger'
   icon?: React.ReactNode
+  style?: React.CSSProperties
 }
 
 export function SubmitButton({
@@ -17,6 +18,7 @@ export function SubmitButton({
   className,
   variant = 'gradient',
   icon,
+  style = {},
 }: SubmitButtonProps) {
   const { pending } = useFormStatus()
 
@@ -38,6 +40,7 @@ export function SubmitButton({
         gap: '0.5rem',
         opacity: pending ? 0.7 : 1,
         cursor: pending ? 'not-allowed' : 'pointer',
+        ...style,
       }}
     >
       {pending ? (

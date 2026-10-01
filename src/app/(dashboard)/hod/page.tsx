@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/StatCard";
-import { Users, CheckSquare, Calendar, Trophy, BarChart3, Star } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Users, CheckSquare, Calendar, Trophy, BarChart3, Star, ArrowRight, Award, Shield } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "HOD Dashboard" };
+export const metadata: Metadata = { title: "HOD Console // Executive Overview" };
 
 export default async function HodDashboard() {
   const session = await auth();
@@ -33,86 +34,140 @@ export default async function HodDashboard() {
   ]);
 
   const now = new Date();
-  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const deptName = process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Dept. of Computer Science & Engineering";
 
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">
-          Department <span className="text-gradient">Overview</span>
-        </h2>
-        <p className="page-subtitle">
-          {process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Department"} · {formatDate(now)}
-        </p>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "EXECUTIVE_NODE" },
+          { label: "DEPT_OVERVIEW" },
+        ]}
+        title="Department Executive Console"
+        subtitle={`Live institutional overview · ${deptName.toUpperCase()} · BMSIT BANGALORE`}
+        actions={
+          <div className="tech-ticker">
+            <span className="tech-led led-green" />
+            <span style={{ color: "#F8FAFC", fontWeight: 700 }}>EXECUTIVE DISPATCH ACTIVE</span>
+          </div>
+        }
+      />
+
+      {/* Cyber Executive Stats */}
+      <div className="grid-4" style={{ marginBottom: 28 }}>
+        <StatCard
+          label="TOTAL FACULTY"
+          value={totalFaculty}
+          icon={<Users size={20} />}
+          iconBg="rgba(14, 165, 233, 0.1)"
+          glowColor="rgba(14, 165, 233, 0.2)"
+        />
+        <StatCard
+          label="ACTIVE CLUSTERS"
+          value={clusters.length}
+          icon={<BarChart3 size={20} />}
+          iconBg="rgba(255, 215, 0, 0.1)"
+          glowColor="rgba(255, 215, 0, 0.2)"
+        />
+        <StatCard
+          label="ALLOCATED TASKS"
+          value={totalTasks}
+          icon={<CheckSquare size={20} />}
+          iconBg="rgba(34, 197, 94, 0.1)"
+          glowColor="rgba(34, 197, 94, 0.2)"
+        />
+        <StatCard
+          label="PENDING LEAVE REVIEWS"
+          value={pendingLeaves}
+          icon={<Calendar size={20} />}
+          iconBg="rgba(245, 158, 11, 0.1)"
+          glowColor="rgba(245, 158, 11, 0.2)"
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid-4 fade-in" style={{ marginBottom: 28 }}>
-        <StatCard label="Total Faculty" value={totalFaculty} icon={<Users size={20} />}
-          iconBg="hsl(192 91% 50% / 0.12)" />
-        <StatCard label="Total Clusters" value={clusters.length} icon={<BarChart3 size={20} />}
-          iconBg="hsl(258 90% 66% / 0.12)" />
-        <StatCard label="Total Tasks" value={totalTasks} icon={<CheckSquare size={20} />}
-          iconBg="hsl(38 92% 50% / 0.12)" />
-        <StatCard label="Pending Leaves (Dept)" value={pendingLeaves} icon={<Calendar size={20} />}
-          iconBg="hsl(0 84% 60% / 0.12)" />
-      </div>
-
-      <div className="grid-2" style={{ alignItems: "start" }}>
+      <div className="grid-2" style={{ alignItems: "start", gap: 20 }}>
         {/* Cluster overview cards */}
-        <div className="card fade-in fade-in-delay-1">
+        <div className="tech-card" style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 className="section-title" style={{ margin: 0 }}>Clusters</h3>
-            <a href="/hod/clusters" className="btn-outline" style={{ padding: "6px 14px", fontSize: 12 }}>
-              Manage
+            <div>
+              <span className="hero-eyebrow" style={{ margin: 0 }}>
+                // TOPOLOGY
+              </span>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                Departmental Clusters
+              </h3>
+            </div>
+            <a href="/hod/clusters" className="btn-primary" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+              CLUSTER MATRIX →
             </a>
           </div>
 
           {clusters.length === 0 ? (
-            <div className="empty-state" style={{ padding: "24px" }}>
-              <BarChart3 size={36} className="empty-state-icon" />
-              <div className="empty-state-title">No clusters yet</div>
+            <div style={{ padding: 28, textAlign: "center" }}>
+              <BarChart3 size={32} style={{ color: "#334155", margin: "0 auto 8px" }} />
+              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NO CLUSTERS CONFIGURED</div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {clusters.map((c) => (
                 <a
                   key={c.id}
                   href={`/hod/clusters/${c.id}`}
                   style={{
-                    display: "flex", alignItems: "center", gap: 14,
-                    padding: "14px 16px",
-                    background: "hsl(var(--bg-subtle))",
-                    borderRadius: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 14,
+                    padding: "12px 16px",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    borderRadius: 10,
                     textDecoration: "none",
-                    border: "1px solid hsl(var(--border))",
-                    transition: "all 0.15s ease",
+                    border: "1px solid rgba(255, 255, 255, 0.07)",
+                    transition: "all 0.18s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.07)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
                   }}
                 >
-                  <div style={{
-                    width: 42, height: 42, borderRadius: 12,
-                    background: "linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-secondary)))",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "white", fontSize: 16, fontWeight: 800,
-                    flexShrink: 0,
-                  }}>
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 8,
+                      background: "#07090E",
+                      border: "1.5px solid #FFD700",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#FFD700",
+                      fontSize: 15,
+                      fontWeight: 800,
+                      fontFamily: "var(--font-mono)",
+                      flexShrink: 0,
+                    }}
+                  >
                     {c.name.charAt(0)}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "hsl(var(--text-primary))" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>
                       {c.name}
                     </div>
-                    <div style={{ fontSize: 12.5, color: "hsl(var(--text-secondary))" }}>
-                      Head: {c.head?.name ?? "Unassigned"} · {c.members.length} members
+                    <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B", marginTop: 2 }}>
+                      HEAD: {c.head?.name?.toUpperCase() ?? "UNASSIGNED"} · {c.members.length} NODES
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
-                    <div style={{ fontSize: 11, color: "hsl(var(--text-muted))" }}>
-                      {c._count.tasks} tasks
-                    </div>
-                    <div style={{ fontSize: 11, color: "hsl(var(--color-warning))" }}>
-                      {c._count.leaveApplications} leaves
-                    </div>
+                    <span className="glyph-chip glyph-chip-cyan" style={{ fontSize: 10, padding: "1px 6px" }}>
+                      {c._count.tasks} TASKS
+                    </span>
+                    <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "#F59E0B" }}>
+                      {c._count.leaveApplications} LEAVES
+                    </span>
                   </div>
                 </a>
               ))}
@@ -121,66 +176,114 @@ export default async function HodDashboard() {
         </div>
 
         {/* Right panel */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {/* Faculty of the Month */}
-          <div className="card fade-in fade-in-delay-2">
-            <h3 className="section-title" style={{ marginBottom: 16 }}>Faculty of the Month</h3>
+          <div className="tech-card" style={{ padding: 22 }}>
+            <span className="hero-eyebrow" style={{ margin: 0 }}>
+              // MERIT RECOGNITION
+            </span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 14px 0" }}>
+              Faculty of the Month
+            </h3>
             {fotm ? (
-              <div style={{
-                padding: "16px",
-                background: "linear-gradient(135deg, hsl(var(--color-primary) / 0.08), hsl(var(--color-secondary) / 0.06))",
-                borderRadius: 12,
-                border: "1px solid hsl(var(--color-primary) / 0.15)",
-                display: "flex", alignItems: "center", gap: 14,
-              }}>
-                <div className="avatar avatar-lg">
+              <div
+                style={{
+                  padding: "16px",
+                  background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%)",
+                  borderRadius: 10,
+                  border: "1.5px solid rgba(255, 215, 0, 0.35)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  boxShadow: "0 0 16px rgba(255, 215, 0, 0.1)",
+                }}
+              >
+                <div
+                  className="avatar avatar-lg"
+                  style={{
+                    background: "#07090E",
+                    border: "2px solid #FFD700",
+                    color: "#FFD700",
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 800,
+                  }}
+                >
                   {getInitials(fotm.faculty.name)}
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, color: "hsl(var(--color-primary))", fontWeight: 600, marginBottom: 2 }}>
-                    🏆 {monthNames[fotm.month - 1]} {fotm.year}
+                  <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FFD700", fontWeight: 700, marginBottom: 2 }}>
+                    ★ {monthNames[fotm.month - 1]} {fotm.year} RECIPIENT
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "hsl(var(--text-primary))", fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#F8FAFC" }}>
                     {fotm.faculty.name}
                   </div>
-                  <div style={{ fontSize: 12.5, color: "hsl(var(--text-secondary))", marginTop: 2 }}>
-                    {fotm.faculty.designation ?? "Faculty"}
+                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
+                    {fotm.faculty.designation ?? "Faculty Member"}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="empty-state" style={{ padding: "20px" }}>
-                <Star size={32} className="empty-state-icon" />
-                <div className="empty-state-title">Not yet determined</div>
-                <div className="empty-state-desc">Faculty of the Month will be computed at month end.</div>
+              <div style={{ padding: 20, textAlign: "center" }}>
+                <Star size={28} style={{ color: "#334155", margin: "0 auto 8px" }} />
+                <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NOT YET DETERMINED</div>
+                <div style={{ fontSize: 11.5, color: "#475569", marginTop: 2 }}>Computed automatically at month end.</div>
               </div>
             )}
-            <a href="/hod/faculty-of-month" className="btn-outline"
-              style={{ display: "block", textAlign: "center", marginTop: 12, padding: "8px", fontSize: 13 }}>
-              View History →
+            <a
+              href="/hod/faculty-of-month"
+              className="btn-outline"
+              style={{ display: "block", textAlign: "center", marginTop: 14, padding: "8px", fontSize: 12, fontFamily: "var(--font-mono)" }}
+            >
+              VIEW RECOGNITION ARCHIVE →
             </a>
           </div>
 
-          {/* Quick actions */}
-          <div className="card fade-in fade-in-delay-3">
-            <h3 className="section-title" style={{ marginBottom: 14 }}>Quick Actions</h3>
+          {/* Quick Actions */}
+          <div className="tech-card" style={{ padding: 22 }}>
+            <span className="hero-eyebrow" style={{ margin: 0 }}>
+              // GOVERNANCE SHORTCUTS
+            </span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 14px 0" }}>
+              Executive Actions
+            </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {[
-                { href: "/hod/tasks", icon: <CheckSquare size={16} />, label: "Assign Tasks Department-wide" },
-                { href: "/hod/leave", icon: <Calendar size={16} />, label: "Review All Leave Requests" },
-                { href: "/hod/leaderboard", icon: <Trophy size={16} />, label: "View Department Leaderboard" },
-                { href: "/hod/analytics", icon: <BarChart3 size={16} />, label: "Department Analytics" },
-                { href: "/hod/export", icon: <BarChart3 size={16} />, label: "Export Department Data" },
-                { href: "/hod/audit", icon: <BarChart3 size={16} />, label: "View Audit Log" },
+                { href: "/hod/tasks", icon: <CheckSquare size={15} />, label: "Assign Tasks Department-Wide" },
+                { href: "/hod/leave", icon: <Calendar size={15} />, label: "Review All Faculty Leave Requests" },
+                { href: "/hod/leaderboard", icon: <Trophy size={15} />, label: "Inspect Department Standings" },
+                { href: "/hod/accreditation", icon: <Award size={15} />, label: "NBA / NAAC Criterion 5 Dossier" },
+                { href: "/hod/export", icon: <BarChart3 size={15} />, label: "Export Department Records Archive" },
+                { href: "/hod/audit", icon: <Shield size={15} />, label: "Audit Ledger Trail" },
               ].map((a) => (
                 <a
                   key={a.href}
                   href={a.href}
-                  className="sidebar-item"
-                  style={{ padding: "10px 12px", borderRadius: 8, textDecoration: "none", border: "1px solid hsl(var(--border))" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "10px 14px",
+                    borderRadius: 6,
+                    textDecoration: "none",
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    color: "#F8FAFC",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.3)";
+                    e.currentTarget.style.color = "#FFD700";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)";
+                    e.currentTarget.style.color = "#F8FAFC";
+                  }}
                 >
-                  <span style={{ color: "hsl(var(--color-primary))" }}>{a.icon}</span>
-                  <span style={{ fontSize: 13.5 }}>{a.label}</span>
+                  <span style={{ color: "#FFD700" }}>{a.icon}</span>
+                  <span style={{ flex: 1 }}>{a.label}</span>
+                  <ArrowRight size={13} style={{ opacity: 0.5 }} />
                 </a>
               ))}
             </div>
