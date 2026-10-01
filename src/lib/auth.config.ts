@@ -42,6 +42,24 @@ export const authConfig: NextAuthConfig = {
 
       return true;
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id ?? "";
+        token.role = (user as { role: Role }).role;
+        token.clusterId = (user as { clusterId: string | null }).clusterId;
+        token.avatarUrl = (user as { avatarUrl: string | null }).avatarUrl;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as Role;
+        session.user.clusterId = token.clusterId as string | null;
+        session.user.avatarUrl = token.avatarUrl as string | null;
+      }
+      return session;
+    },
   },
   providers: [],
   session: { strategy: "jwt" },
