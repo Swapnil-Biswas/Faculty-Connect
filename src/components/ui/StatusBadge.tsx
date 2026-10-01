@@ -5,8 +5,6 @@ import {
   XCircle,
   AlertTriangle,
   PlayCircle,
-  MinusCircle,
-  FileText,
   Check,
 } from "lucide-react";
 
@@ -40,85 +38,105 @@ const STATUS_CONFIG: Record<
     color: string;
     bg: string;
     border: string;
+    glyph: string;
     icon: React.ComponentType<{ size?: number; color?: string; style?: React.CSSProperties }>;
   }
 > = {
   COMPLETED: {
     label: "Completed",
-    color: "#198754",
-    bg: "#F0FDF4",
-    border: "#BBF7D0",
+    color: "#4ADE80",
+    bg: "rgba(34, 197, 94, 0.1)",
+    border: "rgba(34, 197, 94, 0.3)",
+    glyph: "◆",
     icon: Check,
   },
   APPROVED: {
     label: "Approved",
-    color: "#198754",
-    bg: "#F0FDF4",
-    border: "#BBF7D0",
+    color: "#4ADE80",
+    bg: "rgba(34, 197, 94, 0.1)",
+    border: "rgba(34, 197, 94, 0.3)",
+    glyph: "◆",
     icon: CheckCircle2,
   },
   ACTIVE: {
     label: "Active",
-    color: "#198754",
-    bg: "#F0FDF4",
-    border: "#BBF7D0",
+    color: "#4ADE80",
+    bg: "rgba(34, 197, 94, 0.1)",
+    border: "rgba(34, 197, 94, 0.3)",
+    glyph: "◆",
     icon: CheckCircle2,
   },
   PENDING: {
     label: "Pending",
-    color: "#B7791F",
-    bg: "#FEFCE8",
-    border: "#FEF08A",
+    color: "#FCD34D",
+    bg: "rgba(245, 158, 11, 0.1)",
+    border: "rgba(245, 158, 11, 0.3)",
+    glyph: "◈",
     icon: Clock,
   },
   OPEN: {
     label: "Open",
-    color: "#2F6FED",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    color: "#38BDF8",
+    bg: "rgba(14, 165, 233, 0.1)",
+    border: "rgba(14, 165, 233, 0.3)",
+    glyph: "▣",
     icon: Clock,
   },
   IN_PROGRESS: {
     label: "In Progress",
-    color: "#2F6FED",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    color: "#38BDF8",
+    bg: "rgba(14, 165, 233, 0.1)",
+    border: "rgba(14, 165, 233, 0.3)",
+    glyph: "▣",
     icon: PlayCircle,
   },
   OVERDUE: {
     label: "Overdue",
-    color: "#C0392B",
-    bg: "#FEF2F2",
-    border: "#FECDCA",
+    color: "#FB7185",
+    bg: "rgba(244, 63, 94, 0.1)",
+    border: "rgba(244, 63, 94, 0.35)",
+    glyph: "▲",
     icon: AlertTriangle,
   },
   REJECTED: {
     label: "Rejected",
-    color: "#C0392B",
-    bg: "#FEF2F2",
-    border: "#FECDCA",
+    color: "#FB7185",
+    bg: "rgba(244, 63, 94, 0.1)",
+    border: "rgba(244, 63, 94, 0.35)",
+    glyph: "✕",
     icon: XCircle,
   },
   CANCELLED: {
     label: "Cancelled",
-    color: "#667085",
-    bg: "#F2F4F7",
-    border: "#E4E7EC",
-    icon: MinusCircle,
+    color: "#94A3B8",
+    bg: "rgba(100, 116, 139, 0.1)",
+    border: "rgba(100, 116, 139, 0.25)",
+    glyph: "—",
+    icon: XCircle,
   },
   INACTIVE: {
     label: "Inactive",
-    color: "#667085",
-    bg: "#F2F4F7",
-    border: "#E4E7EC",
-    icon: MinusCircle,
+    color: "#94A3B8",
+    bg: "rgba(100, 116, 139, 0.1)",
+    border: "rgba(100, 116, 139, 0.25)",
+    glyph: "—",
+    icon: Clock,
   },
   DRAFT: {
     label: "Draft",
-    color: "#667085",
-    bg: "#F2F4F7",
-    border: "#E4E7EC",
-    icon: FileText,
+    color: "#A78BFA",
+    bg: "rgba(129, 140, 248, 0.1)",
+    border: "rgba(129, 140, 248, 0.3)",
+    glyph: "◇",
+    icon: Clock,
+  },
+  UNREAD: {
+    label: "Unread",
+    color: "#FFD700",
+    bg: "rgba(255, 215, 0, 0.1)",
+    border: "rgba(255, 215, 0, 0.35)",
+    glyph: "●",
+    icon: Clock,
   },
 };
 
@@ -129,38 +147,43 @@ export function StatusBadge({
   showIcon = true,
   className = "",
 }: StatusBadgeProps) {
-  const normKey = (status || "").toUpperCase().replace(/[\s-]/g, "_");
-  const config = STATUS_CONFIG[normKey] || {
-    label: status ? status.replace(/_/g, " ") : "Unknown",
-    color: "#667085",
-    bg: "#F2F4F7",
-    border: "#E4E7EC",
-    icon: MinusCircle,
+  const normKey = (status || "").toUpperCase().replace(/[-\s]/g, "_");
+  const cfg = STATUS_CONFIG[normKey] || {
+    label: status,
+    color: "#94A3B8",
+    bg: "rgba(255, 255, 255, 0.05)",
+    border: "rgba(255, 255, 255, 0.1)",
+    glyph: "●",
+    icon: Clock,
   };
 
-  const displayText = label || config.label;
-  const IconComponent = config.icon;
+  const IconComp = cfg.icon;
+  const displayText = label || cfg.label;
+
   const isSm = size === "sm";
 
   return (
     <span
-      className={className}
+      className={`status-badge ${className}`}
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: isSm ? 3 : 5,
-        padding: isSm ? "2px 6px" : "3px 8px",
+        gap: isSm ? 4 : 5,
+        padding: isSm ? "2px 7px" : "3px 9px",
         borderRadius: 4,
-        fontSize: isSm ? 11 : 12,
-        fontWeight: 500,
-        lineHeight: 1.2,
-        color: config.color,
-        backgroundColor: config.bg,
-        border: `1px solid ${config.border}`,
+        fontSize: isSm ? 10.5 : 11.5,
+        fontWeight: 600,
+        fontFamily: "var(--font-mono)",
+        letterSpacing: "0.04em",
+        color: cfg.color,
+        backgroundColor: cfg.bg,
+        border: `1px solid ${cfg.border}`,
         whiteSpace: "nowrap",
+        lineHeight: 1.2,
       }}
     >
-      {showIcon && <IconComponent size={isSm ? 12 : 13} color={config.color} />}
+      <span style={{ fontSize: isSm ? 8 : 9, opacity: 0.85 }}>{cfg.glyph}</span>
+      {showIcon && <IconComp size={isSm ? 11 : 12} />}
       <span>{displayText}</span>
     </span>
   );

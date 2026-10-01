@@ -20,43 +20,61 @@ export function MetricBlock({
   style = {},
 }: MetricBlockProps) {
   const trendColors = {
-    positive: "#198754",
-    warning: "#B7791F",
-    danger: "#C0392B",
-    neutral: "#667085",
+    positive: "#22C55E",
+    warning: "#F59E0B",
+    danger: "#F43F5E",
+    neutral: "#94A3B8",
   };
 
   return (
     <div
-      className={className}
+      className={`tech-card ${className}`}
       style={{
-        backgroundColor: "#FFFFFF",
-        border: "1px solid #E4E7EC",
-        borderRadius: 6,
+        backgroundColor: "#0E121B",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        borderRadius: 10,
         padding: "16px 18px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 96,
-        boxShadow: "0 1px 2px 0 rgba(16, 24, 40, 0.04)",
+        minHeight: 100,
+        boxShadow: "0 4px 14px -2px rgba(0, 0, 0, 0.5)",
+        position: "relative",
+        overflow: "hidden",
+        transition: "all 0.2s ease",
         ...style,
       }}
     >
+      {/* Corner crosshair accent */}
+      <div 
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 24,
+          height: 24,
+          borderRight: "1px solid rgba(255, 215, 0, 0.2)",
+          borderTop: "1px solid rgba(255, 215, 0, 0.2)",
+          pointerEvents: "none"
+        }}
+      />
+
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: 6,
+          marginBottom: 8,
         }}
       >
         <span
           style={{
-            fontSize: 11,
+            fontSize: 10.5,
             fontWeight: 600,
             textTransform: "uppercase",
-            letterSpacing: "0.04em",
-            color: "#667085",
+            letterSpacing: "0.1em",
+            color: "#64748B",
+            fontFamily: "var(--font-mono)",
           }}
         >
           {label}
@@ -64,8 +82,10 @@ export function MetricBlock({
         {icon && (
           <div
             style={{
-              color: "#173B67",
-              opacity: 0.85,
+              color: "#FFD700",
+              opacity: 0.9,
+              display: "flex",
+              alignItems: "center",
             }}
           >
             {icon}
@@ -76,12 +96,12 @@ export function MetricBlock({
       <div>
         <div
           style={{
-            fontSize: 26,
+            fontSize: 28,
             fontWeight: 700,
-            color: "#17202A",
-            lineHeight: 1.15,
-            fontFamily: "Inter, sans-serif",
-            letterSpacing: "-0.01em",
+            color: "#F8FAFC",
+            lineHeight: 1.1,
+            fontFamily: "var(--font-mono)",
+            letterSpacing: "-0.02em",
           }}
         >
           {value}
@@ -90,10 +110,14 @@ export function MetricBlock({
         {context && (
           <div
             style={{
-              fontSize: 12,
+              fontSize: 11.5,
               fontWeight: 500,
+              fontFamily: "var(--font-mono)",
               color: trendColors[trendType],
-              marginTop: 4,
+              marginTop: 6,
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
             }}
           >
             {context}

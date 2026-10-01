@@ -18,31 +18,34 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={className}
+      className={`tech-card ${className}`}
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "40px 24px",
+        padding: "48px 24px",
         textAlign: "center",
-        backgroundColor: "#FFFFFF",
-        border: "1px solid #E4E7EC",
-        borderRadius: 6,
+        backgroundColor: "#0E121B",
+        border: "1px dashed rgba(255, 255, 255, 0.12)",
+        borderRadius: 12,
+        position: "relative",
       }}
     >
       {Icon && (
         <div
           style={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            backgroundColor: "#F2F4F7",
+            width: 48,
+            height: 48,
+            borderRadius: 10,
+            backgroundColor: "rgba(255, 215, 0, 0.08)",
+            border: "1px solid rgba(255, 215, 0, 0.25)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: 12,
-            color: "#667085",
+            marginBottom: 14,
+            color: "#FFD700",
+            boxShadow: "0 0 16px rgba(255, 215, 0, 0.1)",
           }}
         >
           <Icon size={22} />
@@ -52,9 +55,11 @@ export function EmptyState({
       <h3
         style={{
           fontSize: 15,
-          fontWeight: 600,
-          color: "#17202A",
-          margin: "0 0 4px 0",
+          fontWeight: 700,
+          color: "#F8FAFC",
+          fontFamily: "var(--font-mono)",
+          margin: "0 0 6px 0",
+          letterSpacing: "-0.01em",
         }}
       >
         {title}
@@ -64,9 +69,9 @@ export function EmptyState({
         <p
           style={{
             fontSize: 13,
-            color: "#667085",
-            maxWidth: 380,
+            color: "#94A3B8",
             margin: "0 0 16px 0",
+            maxWidth: 360,
             lineHeight: 1.5,
           }}
         >

@@ -28,7 +28,7 @@ export function PageHeader({
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 8,
+        gap: 6,
         marginBottom: 24,
       }}
     >
@@ -39,21 +39,23 @@ export function PageHeader({
             display: "flex",
             alignItems: "center",
             gap: 6,
-            fontSize: 12,
-            color: "#667085",
+            fontSize: 11,
+            fontFamily: "var(--font-mono)",
+            color: "#64748B",
             marginBottom: 2,
+            letterSpacing: "0.04em",
           }}
         >
           {breadcrumbs.map((b, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
               <React.Fragment key={i}>
-                {i > 0 && <ChevronRight size={12} color="#98A2B3" />}
+                {i > 0 && <ChevronRight size={11} color="#475569" />}
                 {isLast || !b.href ? (
                   <span
                     style={{
                       fontWeight: isLast ? 600 : 400,
-                      color: isLast ? "#17202A" : "#667085",
+                      color: isLast ? "#FFD700" : "#64748B",
                     }}
                   >
                     {b.label}
@@ -62,10 +64,16 @@ export function PageHeader({
                   <Link
                     href={b.href}
                     style={{
-                      color: "#667085",
+                      color: "#94A3B8",
                       textDecoration: "none",
+                      transition: "color 0.15s ease",
                     }}
-                    className="hover:text-primary"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#F8FAFC";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#94A3B8";
+                    }}
                   >
                     {b.label}
                   </Link>
@@ -89,22 +97,23 @@ export function PageHeader({
           <h1
             style={{
               fontSize: 24,
-              fontWeight: 600,
-              color: "#17202A",
-              lineHeight: 1.25,
+              fontWeight: 800,
+              color: "#F8FAFC",
+              lineHeight: 1.2,
               margin: 0,
-              letterSpacing: "-0.015em",
+              letterSpacing: "-0.02em",
             }}
           >
             {title}
           </h1>
+
           {subtitle && (
             <p
               style={{
-                fontSize: 13,
-                color: "#667085",
-                lineHeight: 1.5,
+                fontSize: 13.5,
+                color: "#94A3B8",
                 margin: "4px 0 0 0",
+                lineHeight: 1.45,
               }}
             >
               {subtitle}
