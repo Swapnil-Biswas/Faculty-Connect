@@ -14,35 +14,36 @@ export function ApplyLeaveForm() {
     return (
       <div
         style={{
-          padding: "20px 24px",
-          backgroundColor: "#F0FDF4",
-          border: "1px solid #BBF7D0",
-          borderRadius: 6,
+          padding: "24px",
+          backgroundColor: "rgba(34, 197, 94, 0.08)",
+          border: "1px solid rgba(34, 197, 94, 0.35)",
+          borderRadius: 8,
           textAlign: "center",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, color: "#198754" }}>
-          <CheckCircle2 size={32} />
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 10, color: "#4ADE80" }}>
+          <CheckCircle2 size={36} />
         </div>
         <div
           style={{
             fontSize: 15,
-            fontWeight: 600,
-            color: "#198754",
-            marginBottom: 4,
+            fontWeight: 700,
+            fontFamily: "var(--font-mono)",
+            color: "#4ADE80",
+            marginBottom: 6,
           }}
         >
-          Leave Application Submitted
+          APPLICATION REGISTERED
         </div>
-        <div style={{ fontSize: 13, color: "#667085", lineHeight: 1.4 }}>
-          Your leave request has been submitted and is currently pending review by your Cluster Head.
+        <div style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.5 }}>
+          Your leave request has been submitted and is currently pending evaluation by your Cluster Head.
         </div>
         <button
           onClick={() => window.location.reload()}
           className="btn-outline"
-          style={{ marginTop: 16, fontSize: 12, padding: "6px 14px" }}
+          style={{ marginTop: 18, fontSize: 12, padding: "6px 16px", fontFamily: "var(--font-mono)" }}
         >
-          Apply for Another Date
+          APPLY FOR ANOTHER DATE
         </button>
       </div>
     );
@@ -54,9 +55,9 @@ export function ApplyLeaveForm() {
         <div>
           <label
             htmlFor="startDate"
-            style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}
+            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
           >
-            Start Date *
+            01 // START DATE *
           </label>
           <input
             id="startDate"
@@ -66,17 +67,21 @@ export function ApplyLeaveForm() {
             min={new Date().toISOString().split("T")[0]}
             style={{
               width: "100%",
-              height: 36,
-              padding: "6px 10px",
-              fontSize: 13,
-              border: "1px solid #E4E7EC",
-              borderRadius: 4,
-              backgroundColor: "#FFFFFF",
-              color: "#17202A",
+              height: 38,
+              padding: "0 10px",
+              fontSize: 12.5,
+              fontFamily: "var(--font-mono)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: 6,
+              backgroundColor: "#07090E",
+              color: "#F8FAFC",
+              outline: "none",
             }}
+            onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
+            onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
           />
           {state.fieldErrors?.startDate && (
-            <span style={{ fontSize: 11.5, color: "#C0392B", marginTop: 4, display: "block" }}>
+            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
               {state.fieldErrors.startDate[0]}
             </span>
           )}
@@ -85,9 +90,9 @@ export function ApplyLeaveForm() {
         <div>
           <label
             htmlFor="endDate"
-            style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}
+            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
           >
-            End Date *
+            02 // END DATE *
           </label>
           <input
             id="endDate"
@@ -97,17 +102,21 @@ export function ApplyLeaveForm() {
             min={new Date().toISOString().split("T")[0]}
             style={{
               width: "100%",
-              height: 36,
-              padding: "6px 10px",
-              fontSize: 13,
-              border: "1px solid #E4E7EC",
-              borderRadius: 4,
-              backgroundColor: "#FFFFFF",
-              color: "#17202A",
+              height: 38,
+              padding: "0 10px",
+              fontSize: 12.5,
+              fontFamily: "var(--font-mono)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: 6,
+              backgroundColor: "#07090E",
+              color: "#F8FAFC",
+              outline: "none",
             }}
+            onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
+            onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
           />
           {state.fieldErrors?.endDate && (
-            <span style={{ fontSize: 11.5, color: "#C0392B", marginTop: 4, display: "block" }}>
+            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
               {state.fieldErrors.endDate[0]}
             </span>
           )}
@@ -117,33 +126,32 @@ export function ApplyLeaveForm() {
       <div>
         <label
           htmlFor="reason"
-          style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#17202A", marginBottom: 6 }}
+          style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
         >
-          Justification / Reason *{" "}
-          <span style={{ color: "#667085", fontWeight: 400 }}>(minimum 10 characters)</span>
+          03 // FORMAL JUSTIFICATION *
         </label>
         <textarea
           id="reason"
           name="reason"
-          rows={3}
-          placeholder="State the academic, medical, or personal reason for absence..."
+          rows={4}
           required
-          minLength={10}
-          maxLength={1000}
+          placeholder="State institutional or personal reasons for temporary leave..."
           style={{
             width: "100%",
-            padding: "8px 10px",
+            padding: "10px 12px",
             fontSize: 13,
-            border: "1px solid #E4E7EC",
-            borderRadius: 4,
-            backgroundColor: "#FFFFFF",
-            color: "#17202A",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            borderRadius: 6,
+            backgroundColor: "#07090E",
+            color: "#F8FAFC",
+            outline: "none",
             resize: "vertical",
-            minHeight: 76,
           }}
+          onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
         />
         {state.fieldErrors?.reason && (
-          <span style={{ fontSize: 11.5, color: "#C0392B", marginTop: 4, display: "block" }}>
+          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
             {state.fieldErrors.reason[0]}
           </span>
         )}
@@ -152,21 +160,32 @@ export function ApplyLeaveForm() {
       {state.error && (
         <div
           style={{
-            padding: "10px 12px",
-            backgroundColor: "#FEF2F2",
-            border: "1px solid #FECDCA",
-            borderRadius: 4,
+            padding: "10px 14px",
+            backgroundColor: "rgba(244, 63, 94, 0.1)",
+            border: "1px solid rgba(244, 63, 94, 0.35)",
+            borderRadius: 6,
             fontSize: 12,
-            color: "#C0392B",
+            fontFamily: "var(--font-mono)",
+            color: "#FB7185",
           }}
         >
           {state.error}
         </div>
       )}
 
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
-        <SubmitButton label="Submit Application" pendingLabel="Submitting..." />
-      </div>
+      <SubmitButton
+        label="SUBMIT APPLICATION"
+        pendingLabel="TRANSMITTING..."
+        className="btn-primary"
+        style={{
+          height: 40,
+          width: "100%",
+          justifyContent: "center",
+          fontFamily: "var(--font-mono)",
+          fontSize: 13,
+          letterSpacing: "0.04em",
+        }}
+      />
     </form>
   );
 }
