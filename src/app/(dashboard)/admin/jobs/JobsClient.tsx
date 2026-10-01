@@ -129,45 +129,61 @@ export function JobsClient() {
   return (
     <div>
       {/* Jobs Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: 20, marginBottom: 32 }}>
         {jobDefinitions.map((job) => {
           const isCurrentRunning = runningJob === job.key && isPending;
           return (
             <div
               key={job.key}
-              className="card"
               style={{
-                padding: "22px 24px",
+                background: "#0E121B",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: 12,
+                padding: "24px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                gap: 16,
+                gap: 18,
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                transition: "border-color 0.2s ease, transform 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div
                       style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 12,
-                        background: "hsl(var(--color-primary) / 0.1)",
+                        width: 44,
+                        height: 44,
+                        borderRadius: 10,
+                        background: "rgba(255, 255, 255, 0.03)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        flexShrink: 0,
                       }}
                     >
                       {job.icon}
                     </div>
                     <div>
-                      <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>{job.name}</h3>
-                      <span style={{ fontSize: 11.5, color: "hsl(var(--text-muted))" }}>{job.cronSchedule}</span>
+                      <h3 style={{ fontSize: 15, fontWeight: 700, margin: "0 0 4px 0", color: "#F8FAFC" }}>{job.name}</h3>
+                      <span style={{ fontSize: 11, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
+                        // {job.cronSchedule}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
                   {job.description}
                 </p>
               </div>
@@ -177,34 +193,54 @@ export function JobsClient() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  borderTop: "1px solid hsl(var(--border))",
-                  paddingTop: 14,
+                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  paddingTop: 16,
                 }}
               >
-                <span className="role-badge" style={{ background: "hsl(var(--color-primary) / 0.1)", color: "hsl(var(--color-primary))", fontSize: 11 }}>
-                  Automated Job
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "#38BDF8",
+                    background: "rgba(56, 189, 248, 0.1)",
+                    border: "1px solid rgba(56, 189, 248, 0.25)",
+                    padding: "3px 8px",
+                    borderRadius: 4,
+                  }}
+                >
+                  ● DAEMON READY
                 </span>
                 <button
                   type="button"
                   onClick={() => handleRun(job.key, job.name, job.action)}
                   disabled={isPending}
-                  className="btn btn-primary"
                   style={{
-                    padding: "6px 14px",
-                    fontSize: 12.5,
+                    padding: "7px 16px",
+                    fontSize: 12,
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 6,
                     cursor: isPending ? "not-allowed" : "pointer",
+                    background: isCurrentRunning
+                      ? "rgba(245, 158, 11, 0.2)"
+                      : "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)",
+                    color: "#F59E0B",
+                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    borderRadius: 6,
+                    boxShadow: "0 0 10px rgba(245, 158, 11, 0.15)",
+                    transition: "all 0.2s ease",
                   }}
                 >
                   {isCurrentRunning ? (
                     <>
-                      <RefreshCw size={14} className="spin" /> Executing...
+                      <RefreshCw size={13} className="spin" /> EXECUTING...
                     </>
                   ) : (
                     <>
-                      <Play size={14} /> Run Now
+                      <Play size={13} /> RUN NOW
                     </>
                   )}
                 </button>
@@ -215,20 +251,44 @@ export function JobsClient() {
       </div>
 
       {/* Execution Audit Log Stream */}
-      <div className="card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+      <div
+        style={{
+          background: "#0E121B",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, borderBottom: "1px solid rgba(255, 255, 255, 0.06)", paddingBottom: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Server size={18} style={{ color: "hsl(var(--color-primary))" }} />
-            <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Maintenance Job Run Console</h2>
+            <Server size={18} style={{ color: "#38BDF8" }} />
+            <div>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+                // TERMINAL CONSOLE
+              </span>
+              <h2 style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: "#F8FAFC" }}>
+                Maintenance Job Telemetry Stream
+              </h2>
+            </div>
           </div>
           {logs.length > 0 && (
             <button
               type="button"
               onClick={() => setLogs([])}
-              className="btn btn-secondary"
-              style={{ padding: "4px 10px", fontSize: 12 }}
+              style={{
+                padding: "5px 12px",
+                fontSize: 11,
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                background: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: 6,
+                color: "#94A3B8",
+                cursor: "pointer",
+              }}
             >
-              Clear Log
+              CLEAR CONSOLE
             </button>
           )}
         </div>
@@ -236,58 +296,69 @@ export function JobsClient() {
         {logs.length === 0 ? (
           <div
             style={{
-              padding: "36px 20px",
+              padding: "40px 20px",
               textAlign: "center",
-              color: "hsl(var(--text-muted))",
-              background: "hsl(var(--surface-sunken))",
-              borderRadius: "var(--radius-md)",
+              color: "#64748B",
+              background: "#07090E",
+              borderRadius: 8,
+              border: "1px dashed rgba(255, 255, 255, 0.08)",
             }}
           >
-            <Clock size={28} style={{ margin: "0 auto 8px", opacity: 0.4 }} />
-            <p style={{ margin: 0, fontSize: 13.5 }}>No manual executions in this session yet.</p>
-            <p style={{ margin: "4px 0 0", fontSize: 12 }}>Click &quot;Run Now&quot; on any job above to trigger immediate execution.</p>
+            <Clock size={28} style={{ margin: "0 auto 10px", opacity: 0.4, color: "#F59E0B" }} />
+            <p style={{ margin: 0, fontSize: 13, fontFamily: "var(--font-mono)", color: "#CBD5E1" }}>
+              // STANDBY: No manual executions registered in active buffer
+            </p>
+            <p style={{ margin: "6px 0 0", fontSize: 12, color: "#64748B" }}>
+              Click &quot;RUN NOW&quot; on any job above to trigger immediate background sweep.
+            </p>
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {logs.map((log) => (
               <div
                 key={log.id}
                 style={{
-                  padding: "12px 16px",
-                  borderRadius: "var(--radius-md)",
+                  padding: "14px 18px",
+                  borderRadius: 8,
                   border: `1px solid ${
-                    log.success ? "hsl(var(--color-success) / 0.3)" : "hsl(var(--color-danger) / 0.3)"
+                    log.success ? "rgba(34, 197, 94, 0.3)" : "rgba(244, 63, 94, 0.3)"
                   }`,
-                  background: log.success ? "hsl(var(--color-success) / 0.05)" : "hsl(var(--color-danger) / 0.05)",
+                  background: log.success ? "rgba(34, 197, 94, 0.05)" : "rgba(244, 63, 94, 0.05)",
                   display: "flex",
                   flexDirection: "column",
-                  gap: 6,
+                  gap: 8,
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     {log.success ? (
-                      <CheckCircle2 size={16} style={{ color: "hsl(var(--color-success))" }} />
+                      <CheckCircle2 size={16} style={{ color: "#22C55E" }} />
                     ) : (
-                      <AlertCircle size={16} style={{ color: "hsl(var(--color-danger))" }} />
+                      <AlertCircle size={16} style={{ color: "#F43F5E" }} />
                     )}
-                    <span style={{ fontWeight: 700, fontSize: 13.5 }}>{log.name}</span>
+                    <span style={{ fontWeight: 700, fontSize: 13.5, color: "#F8FAFC" }}>{log.name}</span>
                   </div>
-                  <span style={{ fontSize: 11.5, color: "hsl(var(--text-muted))" }}>{log.timestamp}</span>
+                  <span style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+                    {log.timestamp}
+                  </span>
                 </div>
 
-                <p style={{ margin: 0, fontSize: 13, color: "hsl(var(--text-secondary))" }}>{log.message}</p>
+                <p style={{ margin: 0, fontSize: 13, color: "#CBD5E1", fontFamily: "var(--font-mono)" }}>
+                  {log.message}
+                </p>
 
                 {log.details && (
                   <pre
                     style={{
                       margin: "4px 0 0",
-                      padding: "8px 12px",
-                      borderRadius: "var(--radius-sm)",
-                      background: "hsl(var(--surface-sunken))",
-                      fontSize: 11.5,
+                      padding: "10px 14px",
+                      borderRadius: 6,
+                      background: "#07090E",
+                      fontSize: 11,
+                      fontFamily: "var(--font-mono)",
+                      color: "#38BDF8",
                       overflowX: "auto",
-                      border: "1px solid hsl(var(--border))",
+                      border: "1px solid rgba(255, 255, 255, 0.06)",
                     }}
                   >
                     {JSON.stringify(log.details, null, 2)}
