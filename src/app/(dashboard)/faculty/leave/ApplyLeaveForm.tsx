@@ -55,7 +55,7 @@ export function ApplyLeaveForm() {
         <div>
           <label
             htmlFor="startDate"
-            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
+            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#1D1D1F", marginBottom: 6 }}
           >
             01 // START DATE *
           </label>
@@ -65,23 +65,10 @@ export function ApplyLeaveForm() {
             type="date"
             required
             min={new Date().toISOString().split("T")[0]}
-            style={{
-              width: "100%",
-              height: 38,
-              padding: "0 10px",
-              fontSize: 12.5,
-              fontFamily: "var(--font-mono)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: 6,
-              backgroundColor: "#07090E",
-              color: "#F8FAFC",
-              outline: "none",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
-            onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
+            className="form-input"
           />
           {state.fieldErrors?.startDate && (
-            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
+            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#E11D48", marginTop: 4, display: "block" }}>
               {state.fieldErrors.startDate[0]}
             </span>
           )}
@@ -90,7 +77,7 @@ export function ApplyLeaveForm() {
         <div>
           <label
             htmlFor="endDate"
-            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
+            style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#1D1D1F", marginBottom: 6 }}
           >
             02 // END DATE *
           </label>
@@ -100,23 +87,10 @@ export function ApplyLeaveForm() {
             type="date"
             required
             min={new Date().toISOString().split("T")[0]}
-            style={{
-              width: "100%",
-              height: 38,
-              padding: "0 10px",
-              fontSize: 12.5,
-              fontFamily: "var(--font-mono)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: 6,
-              backgroundColor: "#07090E",
-              color: "#F8FAFC",
-              outline: "none",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
-            onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
+            className="form-input"
           />
           {state.fieldErrors?.endDate && (
-            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
+            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#E11D48", marginTop: 4, display: "block" }}>
               {state.fieldErrors.endDate[0]}
             </span>
           )}
@@ -126,7 +100,7 @@ export function ApplyLeaveForm() {
       <div>
         <label
           htmlFor="reason"
-          style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}
+          style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#1D1D1F", marginBottom: 6 }}
         >
           03 // FORMAL JUSTIFICATION *
         </label>
@@ -136,22 +110,11 @@ export function ApplyLeaveForm() {
           rows={4}
           required
           placeholder="State institutional or personal reasons for temporary leave..."
-          style={{
-            width: "100%",
-            padding: "10px 12px",
-            fontSize: 13,
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            borderRadius: 6,
-            backgroundColor: "#07090E",
-            color: "#F8FAFC",
-            outline: "none",
-            resize: "vertical",
-          }}
-          onFocus={(e) => (e.target.style.borderColor = "#FFD700")}
-          onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.12)")}
+          className="form-input"
+          style={{ height: "auto", resize: "vertical" }}
         />
         {state.fieldErrors?.reason && (
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FB7185", marginTop: 4, display: "block" }}>
+          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#E11D48", marginTop: 4, display: "block" }}>
             {state.fieldErrors.reason[0]}
           </span>
         )}

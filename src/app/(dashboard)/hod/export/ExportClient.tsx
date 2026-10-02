@@ -57,8 +57,7 @@ export function ExportClient({ data }: ExportDataProps) {
       desc: "Comprehensive roster with user roles, official designations, emails, and joining dates for NBA Criterion 5.",
       count: data.faculty.length,
       unit: "faculty members",
-      icon: <Users size={22} />,
-      color: "hsl(var(--color-primary))",
+      icon: <Users size={20} />,
       action: () => downloadCSV("faculty_master_directory", data.faculty),
     },
     {
@@ -67,8 +66,7 @@ export function ExportClient({ data }: ExportDataProps) {
       desc: "Complete history of tasks assigned, priorities, deadlines, assigners, assignees, and completion dates.",
       count: data.tasks.length,
       unit: "task records",
-      icon: <CheckSquare size={22} />,
-      color: "hsl(var(--color-success))",
+      icon: <CheckSquare size={20} />,
       action: () => downloadCSV("department_task_ledger", data.tasks),
     },
     {
@@ -77,8 +75,7 @@ export function ExportClient({ data }: ExportDataProps) {
       desc: "Audit trail of all faculty leave applications, start/end dates, approval statuses, and deciders.",
       count: data.leaves.length,
       unit: "leave requests",
-      icon: <Calendar size={22} />,
-      color: "hsl(var(--color-info))",
+      icon: <Calendar size={20} />,
       action: () => downloadCSV("faculty_leave_records", data.leaves),
     },
     {
@@ -87,8 +84,7 @@ export function ExportClient({ data }: ExportDataProps) {
       desc: "Evaluations recorded by Cluster Heads across quality, contribution, initiative, and overall rating.",
       count: data.evaluations.length,
       unit: "evaluation logs",
-      icon: <Award size={22} />,
-      color: "#F59E0B",
+      icon: <Award size={20} />,
       action: () => downloadCSV("faculty_evaluations_report", data.evaluations),
     },
     {
@@ -97,8 +93,7 @@ export function ExportClient({ data }: ExportDataProps) {
       desc: "Cluster groupings, assigned Cluster Heads, and current active faculty distribution.",
       count: data.clusters.length,
       unit: "clusters",
-      icon: <FolderGit2 size={22} />,
-      color: "#8B5CF6",
+      icon: <FolderGit2 size={20} />,
       action: () => downloadCSV("cluster_leadership_summary", data.clusters),
     },
   ];
@@ -112,37 +107,23 @@ export function ExportClient({ data }: ExportDataProps) {
           return (
             <div
               key={opt.id}
+              className="card card-hover"
               style={{
-                background: "#0E121B",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: 12,
-                padding: "24px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
                 gap: 20,
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-                transition: "border-color 0.2s ease, transform 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               <div>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 14 }}>
                   <div
                     style={{
-                      width: 46,
-                      height: 46,
-                      borderRadius: 10,
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: `1px solid ${opt.color}35`,
-                      color: opt.color,
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      background: "#1D1D1F",
+                      color: "#FFFFFF",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -152,27 +133,15 @@ export function ExportClient({ data }: ExportDataProps) {
                     {opt.icon}
                   </div>
                   <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 4px 0", color: "#F8FAFC" }}>{opt.title}</h3>
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        fontFamily: "var(--font-mono)",
-                        fontSize: 11,
-                        color: opt.color,
-                        background: "rgba(255, 255, 255, 0.03)",
-                        padding: "2px 8px",
-                        borderRadius: 4,
-                        border: "1px solid rgba(255, 255, 255, 0.06)",
-                      }}
-                    >
-                      <span>●</span> {opt.count} {opt.unit} verified
-                    </div>
+                    <h3 className="card-title" style={{ margin: "0 0 4px 0" }}>{opt.title}</h3>
+                    <span className="badge">
+                      <span className="badge-dot" />
+                      {opt.count} {opt.unit} verified
+                    </span>
                   </div>
                 </div>
 
-                <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
+                <p className="card-muted" style={{ margin: 0 }}>
                   {opt.desc}
                 </p>
               </div>
@@ -180,37 +149,19 @@ export function ExportClient({ data }: ExportDataProps) {
               <div
                 style={{
                   paddingTop: 16,
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderTop: "1px solid #E8E8ED",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                 }}
               >
-                <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#64748B" }}>
+                <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#86868B" }}>
                   FORMAT: RFC 4180
                 </span>
                 <button
                   onClick={opt.action}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    fontSize: 12,
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                    padding: "9px 16px",
-                    borderRadius: 8,
-                    cursor: "pointer",
-                    background: isDone
-                      ? "rgba(34, 197, 94, 0.15)"
-                      : "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)",
-                    color: isDone ? "#22C55E" : "#F59E0B",
-                    border: isDone
-                      ? "1px solid rgba(34, 197, 94, 0.35)"
-                      : "1px solid rgba(245, 158, 11, 0.3)",
-                    boxShadow: isDone ? "none" : "0 0 12px rgba(245, 158, 11, 0.15)",
-                    transition: "all 0.2s ease",
-                  }}
+                  className={isDone ? "btn-secondary btn-sm" : "btn-primary btn-sm"}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
                   {isDone ? (
                     <>

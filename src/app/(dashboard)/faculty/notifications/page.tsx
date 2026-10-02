@@ -18,14 +18,18 @@ export default async function NotificationsPage() {
   });
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", paddingBottom: 40 }}>
-      {/* 1. Page Header */}
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. BMSIT Dot Matrix Page Header */}
       <PageHeader
         breadcrumbs={[
           { label: "Faculty Workspace", href: "/faculty" },
           { label: "Notifications" },
         ]}
+        eyebrow="FACULTY // TELEMETRY & ALERTS"
+        dotMatrixText="ALERTS"
+        dotMatrixFontSize={36}
         title="Institutional Notification Center"
+        ghost="inbox."
         subtitle="Chronological feed of task assignments, leave decision outcomes, and recognition credits."
       />
 

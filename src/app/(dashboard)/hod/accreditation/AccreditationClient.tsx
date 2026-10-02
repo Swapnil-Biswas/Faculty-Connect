@@ -39,7 +39,7 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
 
   function exportDossierJSON() {
     const report = {
-      academicInstitution: "Department of Computer Engineering",
+      academicInstitution: "Department of Computer Science & Engineering",
       generatedAt: new Date().toISOString(),
       nbaCriteria5: {
         facultyStudentRatio: {
@@ -104,29 +104,26 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Top Banner & Export Actions */}
       <div
+        className="card"
         style={{
-          background: "linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(14, 18, 27, 0.95) 60%, rgba(56, 189, 248, 0.08) 100%)",
-          border: "1px solid rgba(245, 158, 11, 0.3)",
-          borderRadius: 12,
-          padding: "24px 28px",
+          background: "#FAFAFA",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 20,
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
         }}
       >
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(245, 158, 11, 0.2)", border: "1px solid rgba(245, 158, 11, 0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Award size={18} style={{ color: "#F59E0B" }} />
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: "#1D1D1F", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Award size={18} />
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, color: "#F8FAFC", letterSpacing: "-0.01em" }}>
+            <h2 className="card-title" style={{ margin: 0 }}>
               NBA Self-Study Report (SSR) Generator
             </h2>
           </div>
-          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0, maxWidth: 600 }}>
+          <p className="card-muted" style={{ margin: 0, maxWidth: 640 }}>
             Automated Criterion 5 calculations pre-validated against Tier-I and Tier-II engineering accreditation metrics (Form 5A & 5B).
           </p>
         </div>
@@ -134,61 +131,24 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button
             onClick={() => window.print()}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 16px",
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: 8,
-              color: "#E2E8F0",
-              fontFamily: "var(--font-mono)",
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
+            className="btn-secondary btn-sm"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
           >
-            <Printer size={15} style={{ color: "#38BDF8" }} /> PRINT SSR
+            <Printer size={14} /> PRINT SSR
           </button>
           <button
             onClick={exportForm5ACSV}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 16px",
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: 8,
-              color: "#E2E8F0",
-              fontFamily: "var(--font-mono)",
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
+            className="btn-secondary btn-sm"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
           >
-            <FileText size={15} style={{ color: "#F59E0B" }} /> EXPORT FORM 5A (.CSV)
+            <FileText size={14} /> EXPORT FORM 5A (.CSV)
           </button>
           <button
             onClick={exportDossierJSON}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 18px",
-              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-              border: "none",
-              borderRadius: 8,
-              color: "#0A0D14",
-              fontFamily: "var(--font-mono)",
-              fontSize: 12,
-              fontWeight: 800,
-              cursor: "pointer",
-              boxShadow: "0 0 16px rgba(245, 158, 11, 0.35)",
-            }}
+            className="btn-primary btn-sm"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
           >
-            <Download size={15} /> EXPORT JSON DOSSIER
+            <Download size={14} /> EXPORT JSON DOSSIER
           </button>
         </div>
       </div>
@@ -196,91 +156,55 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
       {/* Main Analysis Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 20 }}>
         {/* Criterion 5.1: Student Faculty Ratio */}
-        <div
-          style={{
-            background: "#0E121B",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: 12,
-            padding: 24,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-          }}
-        >
+        <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
-                // CRITERION 5.1
-              </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+              <span className="section-eyebrow">// CRITERION 5.1</span>
+              <h3 className="card-title" style={{ marginTop: 2 }}>
                 Student-Faculty Ratio (SFR)
               </h3>
             </div>
             {fsrCompliant ? (
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "4px 10px",
-                  borderRadius: 20,
-                  fontSize: 11,
-                  fontFamily: "var(--font-mono)",
-                  fontWeight: 700,
-                  background: "rgba(34, 197, 94, 0.12)",
-                  color: "#22C55E",
-                  border: "1px solid rgba(34, 197, 94, 0.25)",
-                }}
-              >
-                ● NBA COMPLIANT (≤ 1:15)
+              <span className="badge status-published">
+                <span className="badge-dot" />
+                NBA COMPLIANT (≤ 1:15)
               </span>
             ) : (
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "4px 10px",
-                  borderRadius: 20,
-                  fontSize: 11,
-                  fontFamily: "var(--font-mono)",
-                  fontWeight: 700,
-                  background: "rgba(244, 63, 94, 0.12)",
-                  color: "#F43F5E",
-                  border: "1px solid rgba(244, 63, 94, 0.25)",
-                }}
-              >
-                ▲ NEEDS OPTIMIZATION
+              <span className="badge" style={{ color: "#E11D48", borderColor: "rgba(225, 29, 72, 0.3)" }}>
+                <span className="badge-dot" style={{ backgroundColor: "#E11D48" }} />
+                NEEDS OPTIMIZATION
               </span>
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12, margin: "20px 0" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, margin: "16px 0" }}>
             <span
               style={{
                 fontSize: 42,
-                fontWeight: 900,
+                fontWeight: 800,
                 fontFamily: "var(--font-mono)",
-                color: fsrCompliant ? "#22C55E" : "#F43F5E",
+                color: fsrCompliant ? "#16A34A" : "#E11D48",
                 letterSpacing: "-0.03em",
               }}
             >
               1:{fsr}
             </span>
-            <span style={{ fontSize: 12, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
-              Target: 1:15 for max score (20 pts)
+            <span style={{ fontSize: 12, color: "#6E6E73", fontFamily: "var(--font-mono)" }}>
+              Target: 1:15 for maximum score (20 pts)
             </span>
           </div>
 
           <div
             style={{
-              background: "#07090E",
+              background: "#FAFAFA",
               padding: "16px 18px",
-              borderRadius: 8,
-              border: "1px solid rgba(255, 255, 255, 0.06)",
+              borderRadius: 12,
+              border: "1px solid #E8E8ED",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
-              <span style={{ color: "#94A3B8" }}>Total Sanctioned Intake Students:</span>
-              <strong style={{ color: "#38BDF8", fontFamily: "var(--font-mono)", fontSize: 14 }}>
+              <span style={{ color: "#6E6E73" }}>Total Sanctioned Intake Students:</span>
+              <strong style={{ color: "#1D1D1F", fontFamily: "var(--font-mono)", fontSize: 14 }}>
                 {sanctionedStudents} students
               </strong>
             </div>
@@ -293,9 +217,8 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
               onChange={(e) => setSanctionedStudents(parseInt(e.target.value, 10))}
               style={{
                 width: "100%",
-                accentColor: "#F59E0B",
+                accentColor: "#1D1D1F",
                 cursor: "pointer",
-                background: "rgba(255, 255, 255, 0.1)",
                 borderRadius: 4,
                 height: 6,
               }}
@@ -305,7 +228,7 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: 11,
-                color: "#64748B",
+                color: "#86868B",
                 fontFamily: "var(--font-mono)",
                 marginTop: 8,
               }}
@@ -318,202 +241,133 @@ export function AccreditationClient({ metrics, facultyList }: Props) {
         </div>
 
         {/* Criterion 5.2: Cadre Ratio */}
-        <div
-          style={{
-            background: "#0E121B",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: 12,
-            padding: 24,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-          }}
-        >
+        <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
             <div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
-                // CRITERION 5.2
-              </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+              <span className="section-eyebrow">// CRITERION 5.2</span>
+              <h3 className="card-title" style={{ marginTop: 2 }}>
                 Faculty Cadre Proportion
               </h3>
             </div>
-            <span
-              style={{
-                padding: "4px 10px",
-                borderRadius: 20,
-                fontSize: 11,
-                fontFamily: "var(--font-mono)",
-                fontWeight: 700,
-                background: "rgba(56, 189, 248, 0.12)",
-                color: "#38BDF8",
-                border: "1px solid rgba(56, 189, 248, 0.25)",
-              }}
-            >
+            <span className="badge">
               TARGET RATIO 1:2:6
             </span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, margin: "20px 0", textAlign: "center" }}>
-            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>PROFESSORS</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#F59E0B", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, margin: "16px 0", textAlign: "center" }}>
+            <div style={{ background: "#FAFAFA", padding: "14px 10px", borderRadius: 10, border: "1px solid #E8E8ED" }}>
+              <div style={{ fontSize: 10, color: "#6E6E73", fontWeight: 700, fontFamily: "var(--font-mono)" }}>PROFESSORS</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)", marginTop: 4 }}>
                 {metrics.professors}
               </div>
-              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 1</div>
+              <div style={{ fontSize: 10, color: "#86868B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 1</div>
             </div>
 
-            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASSOC. PROF</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#38BDF8", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+            <div style={{ background: "#FAFAFA", padding: "14px 10px", borderRadius: 10, border: "1px solid #E8E8ED" }}>
+              <div style={{ fontSize: 10, color: "#6E6E73", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASSOC. PROF</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)", marginTop: 4 }}>
                 {metrics.associateProfessors}
               </div>
-              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 2</div>
+              <div style={{ fontSize: 10, color: "#86868B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 2</div>
             </div>
 
-            <div style={{ background: "#07090E", padding: "14px 10px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASST. PROF</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#A855F7", fontFamily: "var(--font-mono)", marginTop: 4 }}>
+            <div style={{ background: "#FAFAFA", padding: "14px 10px", borderRadius: 10, border: "1px solid #E8E8ED" }}>
+              <div style={{ fontSize: 10, color: "#6E6E73", fontWeight: 700, fontFamily: "var(--font-mono)" }}>ASST. PROF</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)", marginTop: 4 }}>
                 {metrics.assistantProfessors}
               </div>
-              <div style={{ fontSize: 10, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 6</div>
+              <div style={{ fontSize: 10, color: "#86868B", fontFamily: "var(--font-mono)", marginTop: 2 }}>Target: 6</div>
             </div>
           </div>
 
-          <div style={{ fontSize: 12, color: "#94A3B8", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>
-            Sanctioned cadre strength active: <span style={{ color: "#F8FAFC", fontWeight: 700 }}>{metrics.totalFaculty} faculty members</span> across academic clusters.
+          <div style={{ fontSize: 12, color: "#6E6E73", fontFamily: "var(--font-mono)", lineHeight: 1.6 }}>
+            Sanctioned cadre strength active: <span style={{ color: "#1D1D1F", fontWeight: 700 }}>{metrics.totalFaculty} faculty members</span> across academic clusters.
           </div>
         </div>
       </div>
 
       {/* Criterion 5.7: Research & Development */}
-      <div
-        style={{
-          background: "#0E121B",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: 12,
-          padding: 24,
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-        }}
-      >
+      <div className="card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
           <div>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#22C55E", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>
-              // CRITERION 5.7
-            </span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "4px 0 0", color: "#F8FAFC" }}>
+            <span className="section-eyebrow">// CRITERION 5.7</span>
+            <h3 className="card-title" style={{ marginTop: 2 }}>
               Research Publications & IPR Portfolio
             </h3>
           </div>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              fontFamily: "var(--font-mono)",
-              color: "#F59E0B",
-              background: "rgba(245, 158, 11, 0.12)",
-              padding: "4px 12px",
-              borderRadius: 6,
-              border: "1px solid rgba(245, 158, 11, 0.25)",
-            }}
-          >
+          <span className="badge badge-dark">
             ★ {metrics.pubsPerFaculty} papers / faculty
-          </div>
+          </span>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Scopus / SCI Journals</div>
-            <div style={{ fontSize: 26, fontWeight: 900, color: "#38BDF8", fontFamily: "var(--font-mono)" }}>{metrics.journals}</div>
+          <div style={{ background: "#FAFAFA", padding: "16px", borderRadius: 12, border: "1px solid #E8E8ED" }}>
+            <div style={{ fontSize: 11, color: "#6E6E73", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Scopus / SCI Journals</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>{metrics.journals}</div>
           </div>
-          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>IEEE / ACM Conferences</div>
-            <div style={{ fontSize: 26, fontWeight: 900, color: "#A855F7", fontFamily: "var(--font-mono)" }}>{metrics.conferences}</div>
+          <div style={{ background: "#FAFAFA", padding: "16px", borderRadius: 12, border: "1px solid #E8E8ED" }}>
+            <div style={{ fontSize: 11, color: "#6E6E73", fontFamily: "var(--font-mono)", marginBottom: 4 }}>IEEE / ACM Conferences</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>{metrics.conferences}</div>
           </div>
-          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Granted / Published Patents</div>
-            <div style={{ fontSize: 26, fontWeight: 900, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>{metrics.patents}</div>
+          <div style={{ background: "#FAFAFA", padding: "16px", borderRadius: 12, border: "1px solid #E8E8ED" }}>
+            <div style={{ fontSize: 11, color: "#6E6E73", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Granted / Published Patents</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>{metrics.patents}</div>
           </div>
-          <div style={{ background: "#07090E", padding: "16px", borderRadius: 8, border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-            <div style={{ fontSize: 11, color: "#94A3B8", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Faculty Retention Rate</div>
-            <div style={{ fontSize: 26, fontWeight: 900, color: "#22C55E", fontFamily: "var(--font-mono)" }}>{metrics.retentionRate}%</div>
+          <div style={{ background: "#FAFAFA", padding: "16px", borderRadius: 12, border: "1px solid #E8E8ED" }}>
+            <div style={{ fontSize: 11, color: "#6E6E73", fontFamily: "var(--font-mono)", marginBottom: 4 }}>Faculty Retention Rate</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#16A34A", fontFamily: "var(--font-mono)" }}>{metrics.retentionRate}%</div>
           </div>
         </div>
       </div>
 
       {/* Faculty SSR Roster */}
-      <div
-        style={{
-          background: "#0E121B",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-        }}
-      >
+      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         <div
           style={{
-            padding: "16px 24px",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            padding: "18px 24px",
+            borderBottom: "1px solid #E8E8ED",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            background: "#FAFAFA",
           }}
         >
           <div>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
-              // NBA CRITERIA FORM 5A
-            </span>
-            <h3 style={{ fontSize: 15, fontWeight: 700, margin: "2px 0 0", color: "#F8FAFC" }}>
+            <span className="section-eyebrow">// NBA CRITERIA FORM 5A</span>
+            <h3 className="card-title" style={{ marginTop: 2 }}>
               Faculty Compliance Matrix & Service Record
             </h3>
           </div>
-          <span style={{ fontSize: 12, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+          <span className="badge badge-dark">
             {facultyList.length} FACULTY MEMBERS ENROLLED
           </span>
         </div>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+        <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
+          <table className="table">
             <thead>
-              <tr style={{ background: "rgba(255, 255, 255, 0.02)", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
-                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>FACULTY NAME</th>
-                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>DESIGNATION</th>
-                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>SERVICE TENURE</th>
-                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700 }}>INDEXED PUBS</th>
-                <th style={{ padding: "12px 20px", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", fontWeight: 700, textAlign: "right" }}>STATUS</th>
+              <tr>
+                <th>FACULTY NAME</th>
+                <th>DESIGNATION</th>
+                <th>SERVICE TENURE</th>
+                <th>INDEXED PUBS</th>
+                <th style={{ textAlign: "right" }}>STATUS</th>
               </tr>
             </thead>
             <tbody>
               {facultyList.map((f, i) => (
-                <tr
-                  key={i}
-                  style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                    transition: "background 0.15s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  <td style={{ padding: "14px 20px", fontWeight: 600, color: "#F8FAFC", fontSize: 13 }}>{f.name}</td>
-                  <td style={{ padding: "14px 20px", color: "#94A3B8", fontSize: 13 }}>{f.designation}</td>
-                  <td style={{ padding: "14px 20px", color: "#CBD5E1", fontSize: 13, fontFamily: "var(--font-mono)" }}>
+                <tr key={i}>
+                  <td style={{ fontWeight: 600, color: "#1D1D1F", fontSize: 13.5 }}>{f.name}</td>
+                  <td style={{ color: "#6E6E73", fontSize: 13 }}>{f.designation}</td>
+                  <td style={{ color: "#424245", fontSize: 13, fontFamily: "var(--font-mono)" }}>
                     {f.serviceYears} {f.serviceYears === 1 ? "year" : "years"}
                   </td>
-                  <td style={{ padding: "14px 20px", color: "#F59E0B", fontSize: 13, fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                  <td style={{ color: "#1D1D1F", fontSize: 13, fontFamily: "var(--font-mono)", fontWeight: 700 }}>
                     {f.publicationsCount} papers
                   </td>
-                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontFamily: "var(--font-mono)",
-                        fontWeight: 700,
-                        color: "#22C55E",
-                        background: "rgba(34, 197, 94, 0.12)",
-                        border: "1px solid rgba(34, 197, 94, 0.25)",
-                        padding: "3px 8px",
-                        borderRadius: 4,
-                      }}
-                    >
-                      ● VERIFIED
+                  <td style={{ textAlign: "right" }}>
+                    <span className="badge status-published">
+                      <span className="badge-dot" />
+                      VERIFIED
                     </span>
                   </td>
                 </tr>

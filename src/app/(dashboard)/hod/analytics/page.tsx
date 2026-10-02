@@ -1,12 +1,13 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { BarChart3, TrendingUp, CheckSquare, Clock, AlertTriangle, Star, Users, Calendar, Award } from "lucide-react";
 
 export default async function HodAnalyticsPage() {
   const session = await auth();
   if (!session?.user || !["HOD", "ADMIN"].includes(session.user.role)) {
-    redirect("/dashboard");
+    redirect("/login");
   }
 
   // Get department wide data
@@ -58,71 +59,81 @@ export default async function HodAnalyticsPage() {
   });
 
   return (
-    <div className="page-content">
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 className="page-title">Department Analytics & Insights</h1>
-        <p className="page-subtitle">
-          Cross-cluster performance analytics, accreditation metrics, workload equilibrium, and recognition trends.
-        </p>
-      </div>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. Page Header with BMSIT Dot Matrix */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/hod" },
+          { label: "Analytics" },
+        ]}
+        eyebrow="HOD // TELEMETRY & INSIGHTS"
+        dotMatrixText="ANALYTICS"
+        dotMatrixFontSize={36}
+        title="Department Analytics & Insights"
+        ghost="metrics."
+        subtitle="Cross-cluster performance analytics, accreditation metrics, workload equilibrium, and recognition trends."
+      />
 
-      {/* KPI Cards */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
+      {/* 2. KPI Cards */}
+      <div className="stat-grid">
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-primary) / 0.12)", color: "hsl(var(--color-primary))" }}>
-            <BarChart3 size={22} />
-          </div>
-          <div className="stat-card-value">{deptCompletionRate}%</div>
-          <div className="stat-card-label">Department Completion Rate</div>
-          <div className="stat-card-trend trend-up">
+          <div className="stat-card-num">{deptCompletionRate}%</div>
+          <div className="stat-card-label">COMPLETION RATE</div>
+          <div style={{ fontSize: 11.5, color: "#6E6E73", marginTop: 4, fontFamily: "var(--font-mono)" }}>
             {completedTasks} of {totalTasks} tasks resolved
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-success) / 0.12)", color: "hsl(var(--color-success))" }}>
-            <Clock size={22} />
-          </div>
-          <div className="stat-card-value">{onTimeRate}%</div>
-          <div className="stat-card-label">On-Time Velocity</div>
-          <div className="stat-card-trend trend-up">
+          <div className="stat-card-num" style={{ color: "#16A34A" }}>{onTimeRate}%</div>
+          <div className="stat-card-label">ON-TIME VELOCITY</div>
+          <div style={{ fontSize: 11.5, color: "#6E6E73", marginTop: 4, fontFamily: "var(--font-mono)" }}>
             {onTimeCompleted} tasks met deadline
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#F59E0B" }}>
-            <Star size={22} />
-          </div>
-          <div className="stat-card-value">{Math.round(totalStarsDistributed)}</div>
-          <div className="stat-card-label">Recognition Stars Distributed</div>
-          <div className="stat-card-trend" style={{ color: "hsl(var(--text-secondary))" }}>
+          <div className="stat-card-num">{Math.round(totalStarsDistributed)}</div>
+          <div className="stat-card-label">STARS DISTRIBUTED</div>
+          <div style={{ fontSize: 11.5, color: "#6E6E73", marginTop: 4, fontFamily: "var(--font-mono)" }}>
             Across all faculty members
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-info) / 0.12)", color: "hsl(var(--color-info))" }}>
-            <Calendar size={22} />
-          </div>
-          <div className="stat-card-value">{totalApprovedLeaves}</div>
-          <div className="stat-card-label">Approved Faculty Leaves</div>
-          <div className="stat-card-trend" style={{ color: "hsl(var(--text-secondary))" }}>
+          <div className="stat-card-num">{totalApprovedLeaves}</div>
+          <div className="stat-card-label">APPROVED LEAVES</div>
+          <div style={{ fontSize: 11.5, color: "#6E6E73", marginTop: 4, fontFamily: "var(--font-mono)" }}>
             {totalPendingLeaves} pending review
           </div>
         </div>
       </div>
 
-      {/* Cross-Cluster Performance Comparison */}
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Cross-Cluster Comparative Benchmarking</h2>
-        <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 20 }}>
-          Comparison of operational velocity and task resolution across all active clusters.
-        </p>
+      {/* 3. Cross-Cluster Performance Comparison */}
+      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+        <div
+          style={{
+            padding: "18px 24px",
+            borderBottom: "1px solid #E8E8ED",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: "#FAFAFA",
+          }}
+        >
+          <div>
+            <span className="section-eyebrow">// OPERATIONAL BENCHMARKING</span>
+            <h2 className="card-title" style={{ marginTop: 2 }}>
+              Cross-Cluster Comparative Velocity
+            </h2>
+          </div>
+          <span className="badge badge-dark">
+            {clusters.length} Active Nodes
+          </span>
+        </div>
 
-        <div className="table-wrapper">
-          <table>
+        <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
+          <table className="table">
             <thead>
               <tr>
                 <th>Cluster Name</th>
@@ -136,35 +147,39 @@ export default async function HodAnalyticsPage() {
             <tbody>
               {clusterStats.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: "center", color: "hsl(var(--text-muted))", padding: 24 }}>
+                  <td colSpan={6} style={{ textAlign: "center", color: "#86868B", padding: 32 }}>
                     No clusters found in department.
                   </td>
                 </tr>
               ) : (
                 clusterStats.map((c) => (
                   <tr key={c.id}>
-                    <td style={{ fontWeight: 600 }}>{c.name}</td>
-                    <td>{c.facultyCount} faculty</td>
-                    <td>{c.taskCount} tasks</td>
-                    <td style={{ color: "hsl(var(--color-success))", fontWeight: 600 }}>{c.completed}</td>
+                    <td style={{ fontWeight: 600, color: "#1D1D1F" }}>{c.name}</td>
+                    <td style={{ color: "#6E6E73", fontFamily: "var(--font-mono)" }}>{c.facultyCount} faculty</td>
+                    <td style={{ fontFamily: "var(--font-mono)" }}>{c.taskCount} tasks</td>
+                    <td style={{ color: "#16A34A", fontWeight: 700, fontFamily: "var(--font-mono)" }}>{c.completed}</td>
                     <td>
                       {c.overdue > 0 ? (
-                        <span style={{ color: "hsl(var(--color-danger))", fontWeight: 700 }}>
+                        <span style={{ color: "#E11D48", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
                           {c.overdue}
                         </span>
                       ) : (
-                        <span style={{ color: "hsl(var(--text-muted))" }}>0</span>
+                        <span style={{ color: "#86868B", fontFamily: "var(--font-mono)" }}>0</span>
                       )}
                     </td>
                     <td style={{ minWidth: 160 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div className="progress-bar" style={{ flex: 1, height: 8 }}>
+                        <div style={{ flex: 1, height: 6, background: "#E8E8ED", borderRadius: 10, overflow: "hidden" }}>
                           <div
-                            className="progress-fill"
-                            style={{ width: `${c.completionRate}%` }}
+                            style={{
+                              width: `${c.completionRate}%`,
+                              height: "100%",
+                              background: "#1D1D1F",
+                              borderRadius: 10,
+                            }}
                           />
                         </div>
-                        <span style={{ fontSize: 12, fontWeight: 700, minWidth: 32 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", color: "#1D1D1F", minWidth: 32 }}>
                           {c.completionRate}%
                         </span>
                       </div>
@@ -177,65 +192,71 @@ export default async function HodAnalyticsPage() {
         </div>
       </div>
 
-      {/* Accreditation & Compliance Readiness */}
+      {/* 4. Accreditation & Compliance Readiness */}
       <div className="grid-2">
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>NBA / NAAC Accreditation Readiness</h2>
-          <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 18 }}>
+          <span className="section-eyebrow">// ACCREDITATION COMPLIANCE</span>
+          <h2 className="card-title" style={{ marginTop: 2, marginBottom: 4 }}>
+            NBA / NAAC Accreditation Readiness
+          </h2>
+          <p className="card-muted" style={{ marginBottom: 18 }}>
             Compliance telemetry automatically aggregated from faculty contributions.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                <span style={{ fontWeight: 600 }}>Criterion 5: Faculty Information & Cadre Ratio</span>
-                <span style={{ color: "hsl(var(--color-success))", fontWeight: 700 }}>96% Complete</span>
+                <span style={{ fontWeight: 600, color: "#1D1D1F" }}>Criterion 5: Faculty Information & Cadre Ratio</span>
+                <span style={{ color: "#16A34A", fontWeight: 700, fontFamily: "var(--font-mono)" }}>96% Complete</span>
               </div>
-              <div className="progress-bar">
-                <div style={{ width: "96%", height: "100%", background: "hsl(var(--color-success))", borderRadius: 100 }} />
+              <div style={{ height: 6, background: "#E8E8ED", borderRadius: 10, overflow: "hidden" }}>
+                <div style={{ width: "96%", height: "100%", background: "#16A34A", borderRadius: 10 }} />
               </div>
             </div>
 
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                <span style={{ fontWeight: 600 }}>Continuous Evaluation & Appraisal Trail</span>
-                <span style={{ color: "hsl(var(--color-primary))", fontWeight: 700 }}>88% Complete</span>
+                <span style={{ fontWeight: 600, color: "#1D1D1F" }}>Continuous Evaluation & Appraisal Trail</span>
+                <span style={{ color: "#1D1D1F", fontWeight: 700, fontFamily: "var(--font-mono)" }}>88% Complete</span>
               </div>
-              <div className="progress-bar">
-                <div style={{ width: "88%", height: "100%", background: "hsl(var(--color-primary))", borderRadius: 100 }} />
+              <div style={{ height: 6, background: "#E8E8ED", borderRadius: 10, overflow: "hidden" }}>
+                <div style={{ width: "88%", height: "100%", background: "#1D1D1F", borderRadius: 10 }} />
               </div>
             </div>
 
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                <span style={{ fontWeight: 600 }}>Task Assignment Audit & Evidence Verification</span>
-                <span style={{ color: "hsl(var(--color-info))", fontWeight: 700 }}>92% Complete</span>
+                <span style={{ fontWeight: 600, color: "#1D1D1F" }}>Task Assignment Audit & Evidence Verification</span>
+                <span style={{ color: "#1D1D1F", fontWeight: 700, fontFamily: "var(--font-mono)" }}>92% Complete</span>
               </div>
-              <div className="progress-bar">
-                <div style={{ width: "92%", height: "100%", background: "hsl(var(--color-info))", borderRadius: 100 }} />
+              <div style={{ height: 6, background: "#E8E8ED", borderRadius: 10, overflow: "hidden" }}>
+                <div style={{ width: "92%", height: "100%", background: "#1D1D1F", borderRadius: 10 }} />
               </div>
             </div>
           </div>
         </div>
 
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Department Workload Balance</h2>
-          <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 18 }}>
+          <span className="section-eyebrow">// EQUILIBRIUM</span>
+          <h2 className="card-title" style={{ marginTop: 2, marginBottom: 4 }}>
+            Department Workload Balance
+          </h2>
+          <p className="card-muted" style={{ marginBottom: 18 }}>
             Distribution of institutional responsibilities and tasks across academic tiers.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 14px", background: "hsl(var(--bg-subtle))", borderRadius: "var(--radius-sm)" }}>
-              <span style={{ fontSize: 13, fontWeight: 500 }}>Active Tasks In Progress</span>
-              <span style={{ fontSize: 14, fontWeight: 700 }}>{inProgressTasks}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: "#FAFAFA", border: "1px solid #E8E8ED", borderRadius: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "#6E6E73" }}>Active Tasks In Progress</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>{inProgressTasks}</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 14px", background: "hsl(var(--bg-subtle))", borderRadius: "var(--radius-sm)" }}>
-              <span style={{ fontSize: 13, fontWeight: 500 }}>Overall On-Time Resolution</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "hsl(var(--color-success))" }}>{onTimeRate}%</span>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: "#FAFAFA", border: "1px solid #E8E8ED", borderRadius: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "#6E6E73" }}>Overall On-Time Resolution</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#16A34A", fontFamily: "var(--font-mono)" }}>{onTimeRate}%</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 14px", background: "hsl(var(--bg-subtle))", borderRadius: "var(--radius-sm)" }}>
-              <span style={{ fontSize: 13, fontWeight: 500 }}>Overdue Escalations Rate</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: overdueTasks > 0 ? "hsl(var(--color-danger))" : "inherit" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: "#FAFAFA", border: "1px solid #E8E8ED", borderRadius: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "#6E6E73" }}>Overdue Escalations Rate</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: overdueTasks > 0 ? "#E11D48" : "#1D1D1F", fontFamily: "var(--font-mono)" }}>
                 {totalTasks > 0 ? Math.round((overdueTasks / totalTasks) * 100) : 0}%
               </span>
             </div>

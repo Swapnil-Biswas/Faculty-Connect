@@ -4,21 +4,23 @@ import { db } from '@/lib/db'
 import { formatDate, getInitials } from '@/lib/utils'
 import { Shield, Search } from 'lucide-react'
 import type { Metadata } from 'next'
+import { PageHeader } from '@/components/ui/PageHeader'
+import Link from 'next/link'
 
 export const metadata: Metadata = { title: 'Audit Log — Admin' }
 
 const ACTION_COLORS: Record<string, string> = {
-  USER_CREATED: '#22C55E',
-  USER_ROLE_UPDATED: '#3B82F6',
-  USER_SOFT_DELETED: '#EF4444',
-  USER_ASSIGNED_TO_CLUSTER: '#8B5CF6',
-  TASK_CREATED: '#06B6D4',
-  TASK_STATUS_UPDATED: '#F59E0B',
-  TASK_DELETED: '#EF4444',
-  LEAVE_APPLIED: '#3B82F6',
-  LEAVE_APPROVED: '#22C55E',
-  LEAVE_REJECTED: '#EF4444',
-  LEAVE_CANCELLED: '#9CA3AF',
+  USER_CREATED: '#16a34a',
+  USER_ROLE_UPDATED: '#0284c7',
+  USER_SOFT_DELETED: '#dc2626',
+  USER_ASSIGNED_TO_CLUSTER: '#7c3aed',
+  TASK_CREATED: '#0891b2',
+  TASK_STATUS_UPDATED: '#d97706',
+  TASK_DELETED: '#dc2626',
+  LEAVE_APPLIED: '#0284c7',
+  LEAVE_APPROVED: '#16a34a',
+  LEAVE_REJECTED: '#dc2626',
+  LEAVE_CANCELLED: '#6e6e73',
 }
 
 export default async function AdminAuditPage({
@@ -70,59 +72,61 @@ export default async function AdminAuditPage({
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">
-          <span className="text-gradient">Audit</span> Log
-        </h2>
-        <p className="page-subtitle">
-          Complete immutable record of all system actions. {total.toLocaleString()} events total.
-        </p>
-      </div>
+    <div className="page-content" style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Audit Log' },
+        ]}
+        dotMatrixText="AUDIT"
+        eyebrow="CRYPTOGRAPHIC LEDGER · SECURITY TRACEABILITY"
+        title="Security Audit Log & Ledger"
+        subtitle={`Complete immutable record of all system events. ${total.toLocaleString()} records indexed.`}
+      />
 
       {/* Filter bar */}
-      <div className="card" style={{ marginBottom: 20 }}>
-        <form method="GET" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div className="form-group" style={{ flex: 1, minWidth: 160 }}>
-            <label className="form-label">Action</label>
+      <div className="card" style={{ padding: 20 }}>
+        <form method="GET" style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <label className="field-label">Action</label>
             <input
               name="action"
               type="text"
-              className="form-input"
+              className="input"
               placeholder="e.g. TASK_CREATED"
               defaultValue={actionFilter ?? ''}
               style={{ fontSize: 13 }}
             />
           </div>
-          <div className="form-group" style={{ flex: 1, minWidth: 140 }}>
-            <label className="form-label">Entity Type</label>
+          <div style={{ flex: 1, minWidth: 140 }}>
+            <label className="field-label">Entity Type</label>
             <input
               name="entity"
               type="text"
-              className="form-input"
+              className="input"
               placeholder="e.g. Task"
               defaultValue={entityFilter ?? ''}
               style={{ fontSize: 13 }}
             />
           </div>
-          <div className="form-group" style={{ flex: 1, minWidth: 160 }}>
-            <label className="form-label">Actor (name or email)</label>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <label className="field-label">Actor (name or email)</label>
             <input
               name="actor"
               type="text"
-              className="form-input"
+              className="input"
               placeholder="Search actor…"
               defaultValue={actorFilter ?? ''}
               style={{ fontSize: 13 }}
             />
           </div>
-          <button type="submit" className="btn-gradient" style={{ height: 40, alignSelf: 'flex-end' }}>
-            <Search size={15} /> Filter
+          <button type="submit" className="btn-primary" style={{ height: 42, padding: '0 20px' }}>
+            <Search size={14} style={{ marginRight: 6 }} /> Filter
           </button>
           {(actionFilter || entityFilter || actorFilter) && (
-            <a href="/admin/audit" className="btn-outline" style={{ height: 40, alignSelf: 'flex-end', fontSize: 13 }}>
+            <Link href="/admin/audit" className="btn-secondary" style={{ height: 42, padding: '0 16px' }}>
               Clear
-            </a>
+            </Link>
           )}
         </form>
       </div>
@@ -130,34 +134,43 @@ export default async function AdminAuditPage({
       {/* Log entries */}
       {logs.length === 0 ? (
         <div className="card">
-          <div className="empty-state">
-            <Shield size={40} className="empty-state-icon" />
-            <div className="empty-state-title">No audit events match</div>
-            <div className="empty-state-desc">Try adjusting your filters.</div>
+          <div className="empty">
+            <Shield size={40} style={{ color: 'var(--grey-400)', margin: '0 auto 10px' }} />
+            <div className="empty-title">No audit events match</div>
+            <div className="empty-body">Try adjusting your filters or resetting the search parameters.</div>
           </div>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {logs.map((log) => {
-            const color = ACTION_COLORS[log.action] ?? '#8B5CF6'
+            const color = ACTION_COLORS[log.action] ?? 'var(--grey-800)'
             return (
               <div
                 key={log.id}
+                className="cyber-card-hover"
                 style={{
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: 14,
                   padding: '14px 18px',
                   background: log.isImpersonated
-                    ? 'hsl(326 100% 65% / 0.05)'
-                    : 'hsl(var(--bg-surface))',
-                  border: `1px solid ${log.isImpersonated ? 'hsl(326 100% 65% / 0.2)' : 'hsl(var(--border))'}`,
+                    ? 'rgba(220, 38, 38, 0.04)'
+                    : 'var(--white)',
+                  border: `1px solid ${log.isImpersonated ? 'rgba(220, 38, 38, 0.25)' : 'var(--grey-100)'}`,
                   borderLeft: `3px solid ${color}`,
-                  borderRadius: 10,
+                  borderRadius: 12,
                 }}
               >
                 {/* Actor avatar */}
-                <div className="avatar avatar-sm" style={{ flexShrink: 0, fontSize: 10 }}>
+                <div
+                  className="avatar avatar-sm"
+                  style={{
+                    flexShrink: 0,
+                    fontSize: 10,
+                    background: 'var(--grey-100)',
+                    color: 'var(--grey-800)',
+                  }}
+                >
                   {getInitials(log.actor.name)}
                 </div>
 
@@ -165,11 +178,12 @@ export default async function AdminAuditPage({
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
                     <span
                       style={{
-                        fontSize: 12.5,
+                        fontSize: 11.5,
                         fontWeight: 700,
-                        fontFamily: 'monospace',
+                        fontFamily: 'var(--font-mono)',
                         color,
-                        background: `${color}1A`,
+                        background: 'var(--grey-50)',
+                        border: '1px solid var(--grey-200)',
                         padding: '2px 8px',
                         borderRadius: 4,
                       }}
@@ -179,13 +193,14 @@ export default async function AdminAuditPage({
                     {log.isImpersonated && (
                       <span
                         style={{
-                          fontSize: 10.5,
+                          fontSize: 10,
                           fontWeight: 700,
-                          color: 'hsl(326 80% 50%)',
-                          background: 'hsl(326 100% 65% / 0.1)',
+                          color: '#dc2626',
+                          background: 'rgba(220, 38, 38, 0.08)',
                           padding: '1px 7px',
                           borderRadius: 4,
-                          border: '1px solid hsl(326 100% 65% / 0.2)',
+                          border: '1px solid rgba(220, 38, 38, 0.2)',
+                          fontFamily: 'var(--font-mono)',
                         }}
                       >
                         IMPERSONATED
@@ -196,16 +211,16 @@ export default async function AdminAuditPage({
                   <div
                     style={{
                       fontSize: 13,
-                      color: 'hsl(var(--text-secondary))',
+                      color: 'var(--grey-600)',
                       display: 'flex',
                       gap: 12,
                       flexWrap: 'wrap',
                     }}
                   >
                     <span>
-                      by <strong>{log.actor.name}</strong>
+                      by <strong style={{ color: 'var(--grey-900)' }}>{log.actor.name}</strong>
                     </span>
-                    <span style={{ color: 'hsl(var(--text-muted))' }}>
+                    <span style={{ color: 'var(--grey-400)', fontFamily: 'var(--font-mono)' }}>
                       {log.entityType} #{log.entityId.slice(0, 8)}…
                     </span>
                   </div>
@@ -224,16 +239,17 @@ export default async function AdminAuditPage({
                         <code
                           style={{
                             fontSize: 11,
-                            background: 'hsl(0 84% 60% / 0.06)',
-                            border: '1px solid hsl(0 84% 60% / 0.15)',
+                            background: 'rgba(220, 38, 38, 0.05)',
+                            border: '1px solid rgba(220, 38, 38, 0.15)',
                             padding: '2px 8px',
                             borderRadius: 4,
-                            color: 'hsl(0 60% 45%)',
+                            color: '#b91c1c',
                             maxWidth: 300,
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
                             display: 'block',
+                            fontFamily: 'var(--font-mono)',
                           }}
                         >
                           − {JSON.stringify(log.beforeState)}
@@ -243,16 +259,17 @@ export default async function AdminAuditPage({
                         <code
                           style={{
                             fontSize: 11,
-                            background: 'hsl(142 71% 45% / 0.06)',
-                            border: '1px solid hsl(142 71% 45% / 0.15)',
+                            background: 'rgba(22, 163, 74, 0.05)',
+                            border: '1px solid rgba(22, 163, 74, 0.15)',
                             padding: '2px 8px',
                             borderRadius: 4,
-                            color: 'hsl(142 60% 35%)',
+                            color: '#15803d',
                             maxWidth: 300,
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
                             display: 'block',
+                            fontFamily: 'var(--font-mono)',
                           }}
                         >
                           + {JSON.stringify(log.afterState)}
@@ -265,9 +282,10 @@ export default async function AdminAuditPage({
                 <div
                   style={{
                     fontSize: 11.5,
-                    color: 'hsl(var(--text-muted))',
+                    color: 'var(--grey-400)',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
+                    fontFamily: 'var(--font-mono)',
                   }}
                 >
                   {formatDate(log.timestamp)}
@@ -290,25 +308,23 @@ export default async function AdminAuditPage({
           }}
         >
           {page > 1 && (
-            <a
+            <Link
               href={`/admin/audit?page=${page - 1}${actionFilter ? `&action=${actionFilter}` : ''}${entityFilter ? `&entity=${entityFilter}` : ''}${actorFilter ? `&actor=${actorFilter}` : ''}`}
-              className="btn-outline"
-              style={{ fontSize: 13, padding: '7px 16px' }}
+              className="btn-secondary btn-sm"
             >
               ← Prev
-            </a>
+            </Link>
           )}
-          <span style={{ fontSize: 13, color: 'hsl(var(--text-muted))' }}>
+          <span style={{ fontSize: 13, color: 'var(--grey-500)', fontFamily: 'var(--font-mono)' }}>
             Page {page} of {totalPages} ({total.toLocaleString()} events)
           </span>
           {page < totalPages && (
-            <a
+            <Link
               href={`/admin/audit?page=${page + 1}${actionFilter ? `&action=${actionFilter}` : ''}${entityFilter ? `&entity=${entityFilter}` : ''}${actorFilter ? `&actor=${actorFilter}` : ''}`}
-              className="btn-outline"
-              style={{ fontSize: 13, padding: '7px 16px' }}
+              className="btn-secondary btn-sm"
             >
               Next →
-            </a>
+            </Link>
           )}
         </div>
       )}

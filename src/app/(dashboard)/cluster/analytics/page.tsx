@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { BarChart3, CheckSquare, Clock, AlertTriangle, TrendingUp, Users, Calendar } from "lucide-react";
+import { BarChart3, Clock, AlertTriangle, Users } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default async function ClusterAnalyticsPage() {
   const session = await auth();
@@ -80,86 +81,96 @@ export default async function ClusterAnalyticsPage() {
   }).sort((a: any, b: any) => b.completed - a.completed);
 
   return (
-    <div className="page-content">
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 className="page-title">{cluster.name} — Cluster Analytics</h1>
-        <p className="page-subtitle">
-          Real-time workload metrics, task velocity, on-time completion rates, and faculty distribution.
-        </p>
-      </div>
+    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/cluster" },
+          { label: "Analytics" },
+        ]}
+        dotMatrixText="ANALYTICS"
+        eyebrow={`CLUSTER TELEMETRY · ${cluster.name.toUpperCase()}`}
+        title={`${cluster.name} — Cluster Analytics`}
+        subtitle="Real-time workload metrics, task velocity, on-time completion rates, and faculty distribution."
+      />
 
-      {/* KPI Stats */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
+      {/* KPI Stats Grid */}
+      <div className="stat-grid">
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-primary) / 0.12)", color: "hsl(var(--color-primary))" }}>
-            <BarChart3 size={22} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span className="stat-card-label">Completion Rate</span>
+            <BarChart3 size={16} color="var(--grey-600)" />
           </div>
-          <div className="stat-card-value">{completionRate}%</div>
-          <div className="stat-card-label">Overall Completion Rate</div>
-          <div className="stat-card-trend trend-up">
+          <div className="stat-card-num">{completionRate}%</div>
+          <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)", marginTop: 6, display: "block" }}>
             {completedTasks} of {totalTasks} tasks resolved
-          </div>
+          </span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-success) / 0.12)", color: "hsl(var(--color-success))" }}>
-            <Clock size={22} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span className="stat-card-label">On-Time Rate</span>
+            <Clock size={16} color="#16a34a" />
           </div>
-          <div className="stat-card-value">{onTimeRate}%</div>
-          <div className="stat-card-label">On-Time Delivery Rate</div>
-          <div className="stat-card-trend trend-up">
+          <div className="stat-card-num" style={{ color: "#16a34a" }}>{onTimeRate}%</div>
+          <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)", marginTop: 6, display: "block" }}>
             {onTimeTasks} delivered before deadline
-          </div>
+          </span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-danger) / 0.12)", color: "hsl(var(--color-danger))" }}>
-            <AlertTriangle size={22} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span className="stat-card-label">Overdue Tasks</span>
+            <AlertTriangle size={16} color="#dc2626" />
           </div>
-          <div className="stat-card-value">{overdueTasks}</div>
-          <div className="stat-card-label">Overdue Tasks</div>
-          <div className="stat-card-trend trend-down">
-            Requires immediate cluster attention
+          <div className="stat-card-num" style={{ color: overdueTasks > 0 ? "#dc2626" : "var(--grey-900)" }}>
+            {overdueTasks}
           </div>
+          <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)", marginTop: 6, display: "block" }}>
+            {overdueTasks > 0 ? "Requires cluster review" : "All tasks within schedule"}
+          </span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-card-icon" style={{ background: "hsl(var(--color-info) / 0.12)", color: "hsl(var(--color-info))" }}>
-            <Users size={22} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span className="stat-card-label">Active Members</span>
+            <Users size={16} color="var(--grey-600)" />
           </div>
-          <div className="stat-card-value">{cluster.members.length}</div>
-          <div className="stat-card-label">Cluster Members</div>
-          <div className="stat-card-trend" style={{ color: "hsl(var(--text-secondary))" }}>
-            {inProgressTasks} ongoing tasks distributed
-          </div>
+          <div className="stat-card-num">{cluster.members.length}</div>
+          <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)", marginTop: 6, display: "block" }}>
+            {inProgressTasks} ongoing deliverables
+          </span>
         </div>
       </div>
 
       {/* Analytics Breakdown Grid */}
-      <div className="grid-2" style={{ marginBottom: 24 }}>
+      <div className="grid grid-2" style={{ gap: 24 }}>
         {/* Task Priority Distribution */}
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>Task Priority Distribution</h2>
-          <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 20 }}>
-            Allocation of cluster tasks across urgency levels.
+          <span className="section-eyebrow" style={{ marginBottom: 4 }}>// WORKLOAD SPREAD</span>
+          <h2 style={{ fontSize: 18, fontWeight: 700, margin: "2px 0 6px", color: "var(--grey-900)" }}>
+            Task Priority Distribution
+          </h2>
+          <p className="card-muted" style={{ marginBottom: 20 }}>
+            Allocation of cluster deliverables across urgency levels.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {[
-              { label: "Critical Priority", count: priorities.CRITICAL, color: "hsl(var(--color-danger))" },
-              { label: "High Priority", count: priorities.HIGH, color: "#F97316" },
-              { label: "Medium Priority", count: priorities.MEDIUM, color: "hsl(var(--color-warning))" },
-              { label: "Low Priority", count: priorities.LOW, color: "hsl(var(--color-success))" },
+              { label: "Critical Priority", count: priorities.CRITICAL, color: "#dc2626" },
+              { label: "High Priority", count: priorities.HIGH, color: "#ea580c" },
+              { label: "Medium Priority", count: priorities.MEDIUM, color: "#d97706" },
+              { label: "Low Priority", count: priorities.LOW, color: "#16a34a" },
             ].map((p) => {
               const pct = totalTasks > 0 ? Math.round((p.count / totalTasks) * 100) : 0;
               return (
                 <div key={p.label}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                    <span style={{ fontWeight: 600 }}>{p.label}</span>
-                    <span style={{ color: "hsl(var(--text-muted))" }}>{p.count} tasks ({pct}%)</span>
+                    <span style={{ fontWeight: 600, color: "var(--grey-900)" }}>{p.label}</span>
+                    <span style={{ color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
+                      {p.count} tasks ({pct}%)
+                    </span>
                   </div>
-                  <div className="progress-bar" style={{ height: 8 }}>
+                  <div style={{ height: 6, background: "var(--grey-100)", borderRadius: 100, overflow: "hidden" }}>
                     <div
                       style={{
                         width: `${pct}%`,
@@ -178,29 +189,32 @@ export default async function ClusterAnalyticsPage() {
 
         {/* Member Productivity Roster */}
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>Faculty Workload & Velocity</h2>
-          <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", marginBottom: 20 }}>
+          <span className="section-eyebrow" style={{ marginBottom: 4 }}>// FACULTY VELOCITY</span>
+          <h2 style={{ fontSize: 18, fontWeight: 700, margin: "2px 0 6px", color: "var(--grey-900)" }}>
+            Throughput & Completion Roster
+          </h2>
+          <p className="card-muted" style={{ marginBottom: 20 }}>
             Comparative throughput of faculty members in this cluster.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {memberWorkload.length === 0 ? (
-              <div style={{ color: "hsl(var(--text-muted))", fontSize: 13 }}>No active faculty members in this cluster.</div>
+              <div style={{ color: "var(--grey-400)", fontSize: 13 }}>No active faculty members in this cluster.</div>
             ) : (
               memberWorkload.slice(0, 5).map((m) => (
                 <div key={m.name}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                    <span style={{ fontWeight: 600 }}>{m.name}</span>
-                    <span style={{ color: "hsl(var(--text-muted))" }}>
-                      {m.completed}/{m.assigned} done ({m.rate}%) • <strong style={{ color: "#F59E0B" }}>★ {m.points}</strong>
+                    <span style={{ fontWeight: 600, color: "var(--grey-900)" }}>{m.name}</span>
+                    <span style={{ color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
+                      {m.completed}/{m.assigned} done ({m.rate}%) · <strong style={{ color: "#d97706" }}>★ {m.points}</strong>
                     </span>
                   </div>
-                  <div className="progress-bar" style={{ height: 8 }}>
+                  <div style={{ height: 6, background: "var(--grey-100)", borderRadius: 100, overflow: "hidden" }}>
                     <div
                       style={{
                         width: `${m.rate}%`,
                         height: "100%",
-                        background: "linear-gradient(90deg, var(--gradient-from), var(--gradient-to))",
+                        background: "var(--grey-800)",
                         borderRadius: 100,
                         transition: "width 0.4s ease",
                       }}

@@ -7,12 +7,11 @@ import {
   CheckCircle2,
   AlertCircle,
   RefreshCw,
-  Mail,
   Award,
-  ShieldCheck,
-  AlertTriangle,
-  Server,
   Zap,
+  Server,
+  ShieldCheck,
+  Mail,
 } from "lucide-react";
 import {
   runOverdueTaskCheck,
@@ -76,7 +75,7 @@ export function JobsClient() {
       name: "Nightly Overdue Task Sweeper",
       description: "Scans active tasks, flags past-deadline items as OVERDUE, and delivers high-priority alerts to assignees.",
       cronSchedule: "0 0 * * * (Every midnight)",
-      icon: <Clock size={20} className="text-amber-500" />,
+      icon: <Clock size={20} color="#d97706" />,
       action: () => runOverdueTaskCheck(),
     },
     {
@@ -84,7 +83,7 @@ export function JobsClient() {
       name: "Monthly Leaderboard Snapshot",
       description: "Generates immutable points ledger historical records and freezes rankings for the current calendar period.",
       cronSchedule: "0 1 1 * * (1st of every month)",
-      icon: <Award size={20} className="text-indigo-500" />,
+      icon: <Award size={20} color="var(--grey-800)" />,
       action: () => runLeaderboardSnapshot(),
     },
     {
@@ -92,7 +91,7 @@ export function JobsClient() {
       name: "Faculty of the Month Evaluator",
       description: "Applies tie-breaking rules and points weighting to designate the departmental Faculty of the Month.",
       cronSchedule: "0 2 1 * * (1st of every month)",
-      icon: <Zap size={20} className="text-purple-500" />,
+      icon: <Zap size={20} color="#7c3aed" />,
       action: () => {
         const now = new Date();
         const prevMonth = now.getMonth() === 0 ? 12 : now.getMonth();
@@ -101,89 +100,67 @@ export function JobsClient() {
       },
     },
     {
-      key: "daily_email_digest",
-      name: "Daily Task Notification Digest",
-      description: "Assembles daily summary notifications and delivers pending task alerts to all assigned faculty.",
-      cronSchedule: "0 8 * * * (Daily at 8:00 AM)",
-      icon: <Mail size={20} className="text-sky-500" />,
-      action: () => runEmailDigestJob("DAILY_TASK_DIGEST"),
-    },
-    {
-      key: "weekly_summary",
-      name: "Weekly Department Performance Digest",
-      description: "Aggregates weekly task velocities, completed milestones, and pending leave counts into HOD summary.",
-      cronSchedule: "0 9 * * 1 (Mondays at 9:00 AM)",
-      icon: <Server size={20} className="text-emerald-500" />,
+      key: "email_digest",
+      name: "Weekly Departmental Digest",
+      description: "Compiles weekly summary reports of pending tasks, leave queues, and research publications for HOD & Cluster Heads.",
+      cronSchedule: "0 8 * * 1 (Every Monday 8 AM)",
+      icon: <Mail size={20} color="#0284c7" />,
       action: () => runEmailDigestJob("WEEKLY_HOD_SUMMARY"),
     },
     {
-      key: "compliance_audit",
-      name: "NBA/NAAC Accreditation Integrity Audit",
-      description: "Validates teacher-student ratios, Cadre distribution (1:2:6), and publication DOI indexing.",
-      cronSchedule: "0 3 * * 0 (Sundays at 3:00 AM)",
-      icon: <ShieldCheck size={20} className="text-teal-500" />,
+      key: "compliance_check",
+      name: "NBA / NAAC Compliance Validator",
+      description: "Verifies publication indexing, FSR ratios, and syllabus coverage criteria against current academic year targets.",
+      cronSchedule: "0 3 * * 0 (Every Sunday 3 AM)",
+      icon: <ShieldCheck size={20} color="#16a34a" />,
       action: () => runComplianceIntegrityCheck(),
     },
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Jobs Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 20 }}>
         {jobDefinitions.map((job) => {
           const isCurrentRunning = runningJob === job.key && isPending;
           return (
             <div
               key={job.key}
+              className="card card-hover"
               style={{
-                background: "#0E121B",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: 12,
                 padding: "24px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
                 gap: 18,
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-                transition: "border-color 0.2s ease, transform 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 10,
-                        background: "rgba(255, 255, 255, 0.03)",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {job.icon}
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: 15, fontWeight: 700, margin: "0 0 4px 0", color: "#F8FAFC" }}>{job.name}</h3>
-                      <span style={{ fontSize: 11, color: "#F59E0B", fontFamily: "var(--font-mono)" }}>
-                        // {job.cronSchedule}
-                      </span>
-                    </div>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 10,
+                      background: "var(--grey-50)",
+                      border: "1px solid var(--grey-200)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {job.icon}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 15, fontWeight: 700, margin: "0 0 4px 0", color: "var(--grey-900)" }}>{job.name}</h3>
+                    <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
+                      // {job.cronSchedule}
+                    </span>
                   </div>
                 </div>
 
-                <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
+                <p className="card-muted" style={{ margin: 0 }}>
                   {job.description}
                 </p>
               </div>
@@ -193,54 +170,27 @@ export function JobsClient() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderTop: "1px solid var(--grey-100)",
                   paddingTop: 16,
                 }}
               >
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "#38BDF8",
-                    background: "rgba(56, 189, 248, 0.1)",
-                    border: "1px solid rgba(56, 189, 248, 0.25)",
-                    padding: "3px 8px",
-                    borderRadius: 4,
-                  }}
-                >
+                <span className="badge">
                   ● DAEMON READY
                 </span>
                 <button
                   type="button"
                   onClick={() => handleRun(job.key, job.name, job.action)}
                   disabled={isPending}
-                  style={{
-                    padding: "7px 16px",
-                    fontSize: 12,
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    cursor: isPending ? "not-allowed" : "pointer",
-                    background: isCurrentRunning
-                      ? "rgba(245, 158, 11, 0.2)"
-                      : "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)",
-                    color: "#F59E0B",
-                    border: "1px solid rgba(245, 158, 11, 0.3)",
-                    borderRadius: 6,
-                    boxShadow: "0 0 10px rgba(245, 158, 11, 0.15)",
-                    transition: "all 0.2s ease",
-                  }}
+                  className="btn-primary btn-sm"
+                  style={{ cursor: isPending ? "not-allowed" : "pointer" }}
                 >
                   {isCurrentRunning ? (
                     <>
-                      <RefreshCw size={13} className="spin" /> EXECUTING...
+                      <RefreshCw size={12} className="spin" style={{ marginRight: 6 }} /> EXECUTING...
                     </>
                   ) : (
                     <>
-                      <Play size={13} /> RUN NOW
+                      <Play size={12} style={{ marginRight: 6 }} /> RUN NOW
                     </>
                   )}
                 </button>
@@ -251,23 +201,15 @@ export function JobsClient() {
       </div>
 
       {/* Execution Audit Log Stream */}
-      <div
-        style={{
-          background: "#0E121B",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: 12,
-          padding: 24,
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, borderBottom: "1px solid rgba(255, 255, 255, 0.06)", paddingBottom: 14 }}>
+      <div className="card" style={{ padding: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, borderBottom: "1px solid var(--grey-100)", paddingBottom: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Server size={18} style={{ color: "#38BDF8" }} />
+            <Server size={18} color="var(--grey-800)" />
             <div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+              <span className="section-eyebrow" style={{ marginBottom: 2 }}>
                 // TERMINAL CONSOLE
               </span>
-              <h2 style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: "#F8FAFC" }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0", color: "var(--grey-900)" }}>
                 Maintenance Job Telemetry Stream
               </h2>
             </div>
@@ -276,17 +218,7 @@ export function JobsClient() {
             <button
               type="button"
               onClick={() => setLogs([])}
-              style={{
-                padding: "5px 12px",
-                fontSize: 11,
-                fontFamily: "var(--font-mono)",
-                fontWeight: 600,
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: 6,
-                color: "#94A3B8",
-                cursor: "pointer",
-              }}
+              className="btn-secondary btn-sm"
             >
               CLEAR CONSOLE
             </button>
@@ -294,36 +226,23 @@ export function JobsClient() {
         </div>
 
         {logs.length === 0 ? (
-          <div
-            style={{
-              padding: "40px 20px",
-              textAlign: "center",
-              color: "#64748B",
-              background: "#07090E",
-              borderRadius: 8,
-              border: "1px dashed rgba(255, 255, 255, 0.08)",
-            }}
-          >
-            <Clock size={28} style={{ margin: "0 auto 10px", opacity: 0.4, color: "#F59E0B" }} />
-            <p style={{ margin: 0, fontSize: 13, fontFamily: "var(--font-mono)", color: "#CBD5E1" }}>
-              // STANDBY: No manual executions registered in active buffer
-            </p>
-            <p style={{ margin: "6px 0 0", fontSize: 12, color: "#64748B" }}>
-              Click &quot;RUN NOW&quot; on any job above to trigger immediate background sweep.
-            </p>
+          <div className="empty">
+            <Clock size={28} style={{ margin: "0 auto 10px", color: "var(--grey-400)" }} />
+            <div className="empty-title">Ready for job dispatch</div>
+            <div className="empty-body">Click &quot;RUN NOW&quot; on any job above to trigger immediate background sweep.</div>
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {logs.map((log) => (
               <div
                 key={log.id}
                 style={{
                   padding: "14px 18px",
-                  borderRadius: 8,
+                  borderRadius: 10,
                   border: `1px solid ${
-                    log.success ? "rgba(34, 197, 94, 0.3)" : "rgba(244, 63, 94, 0.3)"
+                    log.success ? "rgba(22, 163, 74, 0.25)" : "rgba(220, 38, 38, 0.25)"
                   }`,
-                  background: log.success ? "rgba(34, 197, 94, 0.05)" : "rgba(244, 63, 94, 0.05)",
+                  background: log.success ? "rgba(22, 163, 74, 0.04)" : "rgba(220, 38, 38, 0.04)",
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
@@ -332,18 +251,18 @@ export function JobsClient() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     {log.success ? (
-                      <CheckCircle2 size={16} style={{ color: "#22C55E" }} />
+                      <CheckCircle2 size={16} color="#16a34a" />
                     ) : (
-                      <AlertCircle size={16} style={{ color: "#F43F5E" }} />
+                      <AlertCircle size={16} color="#dc2626" />
                     )}
-                    <span style={{ fontWeight: 700, fontSize: 13.5, color: "#F8FAFC" }}>{log.name}</span>
+                    <span style={{ fontWeight: 700, fontSize: 13.5, color: "var(--grey-900)" }}>{log.name}</span>
                   </div>
-                  <span style={{ fontSize: 11, color: "#64748B", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
                     {log.timestamp}
                   </span>
                 </div>
 
-                <p style={{ margin: 0, fontSize: 13, color: "#CBD5E1", fontFamily: "var(--font-mono)" }}>
+                <p style={{ margin: 0, fontSize: 13, color: "var(--grey-700)", fontFamily: "var(--font-mono)" }}>
                   {log.message}
                 </p>
 
@@ -352,13 +271,13 @@ export function JobsClient() {
                     style={{
                       margin: "4px 0 0",
                       padding: "10px 14px",
-                      borderRadius: 6,
-                      background: "#07090E",
+                      borderRadius: 8,
+                      background: "var(--grey-50)",
                       fontSize: 11,
                       fontFamily: "var(--font-mono)",
-                      color: "#38BDF8",
+                      color: "var(--grey-800)",
                       overflowX: "auto",
-                      border: "1px solid rgba(255, 255, 255, 0.06)",
+                      border: "1px solid var(--grey-200)",
                     }}
                   >
                     {JSON.stringify(log.details, null, 2)}

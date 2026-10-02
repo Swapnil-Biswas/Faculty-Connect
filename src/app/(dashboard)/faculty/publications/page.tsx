@@ -32,6 +32,8 @@ export default async function FacultyPublicationsPage() {
         ]}
         title="Research & Academic Publications Registry"
         subtitle="Departmental dossier of indexed journals, peer-reviewed conference proceedings, and patents for NBA/NAAC compliance."
+        eyebrow="// RESEARCH & SCHOLARSHIP · CRITERIA 5"
+        dotMatrixText="RESEARCH"
       />
 
       <PublicationsClient

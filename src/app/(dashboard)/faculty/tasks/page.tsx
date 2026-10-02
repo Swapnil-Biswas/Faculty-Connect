@@ -48,6 +48,8 @@ export default async function FacultyTasksPage() {
         ]}
         title="Assigned Academic Tasks & Deliverables"
         subtitle="Operational ledger of teaching, departmental compliance, and committee responsibilities assigned to your node."
+        eyebrow="// DELIVERABLES · TASK PIPELINE"
+        dotMatrixText="TASKS"
       />
 
       {/* 2. Cyber Status Summary Counts Strip */}
@@ -60,11 +62,11 @@ export default async function FacultyTasksPage() {
         }}
       >
         {[
-          { label: "ALL TASKS", count: counts.total, color: "#F8FAFC", bg: "rgba(255, 255, 255, 0.08)", border: "rgba(255, 255, 255, 0.15)" },
-          { label: "OPEN", count: counts.open, color: "#38BDF8", bg: "rgba(14, 165, 233, 0.1)", border: "rgba(14, 165, 233, 0.3)" },
-          { label: "IN PROGRESS", count: counts.inProgress, color: "#818CF8", bg: "rgba(129, 140, 248, 0.1)", border: "rgba(129, 140, 248, 0.3)" },
-          { label: "COMPLETED", count: counts.completed, color: "#4ADE80", bg: "rgba(34, 197, 94, 0.1)", border: "rgba(34, 197, 94, 0.3)" },
-          { label: "OVERDUE", count: counts.overdue, color: "#FB7185", bg: "rgba(244, 63, 94, 0.1)", border: "rgba(244, 63, 94, 0.35)" },
+          { label: "ALL TASKS", count: counts.total, color: "#1D1D1F", bg: "#F5F5F7", border: "#E8E8ED" },
+          { label: "OPEN", count: counts.open, color: "#0284C7", bg: "rgba(14, 165, 233, 0.08)", border: "rgba(14, 165, 233, 0.25)" },
+          { label: "IN PROGRESS", count: counts.inProgress, color: "#4F46E5", bg: "rgba(99, 102, 241, 0.08)", border: "rgba(99, 102, 241, 0.25)" },
+          { label: "COMPLETED", count: counts.completed, color: "#16A34A", bg: "rgba(34, 197, 94, 0.08)", border: "rgba(34, 197, 94, 0.25)" },
+          { label: "OVERDUE", count: counts.overdue, color: "#E11D48", bg: "rgba(225, 29, 72, 0.08)", border: "rgba(225, 29, 72, 0.25)" },
         ].map((s) => (
           <div
             key={s.label}
@@ -73,14 +75,14 @@ export default async function FacultyTasksPage() {
               alignItems: "center",
               gap: 10,
               padding: "8px 14px",
-              backgroundColor: "#0E121B",
+              backgroundColor: "#FFFFFF",
               border: `1px solid ${s.border}`,
               borderRadius: 8,
               fontSize: 12,
               fontFamily: "var(--font-mono)",
               fontWeight: 600,
-              color: "#94A3B8",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+              color: "#6E6E73",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
             }}
           >
             <span
@@ -108,7 +110,7 @@ export default async function FacultyTasksPage() {
           description="You currently have no tasks allocated. When administrative or academic tasks are assigned, they will be listed here with deadlines."
         />
       ) : (
-        <div className="tech-card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="tech-card" style={{ padding: 0, overflow: "hidden", backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
           <div style={{ overflowX: "auto" }}>
             <table
               style={{
@@ -121,9 +123,9 @@ export default async function FacultyTasksPage() {
               <thead>
                 <tr
                   style={{
-                    backgroundColor: "rgba(7, 9, 14, 0.7)",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                    color: "#64748B",
+                    backgroundColor: "#F5F5F7",
+                    borderBottom: "1px solid #E8E8ED",
+                    color: "#6E6E73",
                     fontSize: 11,
                     fontFamily: "var(--font-mono)",
                     textTransform: "uppercase",
@@ -148,20 +150,20 @@ export default async function FacultyTasksPage() {
                       key={task.id}
                       className="cyber-row-hover"
                       style={{
-                        borderBottom: idx < tasks.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
-                        backgroundColor: isOverdue ? "rgba(244, 63, 94, 0.04)" : "transparent",
+                        borderBottom: idx < tasks.length - 1 ? "1px solid #E8E8ED" : "none",
+                        backgroundColor: isOverdue ? "rgba(225, 29, 72, 0.04)" : "transparent",
                       }}
                     >
                       {/* Title & Description */}
                       <td style={{ padding: "16px 22px", verticalAlign: "top" }}>
-                        <div style={{ fontWeight: 600, color: "#F8FAFC", marginBottom: 4 }}>
+                        <div style={{ fontWeight: 600, color: "#1D1D1F", marginBottom: 4 }}>
                           {task.title}
                         </div>
                         {task.description && (
                           <div
                             style={{
                               fontSize: 12.5,
-                              color: "#94A3B8",
+                              color: "#6E6E73",
                               lineHeight: 1.45,
                               maxWidth: 440,
                             }}
@@ -173,8 +175,8 @@ export default async function FacultyTasksPage() {
 
                       {/* Assigned By */}
                       <td style={{ padding: "16px 18px", verticalAlign: "top" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, fontFamily: "var(--font-mono)", color: "#E2E8F0" }}>
-                          <User size={13} color="#64748B" />
+                        <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, fontFamily: "var(--font-mono)", color: "#1D1D1F" }}>
+                          <User size={13} color="#86868B" />
                           <span>{task.assignedBy?.name ?? "DEPARTMENT"}</span>
                         </div>
                       </td>
@@ -188,11 +190,11 @@ export default async function FacultyTasksPage() {
                             gap: 6,
                             fontSize: 12.5,
                             fontFamily: "var(--font-mono)",
-                            color: isOverdue ? "#FB7185" : "#94A3B8",
+                            color: isOverdue ? "#E11D48" : "#6E6E73",
                             fontWeight: isOverdue ? 700 : 500,
                           }}
                         >
-                          {isOverdue ? <AlertTriangle size={13} /> : <Clock size={13} color="#64748B" />}
+                          {isOverdue ? <AlertTriangle size={13} /> : <Clock size={13} color="#86868B" />}
                           <span>{formatDate(task.deadline)}</span>
                         </div>
                       </td>

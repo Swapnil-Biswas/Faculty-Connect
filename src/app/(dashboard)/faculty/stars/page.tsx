@@ -62,6 +62,8 @@ export default async function FacultyStarsPage() {
         ]}
         title="Recognition & Merit Performance Ledger"
         subtitle="Cryptographically verified, append-only performance ledger and achievements earned across departmental activities."
+        eyebrow="// MERIT RECOGNITION · STARS LEDGER"
+        dotMatrixText="STARS"
       />
 
       {/* 2. Top Summary Metric Blocks */}
@@ -128,38 +130,38 @@ export default async function FacultyStarsPage() {
             gap: 16,
           }}
         >
-          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(14, 165, 233, 0.25)" }}>
-            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#38BDF8", textTransform: "uppercase" }}>
+          <div style={{ padding: "14px 16px", backgroundColor: "#FAFAFA", borderRadius: 8, border: "1px solid rgba(14, 165, 233, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#0284C7", textTransform: "uppercase" }}>
               ◆ TASK DELIVERY
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
-              {taskPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#1D1D1F", marginTop: 4 }}>
+              {taskPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#6E6E73" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#6E6E73", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((taskPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
 
-          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(255, 215, 0, 0.25)" }}>
-            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#FFD700", textTransform: "uppercase" }}>
+          <div style={{ padding: "14px 16px", backgroundColor: "#FAFAFA", borderRadius: 8, border: "1px solid rgba(217, 119, 6, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#B45309", textTransform: "uppercase" }}>
               ★ CLUSTER EVALUATIONS
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
-              {evalPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#1D1D1F", marginTop: 4 }}>
+              {evalPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#6E6E73" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#6E6E73", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((evalPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
 
-          <div style={{ padding: "14px 16px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderRadius: 8, border: "1px solid rgba(129, 140, 248, 0.25)" }}>
-            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#818CF8", textTransform: "uppercase" }}>
+          <div style={{ padding: "14px 16px", backgroundColor: "#FAFAFA", borderRadius: 8, border: "1px solid rgba(99, 102, 241, 0.25)" }}>
+            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#4F46E5", textTransform: "uppercase" }}>
               ◈ SCHOLARLY & RESEARCH
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#F8FAFC", marginTop: 4 }}>
-              {otherPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>pts</span>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: "#1D1D1F", marginTop: 4 }}>
+              {otherPoints} <span style={{ fontSize: 12, fontWeight: 500, color: "#6E6E73" }}>pts</span>
             </div>
-            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#94A3B8", marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#6E6E73", marginTop: 4 }}>
               {totalPoints > 0 ? Math.round((otherPoints / totalPoints) * 100) : 0}% of cumulative total
             </div>
           </div>
@@ -167,22 +169,22 @@ export default async function FacultyStarsPage() {
       </div>
 
       {/* 4. Append-Only Points Ledger Table */}
-      <div className="tech-card" style={{ padding: 0, overflow: "hidden", marginBottom: 32 }}>
+      <div className="tech-card" style={{ padding: 0, overflow: "hidden", marginBottom: 32, backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
         <div
           style={{
             padding: "16px 24px",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            borderBottom: "1px solid #E8E8ED",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            backgroundColor: "rgba(7, 9, 14, 0.6)",
+            backgroundColor: "#F5F5F7",
           }}
         >
           <div>
-            <span className="hero-eyebrow" style={{ margin: 0 }}>
+            <span className="hero-eyebrow" style={{ margin: 0, color: "#86868B" }}>
               // AUDIT LOG
             </span>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1D1D1F", margin: "2px 0 0 0" }}>
               Points Transaction Ledger
             </h2>
           </div>
@@ -212,9 +214,9 @@ export default async function FacultyStarsPage() {
               <thead>
                 <tr
                   style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.02)",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                    color: "#64748B",
+                    backgroundColor: "#F5F5F7",
+                    borderBottom: "1px solid #E8E8ED",
+                    color: "#6E6E73",
                     fontSize: 11,
                     fontFamily: "var(--font-mono)",
                     textTransform: "uppercase",
@@ -233,12 +235,12 @@ export default async function FacultyStarsPage() {
                     key={entry.id}
                     className="cyber-row-hover"
                     style={{
-                      borderBottom: idx < ledger.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
+                      borderBottom: idx < ledger.length - 1 ? "1px solid #E8E8ED" : "none",
                     }}
                   >
-                    <td style={{ padding: "14px 20px", color: "#94A3B8", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "14px 20px", color: "#6E6E73", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <Clock size={12} color="#64748B" />
+                        <Clock size={12} color="#86868B" />
                         <span>{formatDate(entry.createdAt)}</span>
                       </div>
                     </td>
@@ -249,9 +251,9 @@ export default async function FacultyStarsPage() {
                       </span>
                     </td>
 
-                    <td style={{ padding: "14px 18px", color: "#F8FAFC" }}>
+                    <td style={{ padding: "14px 18px", color: "#1D1D1F" }}>
                       <div>{entry.reason || "Performance credit"}</div>
-                      <div style={{ fontSize: 10.5, color: "#64748B", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                      <div style={{ fontSize: 10.5, color: "#86868B", fontFamily: "var(--font-mono)", marginTop: 2 }}>
                         TX: {entry.id}
                       </div>
                     </td>
@@ -262,7 +264,7 @@ export default async function FacultyStarsPage() {
                         textAlign: "right",
                         fontWeight: 700,
                         fontFamily: "var(--font-mono)",
-                        color: entry.amount >= 0 ? "#4ADE80" : "#FB7185",
+                        color: entry.amount >= 0 ? "#16A34A" : "#E11D48",
                         fontSize: 13.5,
                         whiteSpace: "nowrap",
                       }}
@@ -278,15 +280,15 @@ export default async function FacultyStarsPage() {
       </div>
 
       {/* 5. Institutional Badges Catalog */}
-      <div className="tech-card" style={{ padding: 24 }}>
+      <div className="tech-card" style={{ padding: 24, backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
         <div style={{ marginBottom: 18 }}>
-          <span className="hero-eyebrow" style={{ margin: 0 }}>
+          <span className="hero-eyebrow" style={{ margin: 0, color: "#86868B" }}>
             // INSTITUTIONAL RECOGNITIONS
           </span>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1D1D1F", margin: "2px 0 0 0" }}>
             Faculty Merit Badges
           </h2>
-          <p style={{ fontSize: 12.5, color: "#94A3B8", margin: "4px 0 0 0" }}>
+          <p style={{ fontSize: 12.5, color: "#6E6E73", margin: "4px 0 0 0" }}>
             Departmental badges unlocked through sustained punctuality, research output, and peer mentoring.
           </p>
         </div>
@@ -310,15 +312,15 @@ export default async function FacultyStarsPage() {
                   alignItems: "flex-start",
                   gap: 14,
                   padding: "16px",
-                  borderRadius: 10,
+                  borderRadius: 12,
                   border: isEarned
-                    ? "1px solid rgba(255, 215, 0, 0.4)"
-                    : "1px solid rgba(255, 255, 255, 0.08)",
+                    ? "1.5px solid #1D1D1F"
+                    : "1px solid #E8E8ED",
                   backgroundColor: isEarned
-                    ? "rgba(255, 215, 0, 0.04)"
-                    : "rgba(255, 255, 255, 0.02)",
-                  opacity: isEarned ? 1 : 0.6,
-                  boxShadow: isEarned ? "0 0 16px rgba(255, 215, 0, 0.1)" : "none",
+                    ? "#FFFFFF"
+                    : "#FAFAFA",
+                  opacity: isEarned ? 1 : 0.75,
+                  boxShadow: isEarned ? "0 2px 8px rgba(0, 0, 0, 0.06)" : "none",
                 }}
               >
                 <div
@@ -329,9 +331,9 @@ export default async function FacultyStarsPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: isEarned ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 255, 255, 0.04)",
-                    border: isEarned ? "1px solid rgba(255, 215, 0, 0.4)" : "1px solid rgba(255, 255, 255, 0.08)",
-                    color: isEarned ? "#FFD700" : "#64748B",
+                    backgroundColor: isEarned ? "#F5F5F7" : "#E8E8ED",
+                    border: "1px solid #E8E8ED",
+                    color: isEarned ? "#1D1D1F" : "#86868B",
                     flexShrink: 0,
                   }}
                 >
@@ -343,22 +345,22 @@ export default async function FacultyStarsPage() {
                     style={{
                       fontSize: 14,
                       fontWeight: 700,
-                      color: isEarned ? "#F8FAFC" : "#94A3B8",
+                      color: isEarned ? "#1D1D1F" : "#6E6E73",
                       lineHeight: 1.25,
                     }}
                   >
                     {badge.name}
                   </div>
-                  <div style={{ fontSize: 12, color: "#64748B", marginTop: 4, lineHeight: 1.45 }}>
+                  <div style={{ fontSize: 12, color: "#6E6E73", marginTop: 4, lineHeight: 1.45 }}>
                     {badge.description}
                   </div>
                   <div style={{ marginTop: 10, fontSize: 11, fontFamily: "var(--font-mono)" }}>
                     {isEarned ? (
-                      <span style={{ color: "#4ADE80", display: "flex", alignItems: "center", gap: 4 }}>
+                      <span style={{ color: "#16A34A", display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
                         <CheckCircle2 size={12} /> Unlocked on {formatDate(awardedAt!)}
                       </span>
                     ) : (
-                      <span style={{ color: "#64748B" }}>
+                      <span style={{ color: "#86868B" }}>
                         Criteria: Institutional Award
                       </span>
                     )}

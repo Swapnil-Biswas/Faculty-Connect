@@ -2,7 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ScoringConfigForm } from "./ScoringConfigForm";
-import { Settings, Info, History } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { History, Info, Sparkles } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default async function ScoringConfigPage() {
@@ -25,55 +26,88 @@ export default async function ScoringConfigPage() {
   });
 
   return (
-    <div className="dashboard-container" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      {/* Header */}
-      <div>
-        <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Settings className="text-primary" size={28} />
-          Scoring Configuration
-        </h1>
-        <p className="page-subtitle">
-          Adjust the weight of each performance dimension in the Recognition Engine. All changes are versioned and audited.
-        </p>
-      </div>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* BMSIT Dot Matrix Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/hod" },
+          { label: "Scoring Configuration" },
+        ]}
+        eyebrow="HOD // MERIT MATRIX SYSTEM"
+        dotMatrixText="SCORING"
+        dotMatrixFontSize={36}
+        title="Scoring Configuration"
+        ghost="parameters."
+        subtitle="Adjust the weight of each performance dimension in the Recognition Engine. All changes are versioned and audited."
+      />
 
-      {/* Info box */}
+      {/* Info Callout */}
       <div
+        className="card"
         style={{
           display: "flex",
-          gap: "0.75rem",
-          padding: "1rem",
-          background: "hsl(var(--color-primary) / 0.07)",
-          border: "1px solid hsl(var(--color-primary) / 0.2)",
-          borderRadius: "var(--radius-lg)",
+          gap: 14,
+          padding: 18,
+          background: "#FAFAFA",
+          borderColor: "#E8E8ED",
+          alignItems: "flex-start",
         }}
       >
-        <Info size={18} style={{ flexShrink: 0, marginTop: "1px", color: "hsl(var(--color-primary))" }} />
-        <div style={{ fontSize: "0.875rem" }}>
-          <strong>Explainability guarantee:</strong> Saving creates a new versioned config — historical scores remain linked
-          to the version active at award time. No points are retroactively recalculated.
-          Current version: <strong>v{activeConfig?.version ?? 1}</strong> — set by{" "}
-          <strong>{activeConfig?.setByAdmin?.name ?? "System"}</strong>.
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: "#1D1D1F",
+            color: "#FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <Sparkles size={16} />
+        </div>
+        <div style={{ fontSize: 13, color: "#424245", lineHeight: 1.6 }}>
+          <strong style={{ color: "#1D1D1F" }}>Explainability Guarantee:</strong> Saving creates a new versioned configuration snapshot. Historical faculty scores remain permanently tied to the formula active when awards were computed. No historical points are retroactively altered.
+          <div style={{ marginTop: 4, fontFamily: "var(--font-mono)", fontSize: 11, color: "#6E6E73" }}>
+            Current Active Version: <span style={{ fontWeight: 700, color: "#1D1D1F" }}>v{activeConfig?.version ?? 1}</span> · Established by: <span style={{ fontWeight: 600, color: "#1D1D1F" }}>{activeConfig?.setByAdmin?.name ?? "System"}</span>
+          </div>
         </div>
       </div>
 
-      {/* Config Form */}
-      <div className="card" style={{ padding: "2rem" }}>
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 700, marginBottom: "1.5rem" }}>
-          Factor Weights
-        </h2>
+      {/* Factor Weights Config Form */}
+      <div className="card">
+        <div style={{ marginBottom: 20 }}>
+          <span className="section-eyebrow">// CONFIGURATION FORM</span>
+          <h2 className="card-title" style={{ marginTop: 4 }}>
+            Evaluation Weights Distribution
+          </h2>
+          <p className="card-muted">
+            Define percentage weights allocated to on-time execution, early delivery, peer quality, and departmental contributions.
+          </p>
+        </div>
         <ScoringConfigForm activeConfig={activeConfig} />
       </div>
 
-      {/* History */}
+      {/* Version History Table */}
       {history.length > 0 && (
-        <div className="card" style={{ padding: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <History size={20} />
-            Version History
-          </h2>
-          <div className="table-wrapper">
-            <table>
+        <div className="card">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+            <div>
+              <span className="section-eyebrow">// AUDIT TRAIL</span>
+              <h2 className="card-title" style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
+                <History size={18} />
+                Version History Ledger
+              </h2>
+            </div>
+            <span className="badge badge-dark">
+              {history.length} Snapshots
+            </span>
+          </div>
+
+          <div className="table-wrap">
+            <table className="table">
               <thead>
                 <tr>
                   <th>Version</th>
@@ -92,21 +126,24 @@ export default async function ScoringConfigPage() {
                 {history.map((cfg) => (
                   <tr key={cfg.id}>
                     <td>
-                      <span style={{ fontWeight: 700 }}>v{cfg.version}</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "#1D1D1F" }}>
+                        v{cfg.version}
+                      </span>
                     </td>
                     <td>
-                      <span className={`status-badge ${cfg.isActive ? "status-approved" : ""}`} style={{ fontSize: "11px" }}>
+                      <span className={`badge ${cfg.isActive ? "status-published" : "status-draft"}`}>
+                        <span className="badge-dot" />
                         {cfg.isActive ? "Active" : "Archived"}
                       </span>
                     </td>
-                    <td style={{ fontSize: "0.8125rem" }}>{cfg.setByAdmin?.name ?? "—"}</td>
-                    <td>{Math.round(cfg.onTimeWeight * 100)}%</td>
-                    <td>{Math.round(cfg.earlyWeight * 100)}%</td>
-                    <td>{Math.round(cfg.qualityWeight * 100)}%</td>
-                    <td>{Math.round(cfg.contributionWeight * 100)}%</td>
-                    <td>{Math.round(cfg.initiativeWeight * 100)}%</td>
-                    <td>{Math.round(cfg.overallRatingWeight * 100)}%</td>
-                    <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))", whiteSpace: "nowrap" }}>
+                    <td style={{ fontSize: 13, color: "#424245" }}>{cfg.setByAdmin?.name ?? "—"}</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.onTimeWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.earlyWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.qualityWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.contributionWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.initiativeWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>{Math.round(cfg.overallRatingWeight * 100)}%</td>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "#86868B", whiteSpace: "nowrap" }}>
                       {formatDate(cfg.createdAt)}
                     </td>
                   </tr>

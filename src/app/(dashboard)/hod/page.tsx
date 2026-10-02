@@ -39,89 +39,82 @@ export default async function HodDashboard() {
   const deptName = process.env.NEXT_PUBLIC_DEPARTMENT_NAME ?? "Dept. of Computer Science & Engineering";
 
   return (
-    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
           { label: "EXECUTIVE_NODE" },
           { label: "DEPT_OVERVIEW" },
         ]}
+        eyebrow="HOD // GOVERNANCE CONSOLE"
+        dotMatrixText="HOD CONSOLE"
+        dotMatrixFontSize={36}
         title="Department Executive Console"
+        ghost="overview."
         subtitle={`Live institutional overview · ${deptName.toUpperCase()} · BMSIT BANGALORE`}
         actions={
-          <div className="tech-ticker">
-            <span className="tech-led led-green" />
-            <span style={{ color: "#F8FAFC", fontWeight: 700 }}>EXECUTIVE DISPATCH ACTIVE</span>
-          </div>
+          <span className="badge badge-dark">
+            <span className="badge-dot" style={{ backgroundColor: "#16A34A" }} />
+            EXECUTIVE DISPATCH ACTIVE
+          </span>
         }
       />
 
-      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      {/* 2. Dot Matrix Command Hero */}
       <DotMatrixHero
         titleLine1="HOD COMMAND"
         titleLine2="CENTER"
         eyebrow={`// GOVERNANCE NODE · ${deptName.toUpperCase()} · BMSIT`}
         tagline="Comprehensive departmental cluster monitoring, accreditation synthesis, and faculty merit governance."
         stats={[
-          { label: "FACULTY ACTIVE", value: totalFaculty, color: "#38BDF8" },
-          { label: "CLUSTERS ONLINE", value: clusters.length, color: "#FFD700" },
-          { label: "TASKS DISPATCHED", value: totalTasks, color: "#22C55E" },
-          { label: "PENDING LEAVE", value: pendingLeaves, color: "#F59E0B" },
+          { label: "FACULTY ACTIVE", value: totalFaculty, color: "#1D1D1F" },
+          { label: "CLUSTERS ONLINE", value: clusters.length, color: "#1D1D1F" },
+          { label: "TASKS DISPATCHED", value: totalTasks, color: "#16A34A" },
+          { label: "PENDING LEAVE", value: pendingLeaves, color: "#D97706" },
         ]}
       />
 
-      {/* Cyber Executive Stats */}
-      <div className="grid-4" style={{ marginBottom: 28 }}>
-        <StatCard
-          label="TOTAL FACULTY"
-          value={totalFaculty}
-          icon={<Users size={20} />}
-          iconBg="rgba(14, 165, 233, 0.1)"
-          glowColor="rgba(14, 165, 233, 0.2)"
-        />
-        <StatCard
-          label="ACTIVE CLUSTERS"
-          value={clusters.length}
-          icon={<BarChart3 size={20} />}
-          iconBg="rgba(255, 215, 0, 0.1)"
-          glowColor="rgba(255, 215, 0, 0.2)"
-        />
-        <StatCard
-          label="ALLOCATED TASKS"
-          value={totalTasks}
-          icon={<CheckSquare size={20} />}
-          iconBg="rgba(34, 197, 94, 0.1)"
-          glowColor="rgba(34, 197, 94, 0.2)"
-        />
-        <StatCard
-          label="PENDING LEAVE REVIEWS"
-          value={pendingLeaves}
-          icon={<Calendar size={20} />}
-          iconBg="rgba(245, 158, 11, 0.1)"
-          glowColor="rgba(245, 158, 11, 0.2)"
-        />
+      {/* 3. Metric Stats Grid */}
+      <div className="stat-grid">
+        <div className="stat-card">
+          <div className="stat-card-num">{totalFaculty}</div>
+          <div className="stat-card-label">TOTAL FACULTY</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-num">{clusters.length}</div>
+          <div className="stat-card-label">ACTIVE CLUSTERS</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-num">{totalTasks}</div>
+          <div className="stat-card-label">ALLOCATED TASKS</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-num" style={{ color: pendingLeaves > 0 ? "#D97706" : "#1D1D1F" }}>
+            {pendingLeaves}
+          </div>
+          <div className="stat-card-label">PENDING LEAVE REVIEWS</div>
+        </div>
       </div>
 
       <div className="grid-2" style={{ alignItems: "start", gap: 20 }}>
         {/* Cluster overview cards */}
-        <div className="tech-card" style={{ padding: 22 }}>
+        <div className="card">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
             <div>
-              <span className="hero-eyebrow" style={{ margin: 0 }}>
-                // TOPOLOGY
-              </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+              <span className="section-eyebrow">// TOPOLOGY</span>
+              <h3 className="card-title" style={{ marginTop: 2 }}>
                 Departmental Clusters
               </h3>
             </div>
-            <a href="/hod/clusters" className="btn-primary" style={{ padding: "6px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+            <a href="/hod/clusters" className="btn-secondary btn-sm">
               CLUSTER MATRIX →
             </a>
           </div>
 
           {clusters.length === 0 ? (
-            <div style={{ padding: 28, textAlign: "center" }}>
-              <BarChart3 size={32} style={{ color: "#334155", margin: "0 auto 8px" }} />
-              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NO CLUSTERS CONFIGURED</div>
+            <div style={{ padding: 32, textAlign: "center" }}>
+              <BarChart3 size={32} style={{ color: "#B0B0B5", margin: "0 auto 8px" }} />
+              <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#6E6E73" }}>NO CLUSTERS CONFIGURED</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -133,11 +126,11 @@ export default async function HodDashboard() {
                     display: "flex",
                     alignItems: "center",
                     gap: 14,
-                    padding: "12px 16px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    borderRadius: 10,
+                    padding: "14px 16px",
+                    background: "#FAFAFA",
+                    borderRadius: 12,
                     textDecoration: "none",
-                    border: "1px solid rgba(255, 255, 255, 0.07)",
+                    border: "1px solid #E8E8ED",
                   }}
                   className="cyber-card-hover"
                 >
@@ -145,14 +138,13 @@ export default async function HodDashboard() {
                     style={{
                       width: 40,
                       height: 40,
-                      borderRadius: 8,
-                      background: "#07090E",
-                      border: "1.5px solid #FFD700",
+                      borderRadius: 10,
+                      background: "#1D1D1F",
+                      color: "#FFFFFF",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#FFD700",
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: 800,
                       fontFamily: "var(--font-mono)",
                       flexShrink: 0,
@@ -161,18 +153,18 @@ export default async function HodDashboard() {
                     {c.name.charAt(0)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F" }}>
                       {c.name}
                     </div>
-                    <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B", marginTop: 2 }}>
-                      HEAD: {c.head?.name?.toUpperCase() ?? "UNASSIGNED"} · {c.members.length} NODES
+                    <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#6E6E73", marginTop: 2 }}>
+                      HEAD: {c.head?.name?.toUpperCase() ?? "UNASSIGNED"} · {c.members.length} MEMBERS
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
-                    <span className="glyph-chip glyph-chip-cyan" style={{ fontSize: 10, padding: "1px 6px" }}>
+                    <span className="badge">
                       {c._count.tasks} TASKS
                     </span>
-                    <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "#F59E0B" }}>
+                    <span style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "#D97706" }}>
                       {c._count.leaveApplications} LEAVES
                     </span>
                   </div>
@@ -185,72 +177,73 @@ export default async function HodDashboard() {
         {/* Right panel */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {/* Faculty of the Month */}
-          <div className="tech-card" style={{ padding: 22 }}>
-            <span className="hero-eyebrow" style={{ margin: 0 }}>
-              // MERIT RECOGNITION
-            </span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 14px 0" }}>
+          <div className="card">
+            <span className="section-eyebrow">// MERIT RECOGNITION</span>
+            <h3 className="card-title" style={{ marginTop: 2, marginBottom: 14 }}>
               Faculty of the Month
             </h3>
             {fotm ? (
               <div
                 style={{
-                  padding: "16px",
-                  background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%)",
-                  borderRadius: 10,
-                  border: "1.5px solid rgba(255, 215, 0, 0.35)",
+                  padding: "18px",
+                  background: "#FAFAFA",
+                  borderRadius: 12,
+                  border: "1px solid #E8E8ED",
                   display: "flex",
                   alignItems: "center",
                   gap: 14,
-                  boxShadow: "0 0 16px rgba(255, 215, 0, 0.1)",
                 }}
               >
                 <div
-                  className="avatar avatar-lg"
                   style={{
-                    background: "#07090E",
-                    border: "2px solid #FFD700",
-                    color: "#FFD700",
+                    width: 52,
+                    height: 52,
+                    borderRadius: 12,
+                    background: "#1D1D1F",
+                    color: "#FFFFFF",
                     fontFamily: "var(--font-mono)",
                     fontWeight: 800,
+                    fontSize: 18,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
                   }}
                 >
                   {getInitials(fotm.faculty.name)}
                 </div>
                 <div>
-                  <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#FFD700", fontWeight: 700, marginBottom: 2 }}>
+                  <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "#B45309", fontWeight: 700, marginBottom: 2 }}>
                     ★ {monthNames[fotm.month - 1]} {fotm.year} RECIPIENT
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "#F8FAFC" }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#1D1D1F" }}>
                     {fotm.faculty.name}
                   </div>
-                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
+                  <div style={{ fontSize: 12, color: "#6E6E73", marginTop: 2 }}>
                     {fotm.faculty.designation ?? "Faculty Member"}
                   </div>
                 </div>
               </div>
             ) : (
-              <div style={{ padding: 20, textAlign: "center" }}>
-                <Star size={28} style={{ color: "#334155", margin: "0 auto 8px" }} />
-                <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "#64748B" }}>NOT YET DETERMINED</div>
-                <div style={{ fontSize: 11.5, color: "#475569", marginTop: 2 }}>Computed automatically at month end.</div>
+              <div style={{ padding: 24, textAlign: "center", background: "#FAFAFA", borderRadius: 12, border: "1px dashed #D2D2D7" }}>
+                <Star size={24} style={{ color: "#B0B0B5", margin: "0 auto 8px" }} />
+                <div style={{ fontSize: 12.5, fontFamily: "var(--font-mono)", color: "#6E6E73" }}>NOT YET DETERMINED</div>
+                <div style={{ fontSize: 11.5, color: "#86868B", marginTop: 2 }}>Computed automatically at month end.</div>
               </div>
             )}
             <a
               href="/hod/faculty-of-month"
-              className="btn-outline"
-              style={{ display: "block", textAlign: "center", marginTop: 14, padding: "8px", fontSize: 12, fontFamily: "var(--font-mono)" }}
+              className="btn-secondary btn-block"
+              style={{ textAlign: "center", marginTop: 14, padding: "8px 14px", fontSize: 11.5, fontFamily: "var(--font-mono)" }}
             >
               VIEW RECOGNITION ARCHIVE →
             </a>
           </div>
 
           {/* Quick Actions */}
-          <div className="tech-card" style={{ padding: 22 }}>
-            <span className="hero-eyebrow" style={{ margin: 0 }}>
-              // GOVERNANCE SHORTCUTS
-            </span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 14px 0" }}>
+          <div className="card">
+            <span className="section-eyebrow">// GOVERNANCE SHORTCUTS</span>
+            <h3 className="card-title" style={{ marginTop: 2, marginBottom: 14 }}>
               Executive Actions
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -269,20 +262,20 @@ export default async function HodDashboard() {
                     display: "flex",
                     alignItems: "center",
                     gap: 10,
-                    padding: "10px 14px",
-                    borderRadius: 6,
+                    padding: "11px 14px",
+                    borderRadius: 10,
                     textDecoration: "none",
-                    border: "1px solid rgba(255, 255, 255, 0.06)",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    color: "#F8FAFC",
+                    border: "1px solid #E8E8ED",
+                    background: "#FAFAFA",
+                    color: "#1D1D1F",
                     fontSize: 13,
                     fontWeight: 500,
                   }}
                   className="cyber-card-hover"
                 >
-                  <span style={{ color: "#FFD700" }}>{a.icon}</span>
+                  <span style={{ color: "#1D1D1F" }}>{a.icon}</span>
                   <span style={{ flex: 1 }}>{a.label}</span>
-                  <ArrowRight size={13} style={{ opacity: 0.5 }} />
+                  <ArrowRight size={13} style={{ opacity: 0.4 }} />
                 </a>
               ))}
             </div>

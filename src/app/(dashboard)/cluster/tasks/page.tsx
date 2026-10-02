@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { formatDate } from '@/lib/utils'
 import { AssignTaskForm } from './AssignTaskForm'
 import { DeleteTaskButton } from './DeleteTaskButton'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { CheckSquare, Plus, AlertTriangle } from 'lucide-react'
 import type { Metadata } from 'next'
 
@@ -18,11 +19,10 @@ export default async function ClusterTasksPage() {
   const clusterId = session.user.clusterId
   if (!clusterId) {
     return (
-      <div className="card">
-        <div className="empty-state">
-          <AlertTriangle size={40} className="empty-state-icon" />
-          <div className="empty-state-title">No cluster assigned</div>
-        </div>
+      <div className="card" style={{ padding: 48, textAlign: 'center' }}>
+        <AlertTriangle size={40} style={{ color: "#D97706", margin: "0 auto 12px" }} />
+        <h2 className="card-title" style={{ marginBottom: 6 }}>No Cluster Assigned</h2>
+        <p className="card-muted">Contact the department HOD to assign you to a cluster node.</p>
       </div>
     )
   }
@@ -42,212 +42,116 @@ export default async function ClusterTasksPage() {
   const facultyList = members.map((m) => m.user)
 
   const STATUS_COLORS: Record<string, string> = {
-    OPEN: '#3B82F6',
-    IN_PROGRESS: '#F59E0B',
-    COMPLETED: '#22C55E',
-    OVERDUE: '#EF4444',
+    OPEN: '#1D1D1F',
+    IN_PROGRESS: '#D97706',
+    COMPLETED: '#16A34A',
+    OVERDUE: '#E11D48',
   }
 
   return (
-    <div className="page-content" style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* BMSIT High-Tech Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '3px 10px', borderRadius: 4, background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.25)', color: '#F59E0B', fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
-            <span>●</span> TASK DISPATCH // CLUSTER WORKLOAD MANAGEMENT
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#F8FAFC', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-            Cluster Task Management
-          </h1>
-          <p style={{ fontSize: 13, color: '#94A3B8', margin: 0, fontFamily: 'var(--font-mono)' }}>
-            // Assign, track, and supervise academic and operational deliverables for your cluster
-          </p>
-        </div>
-      </div>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. Page Header with BMSIT Dot Matrix */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Cluster Console", href: "/cluster" },
+          { label: "Task Dispatch" },
+        ]}
+        eyebrow="CLUSTER // WORKLOAD DISPATCH"
+        dotMatrixText="TASKS"
+        dotMatrixFontSize={36}
+        title="Cluster Task Management"
+        ghost="pipeline."
+        subtitle="Assign, track, and supervise academic and operational deliverables for your cluster."
+        actions={
+          <span className="badge badge-dark">
+            {tasks.length} Cluster Deliverables
+          </span>
+        }
+      />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', alignItems: 'start', gap: 24 }}>
         {/* Assign Task form */}
-        <div
-          style={{
-            background: '#0E121B',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: 12,
-            padding: 24,
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: 20,
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-              paddingBottom: 14,
-            }}
-          >
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <div
               style={{
                 width: 34,
                 height: 34,
                 borderRadius: 8,
-                background: 'rgba(245, 158, 11, 0.15)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
+                background: '#1D1D1F',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#F59E0B',
+                color: '#FFFFFF',
               }}
             >
               <Plus size={18} />
             </div>
             <div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B', fontFamily: 'var(--font-mono)' }}>
-                // DISPATCH CONSOLE
-              </span>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#F8FAFC' }}>
-                Assign New Task
+              <span className="section-eyebrow">// DIRECT DISPATCH</span>
+              <h3 className="card-title" style={{ margin: 0 }}>
+                Assign New Deliverable
               </h3>
             </div>
           </div>
-          <AssignTaskForm faculty={facultyList} />
+          <AssignTaskForm faculty={facultyList} clusterId={clusterId} />
         </div>
 
         {/* Task list */}
-        <div
-          style={{
-            background: '#0E121B',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: 12,
-            padding: 24,
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 18,
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-              paddingBottom: 14,
-            }}
-          >
-            <div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#38BDF8', fontFamily: 'var(--font-mono)' }}>
-                // ACTIVE PIPELINE
-              </span>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#F8FAFC' }}>
-                Cluster Tasks Matrix ({tasks.length})
-              </h3>
-            </div>
-            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: '#64748B' }}>
-              LIVE FEED
-            </span>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <span className="section-eyebrow">// ACTIVE DELIVERABLES</span>
+            <span className="badge">{tasks.length} Assigned</span>
           </div>
 
           {tasks.length === 0 ? (
-            <div
-              style={{
-                padding: '40px 20px',
-                textAlign: 'center',
-                color: '#64748B',
-                background: '#07090E',
-                borderRadius: 8,
-                border: '1px dashed rgba(255, 255, 255, 0.08)',
-                fontFamily: 'var(--font-mono)',
-              }}
-            >
-              <CheckSquare size={32} style={{ margin: '0 auto 10px', opacity: 0.4, color: '#22C55E' }} />
-              <div>// No tasks active in cluster queue</div>
-              <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>
-                Assign your first task using the dispatch console.
-              </div>
+            <div className="card" style={{ padding: 48, textAlign: 'center' }}>
+              <CheckSquare size={36} style={{ color: '#B0B0B5', margin: '0 auto 8px' }} />
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1D1D1F' }}>No tasks assigned in this cluster yet</div>
+              <p className="card-muted" style={{ marginTop: 4 }}>Use the form on the left to dispatch a task to a faculty member.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="cyber-card-hover"
-                  style={{
-                    background: '#07090E',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                    borderRadius: 8,
-                    padding: '16px 18px',
-                    transition: 'border-color 0.15s ease',
-                  }}
+                  className="card cyber-card-hover"
+                  style={{ padding: '16px 20px', background: '#FFFFFF' }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 12,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        background: STATUS_COLORS[task.status] ?? '#888',
-                        boxShadow: `0 0 8px ${STATUS_COLORS[task.status] ?? '#888'}`,
-                        flexShrink: 0,
-                        marginTop: 5,
-                      }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                       <div
                         style={{
-                          fontSize: 14,
-                          fontWeight: 700,
-                          color: '#F8FAFC',
-                          marginBottom: 4,
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          background: STATUS_COLORS[task.status] ?? '#888',
+                          flexShrink: 0,
+                          marginTop: 6,
                         }}
-                      >
-                        {task.title}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: '#94A3B8',
-                          display: 'flex',
-                          gap: 10,
-                          flexWrap: 'wrap',
-                          alignItems: 'center',
-                          fontFamily: 'var(--font-mono)',
-                        }}
-                      >
-                        <span style={{ color: '#CBD5E1' }}>→ {task.assignedTo.name}</span>
-                        <span>Due {formatDate(task.deadline)}</span>
-                        <span
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 700,
-                            padding: '2px 6px',
-                            borderRadius: 4,
-                            background: `${STATUS_COLORS[task.status]}15`,
-                            color: STATUS_COLORS[task.status],
-                            border: `1px solid ${STATUS_COLORS[task.status]}35`,
-                          }}
-                        >
-                          {task.status.replace('_', ' ')}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 700,
-                            padding: '2px 6px',
-                            borderRadius: 4,
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            color: '#CBD5E1',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                          }}
-                        >
-                          {task.priority}
-                        </span>
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#1D1D1F', marginBottom: 4 }}>
+                          {task.title}
+                        </div>
+                        {task.description && (
+                          <p style={{ fontSize: 13, color: '#6E6E73', margin: '0 0 8px 0', lineHeight: 1.45 }}>
+                            {task.description}
+                          </p>
+                        )}
+                        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', fontSize: 12, color: '#6E6E73' }}>
+                          <span style={{ fontWeight: 600, color: '#1D1D1F' }}>→ {task.assignedTo.name}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)' }}>Due {formatDate(task.deadline)}</span>
+                          <span className="badge" style={{ fontSize: 9.5, padding: '2px 6px' }}>
+                            {task.status.replace('_', ' ')}
+                          </span>
+                          <span className="badge" style={{ fontSize: 9.5, padding: '2px 6px' }}>
+                            {task.priority}
+                          </span>
+                        </div>
                       </div>
                     </div>
+
                     <DeleteTaskButton taskId={task.id} />
                   </div>
                 </div>

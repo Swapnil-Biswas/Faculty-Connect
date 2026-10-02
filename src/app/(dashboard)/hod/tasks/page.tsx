@@ -1,8 +1,9 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { db } from '@/lib/db'
-import { formatDate, getInitials } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { AssignTaskForm } from './AssignTaskForm'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { CheckSquare, Plus, Filter } from 'lucide-react'
 import type { Metadata } from 'next'
 
@@ -57,49 +58,51 @@ export default async function HodTasksPage({
   }
 
   const STATUS_COLORS: Record<string, string> = {
-    OPEN: '#3B82F6',
-    IN_PROGRESS: '#F59E0B',
-    COMPLETED: '#22C55E',
-    OVERDUE: '#EF4444',
+    OPEN: '#1D1D1F',
+    IN_PROGRESS: '#D97706',
+    COMPLETED: '#16A34A',
+    OVERDUE: '#E11D48',
   }
 
   return (
-    <div>
-      <div className="page-header">
-        <h2 className="page-title">
-          Department <span className="text-gradient">Tasks</span>
-        </h2>
-        <p className="page-subtitle">
-          View and assign tasks across all clusters in the department.
-        </p>
-      </div>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. Page Header with BMSIT Dot Matrix */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/hod" },
+          { label: "Tasks" },
+        ]}
+        eyebrow="HOD // OPERATIONAL WORKFLOWS"
+        dotMatrixText="TASKS"
+        dotMatrixFontSize={36}
+        title="Department Tasks"
+        ghost="dispatch."
+        subtitle="View, allocate, and track tasks across all clusters in the department."
+      />
 
-      {/* Summary pills */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
+      {/* Summary status pills */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         {Object.entries(statsMap).map(([status, count]) => (
           <div
             key={status}
+            className="badge"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 7,
-              padding: '8px 16px',
-              background: 'hsl(var(--bg-surface))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 10,
-              fontSize: 13,
-              fontWeight: 600,
+              padding: '6px 14px',
+              fontSize: 11.5,
+              background: '#FFFFFF',
+              borderColor: '#E8E8ED',
+              color: '#1D1D1F',
             }}
           >
             <span
               style={{
-                width: 9,
-                height: 9,
+                width: 7,
+                height: 7,
                 borderRadius: '50%',
                 background: STATUS_COLORS[status],
               }}
             />
-            {count} {status.replace('_', ' ')}
+            <span>{count} {status.replace('_', ' ')}</span>
           </div>
         ))}
       </div>
@@ -110,17 +113,20 @@ export default async function HodTasksPage({
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <div
               style={{
-                width: 32, height: 32, borderRadius: 8,
-                background: 'hsl(var(--color-primary) / 0.1)',
+                width: 34, height: 34, borderRadius: 8,
+                background: '#1D1D1F',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'hsl(var(--color-primary))',
+                color: '#FFFFFF',
               }}
             >
               <Plus size={18} />
             </div>
-            <h3 className="section-title" style={{ margin: 0 }}>
-              Assign Task (Dept-wide)
-            </h3>
+            <div>
+              <span className="section-eyebrow">// DIRECT DISPATCH</span>
+              <h3 className="card-title" style={{ margin: 0 }}>
+                Assign Task (Dept-wide)
+              </h3>
+            </div>
           </div>
           <AssignTaskForm faculty={allFaculty} clusters={clusters} />
         </div>
@@ -129,12 +135,15 @@ export default async function HodTasksPage({
         <div>
           {/* Filter bar */}
           <div
+            className="card"
             style={{
+              padding: '12px 18px',
               display: 'flex',
-              gap: 10,
-              marginBottom: 14,
+              gap: 12,
+              marginBottom: 16,
               flexWrap: 'wrap',
               alignItems: 'center',
+              background: '#FAFAFA',
             }}
           >
             <span
@@ -142,21 +151,23 @@ export default async function HodTasksPage({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 5,
-                fontSize: 13,
-                color: 'hsl(var(--text-muted))',
+                fontSize: 12,
+                fontWeight: 600,
+                fontFamily: 'var(--font-mono)',
+                color: '#6E6E73',
               }}
             >
-              <Filter size={14} /> Filter:
+              <Filter size={13} /> FILTER:
             </span>
 
             {/* Cluster filter */}
-            <form method="GET">
+            <form method="GET" style={{ display: 'inline-flex' }}>
               {statusFilter && <input type="hidden" name="status" value={statusFilter} />}
               {priorityFilter && <input type="hidden" name="priority" value={priorityFilter} />}
               <select
                 name="cluster"
-                className="form-input"
-                style={{ fontSize: 12.5, padding: '6px 10px' }}
+                className="select"
+                style={{ fontSize: 12, padding: '6px 12px', height: 34, width: 'auto' }}
                 defaultValue={clusterFilter ?? ''}
                 onChange={(e) => (e.target.form as HTMLFormElement).submit()}
               >
@@ -168,13 +179,13 @@ export default async function HodTasksPage({
             </form>
 
             {/* Status filter */}
-            <form method="GET">
+            <form method="GET" style={{ display: 'inline-flex' }}>
               {clusterFilter && <input type="hidden" name="cluster" value={clusterFilter} />}
               {priorityFilter && <input type="hidden" name="priority" value={priorityFilter} />}
               <select
                 name="status"
-                className="form-input"
-                style={{ fontSize: 12.5, padding: '6px 10px' }}
+                className="select"
+                style={{ fontSize: 12, padding: '6px 12px', height: 34, width: 'auto' }}
                 defaultValue={statusFilter ?? ''}
                 onChange={(e) => (e.target.form as HTMLFormElement).submit()}
               >
@@ -186,59 +197,57 @@ export default async function HodTasksPage({
             </form>
           </div>
 
-          <h3 className="section-title" style={{ marginBottom: 12 }}>
-            Tasks ({tasks.length})
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span className="section-eyebrow">// TASK REGISTRY</span>
+            <span className="badge badge-dark">{tasks.length} Records</span>
+          </div>
 
           {tasks.length === 0 ? (
-            <div className="card">
-              <div className="empty-state">
-                <CheckSquare size={40} className="empty-state-icon" />
-                <div className="empty-state-title">No tasks match filters</div>
-              </div>
+            <div className="card" style={{ padding: 40, textAlign: 'center' }}>
+              <CheckSquare size={36} style={{ color: '#B0B0B5', margin: '0 auto 8px' }} />
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1D1D1F' }}>No tasks match current filters</div>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="card"
-                  style={{ padding: '12px 16px' }}
+                  className="card cyber-card-hover"
+                  style={{ padding: '14px 18px', background: '#FFFFFF' }}
                 >
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                     <div
                       style={{
-                        width: 9, height: 9, borderRadius: '50%',
+                        width: 8, height: 8, borderRadius: '50%',
                         background: STATUS_COLORS[task.status] ?? '#888',
-                        flexShrink: 0, marginTop: 5,
+                        flexShrink: 0, marginTop: 6,
                       }}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
-                          fontSize: 13.5, fontWeight: 700,
-                          color: 'hsl(var(--text-primary))', marginBottom: 3,
+                          fontSize: 14, fontWeight: 700,
+                          color: '#1D1D1F', marginBottom: 4,
                         }}
                       >
                         {task.title}
                       </div>
                       <div
                         style={{
-                          fontSize: 12, color: 'hsl(var(--text-secondary))',
+                          fontSize: 12, color: '#6E6E73',
                           display: 'flex', gap: 10, flexWrap: 'wrap',
+                          alignItems: 'center',
                         }}
                       >
-                        <span>→ {task.assignedTo.name}</span>
-                        <span style={{ color: 'hsl(var(--text-muted))' }}>
+                        <span style={{ fontWeight: 600, color: '#1D1D1F' }}>→ {task.assignedTo.name}</span>
+                        <span style={{ color: '#86868B', fontFamily: 'var(--font-mono)' }}>
                           {task.cluster?.name}
                         </span>
-                        <span>Due {formatDate(task.deadline)}</span>
-                        <span className={`status-badge status-${task.status.toLowerCase().replace('_', '-')}`}
-                          style={{ fontSize: 10.5, padding: '1px 7px' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)' }}>Due {formatDate(task.deadline)}</span>
+                        <span className="badge" style={{ fontSize: 9.5, padding: '2px 6px' }}>
                           {task.status.replace('_', ' ')}
                         </span>
-                        <span className={`status-badge priority-${task.priority.toLowerCase()}`}
-                          style={{ fontSize: 10.5, padding: '1px 7px' }}>
+                        <span className="badge" style={{ fontSize: 9.5, padding: '2px 6px' }}>
                           {task.priority}
                         </span>
                       </div>

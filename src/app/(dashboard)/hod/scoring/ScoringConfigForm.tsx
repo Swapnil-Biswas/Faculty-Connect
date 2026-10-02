@@ -33,17 +33,17 @@ function WeightSlider({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <label htmlFor={name} style={{ fontWeight: 600, fontSize: "0.9rem" }}>
+        <label htmlFor={name} style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--foreground)" }}>
           {label}
         </label>
         <span
           id={`${name}-display`}
-          style={{ fontWeight: 700, color: "hsl(var(--color-primary))", fontSize: "0.9375rem" }}
+          style={{ fontWeight: 700, color: "var(--foreground)", fontFamily: "var(--font-mono)", fontSize: "0.9375rem" }}
         >
           {pct}%
         </span>
       </div>
-      <p style={{ fontSize: "0.78125rem", color: "hsl(var(--text-muted))", marginTop: "-2px" }}>
+      <p style={{ fontSize: "0.78125rem", color: "var(--grey-500)", marginTop: "-2px" }}>
         {description}
       </p>
       <input
@@ -54,7 +54,7 @@ function WeightSlider({
         max={1}
         step={0.01}
         defaultValue={defaultValue}
-        style={{ width: "100%", accentColor: "hsl(var(--color-primary))" }}
+        style={{ width: "100%", accentColor: "var(--accent)" }}
         onInput={(e) => {
           const display = document.getElementById(`${name}-display`);
           if (display) {
@@ -87,22 +87,12 @@ export function ScoringConfigForm({
   return (
     <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       {state.success && (
-        <div
-          style={{
-            padding: "0.875rem 1rem",
-            background: "hsl(142 71% 45% / 0.1)",
-            borderRadius: "var(--radius-md)",
-            color: "#16a34a",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            border: "1px solid hsl(142 71% 45% / 0.25)",
-          }}
-        >
+        <div className="form-success">
           ✓ Scoring configuration saved as a new version. Future points will use these weights.
         </div>
       )}
       {state.error && (
-        <div className="form-error" style={{ padding: "0.75rem", background: "hsl(0 84% 60% / 0.1)", borderRadius: "var(--radius-md)" }}>
+        <div className="form-error">
           {state.error}
         </div>
       )}
@@ -110,7 +100,7 @@ export function ScoringConfigForm({
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
         {/* Automatic Factors */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--text-muted))", marginBottom: "1rem", paddingBottom: "0.5rem", borderBottom: "1px solid hsl(var(--border))" }}>
+          <div style={{ fontWeight: 700, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--grey-500)", marginBottom: "1rem", paddingBottom: "0.5rem", borderBottom: "1px solid var(--border)", fontFamily: "var(--font-mono)" }}>
             Automatic Performance Factors
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -143,7 +133,7 @@ export function ScoringConfigForm({
 
         {/* Manual Evaluation Factors */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--text-muted))", marginBottom: "1rem", paddingBottom: "0.5rem", borderBottom: "1px solid hsl(var(--border))" }}>
+          <div style={{ fontWeight: 700, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--grey-500)", marginBottom: "1rem", paddingBottom: "0.5rem", borderBottom: "1px solid var(--border)", fontFamily: "var(--font-mono)" }}>
             Manual Evaluation Factors
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>

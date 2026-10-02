@@ -168,9 +168,9 @@ export function PublicationsClient({ initialPublications }: Props) {
                   fontSize: 11.5,
                   fontFamily: "var(--font-mono)",
                   fontWeight: isActive ? 700 : 500,
-                  border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
-                  backgroundColor: isActive ? "rgba(255, 215, 0, 0.1)" : "rgba(255, 255, 255, 0.02)",
-                  color: isActive ? "#FFD700" : "#94A3B8",
+                  border: isActive ? "1px solid #1D1D1F" : "1px solid #E8E8ED",
+                  backgroundColor: isActive ? "#1D1D1F" : "#FFFFFF",
+                  color: isActive ? "#FFFFFF" : "#6E6E73",
                   cursor: "pointer",
                   display: "inline-flex",
                   alignItems: "center",
@@ -184,8 +184,8 @@ export function PublicationsClient({ initialPublications }: Props) {
                     fontSize: 10,
                     padding: "1px 5px",
                     borderRadius: 4,
-                    backgroundColor: isActive ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.06)",
-                    color: isActive ? "#FFD700" : "#64748B",
+                    backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "#F5F5F7",
+                    color: isActive ? "#FFFFFF" : "#6E6E73",
                   }}
                 >
                   {tab.count}
@@ -200,7 +200,7 @@ export function PublicationsClient({ initialPublications }: Props) {
           <div style={{ position: "relative" }}>
             <Search
               size={14}
-              color="#64748B"
+              color="#86868B"
               style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}
             />
             <input
@@ -208,23 +208,12 @@ export function PublicationsClient({ initialPublications }: Props) {
               placeholder="Search by title, venue, DOI..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="form-input"
               style={{
                 height: 36,
                 padding: "0 14px 0 34px",
                 fontSize: 12.5,
-                fontFamily: "var(--font-mono)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: 6,
-                backgroundColor: "#07090E",
-                color: "#F8FAFC",
                 width: 250,
-                outline: "none",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#FFD700";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
               }}
             />
           </div>
@@ -263,7 +252,7 @@ export function PublicationsClient({ initialPublications }: Props) {
           }
         />
       ) : (
-        <div className="tech-card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="tech-card" style={{ padding: 0, overflow: "hidden", backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
           <div style={{ overflowX: "auto" }}>
             <table
               style={{
@@ -276,9 +265,9 @@ export function PublicationsClient({ initialPublications }: Props) {
               <thead>
                 <tr
                   style={{
-                    backgroundColor: "rgba(7, 9, 14, 0.7)",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                    color: "#64748B",
+                    backgroundColor: "#F5F5F7",
+                    borderBottom: "1px solid #E8E8ED",
+                    color: "#6E6E73",
                     fontSize: 11,
                     fontFamily: "var(--font-mono)",
                     textTransform: "uppercase",
@@ -300,24 +289,19 @@ export function PublicationsClient({ initialPublications }: Props) {
                   return (
                     <tr
                       key={pub.id}
+                      className="cyber-row-hover"
                       style={{
-                        borderBottom: idx < filtered.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
+                        borderBottom: idx < filtered.length - 1 ? "1px solid #E8E8ED" : "none",
                         transition: "background-color 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "transparent";
                       }}
                     >
                       {/* Title & Venue */}
                       <td style={{ padding: "16px 22px", verticalAlign: "top" }}>
-                        <div style={{ fontWeight: 600, color: "#F8FAFC", lineHeight: 1.35, marginBottom: 4 }}>
+                        <div style={{ fontWeight: 600, color: "#1D1D1F", lineHeight: 1.35, marginBottom: 4 }}>
                           {pub.title}
                         </div>
-                        <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#64748B" }}>
-                          VENUE: <span style={{ color: "#94A3B8" }}>{venue}</span>
+                        <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#86868B" }}>
+                          VENUE: <span style={{ color: "#6E6E73" }}>{venue}</span>
                         </div>
                       </td>
 
@@ -345,7 +329,7 @@ export function PublicationsClient({ initialPublications }: Props) {
                       </td>
 
                       {/* Year */}
-                      <td style={{ padding: "16px 16px", verticalAlign: "top", color: "#F8FAFC", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                      <td style={{ padding: "16px 16px", verticalAlign: "top", color: "#1D1D1F", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
                         {pub.year}
                       </td>
 
@@ -419,7 +403,7 @@ export function PublicationsClient({ initialPublications }: Props) {
           style={{
             position: "fixed",
             inset: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backgroundColor: "rgba(10, 10, 10, 0.4)",
             backdropFilter: "blur(6px)",
             WebkitBackdropFilter: "blur(6px)",
             display: "flex",
@@ -431,31 +415,31 @@ export function PublicationsClient({ initialPublications }: Props) {
         >
           <div
             style={{
-              backgroundColor: "#0E121B",
-              borderRadius: 12,
-              border: "1px solid rgba(255, 255, 255, 0.12)",
+              backgroundColor: "#FFFFFF",
+              borderRadius: 16,
+              border: "1px solid #E8E8ED",
               width: "100%",
               maxWidth: 540,
-              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.08)",
+              boxShadow: "0 24px 60px rgba(0, 0, 0, 0.12)",
               overflow: "hidden",
             }}
           >
             {/* Modal Header */}
             <div
               style={{
-                padding: "16px 22px",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                padding: "18px 24px",
+                borderBottom: "1px solid #E8E8ED",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                backgroundColor: "rgba(7, 9, 14, 0.6)",
+                backgroundColor: "#F5F5F7",
               }}
             >
               <div>
-                <span className="hero-eyebrow" style={{ margin: 0 }}>
+                <span className="hero-eyebrow" style={{ margin: 0, color: "#86868B" }}>
                   // REGISTER PUBLICATION
                 </span>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1D1D1F", margin: "2px 0 0 0" }}>
                   Record Academic Publication
                 </h3>
               </div>
@@ -464,7 +448,7 @@ export function PublicationsClient({ initialPublications }: Props) {
                 style={{
                   background: "transparent",
                   border: "none",
-                  color: "#64748B",
+                  color: "#6E6E73",
                   cursor: "pointer",
                   padding: 4,
                 }}
@@ -474,17 +458,17 @@ export function PublicationsClient({ initialPublications }: Props) {
             </div>
 
             {/* Modal Body / Form */}
-            <form onSubmit={handleAddSubmit} style={{ padding: "22px" }}>
+            <form onSubmit={handleAddSubmit} style={{ padding: "24px" }}>
               {formError && (
                 <div
                   style={{
                     padding: "10px 14px",
-                    backgroundColor: "rgba(244, 63, 94, 0.1)",
-                    border: "1px solid rgba(244, 63, 94, 0.35)",
-                    borderRadius: 6,
+                    backgroundColor: "rgba(225, 29, 72, 0.08)",
+                    border: "1px solid rgba(225, 29, 72, 0.25)",
+                    borderRadius: 8,
                     fontSize: 12,
                     fontFamily: "var(--font-mono)",
-                    color: "#FB7185",
+                    color: "#E11D48",
                     marginBottom: 16,
                   }}
                 >
@@ -495,54 +479,28 @@ export function PublicationsClient({ initialPublications }: Props) {
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {/* Title */}
                 <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#1D1D1F", marginBottom: 6 }}>
                     01 // PUBLICATION TITLE *
                   </label>
                   <input
                     name="title"
                     required
                     placeholder="Full title of the paper, patent, or chapter..."
-                    style={{
-                      width: "100%",
-                      height: 38,
-                      padding: "0 12px",
-                      fontSize: 13,
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      borderRadius: 6,
-                      backgroundColor: "#07090E",
-                      color: "#F8FAFC",
-                      outline: "none",
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = "#FFD700";
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    }}
+                    className="form-input"
                   />
                 </div>
 
                 {/* Type & Year */}
                 <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 12 }}>
                   <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#FFD700", marginBottom: 6 }}>
+                    <label style={{ display: "block", fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 600, color: "#1D1D1F", marginBottom: 6 }}>
                       02 // CATEGORY *
                     </label>
                     <select
                       name="type"
                       required
-                      style={{
-                        width: "100%",
-                        height: 38,
-                        padding: "0 10px",
-                        fontSize: 13,
-                        fontFamily: "var(--font-mono)",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        borderRadius: 6,
-                        backgroundColor: "#07090E",
-                        color: "#F8FAFC",
-                        outline: "none",
-                      }}
+                      className="form-input"
+                      style={{ cursor: "pointer" }}
                     >
                       <option value="JOURNAL">Journal Article</option>
                       <option value="CONFERENCE">Conference Paper</option>

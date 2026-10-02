@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ScoringConfigForm } from "@/app/(dashboard)/hod/scoring/ScoringConfigForm";
-import { Settings } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default async function AdminScoringPage() {
   const session = await auth();
@@ -23,56 +23,90 @@ export default async function AdminScoringPage() {
   });
 
   return (
-    <div className="dashboard-container" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      <div>
-        <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Settings className="text-primary" size={28} />
-          Scoring Config — Admin Defaults
-        </h1>
-        <p className="page-subtitle">
-          System-level scoring configuration. Changes create a new versioned snapshot; historical ledger entries remain linked to the config version at award time.
-        </p>
-      </div>
+    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Admin", href: "/admin" },
+          { label: "Scoring" },
+        ]}
+        dotMatrixText="SCORING"
+        eyebrow="HEURISTICS CALIBRATION · GLOBAL MULTIPLIERS"
+        title="Scoring Configuration & Rules"
+        subtitle="System-level scoring heuristics. Changes create a new immutable versioned snapshot."
+        actions={
+          <span className="badge" style={{ fontWeight: 700 }}>
+            CURRENT: v{activeConfig?.version ?? 1}.0 ACTIVE
+          </span>
+        }
+      />
 
-      <div className="card" style={{ padding: "2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: 700 }}>Factor Weights</h2>
-          <span className="status-badge status-approved" style={{ fontSize: "12px" }}>
-            Current: v{activeConfig?.version ?? 1}
+      <div className="card" style={{ padding: 28 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, borderBottom: "1px solid var(--grey-100)", paddingBottom: 14 }}>
+          <div>
+            <span className="section-eyebrow" style={{ marginBottom: 2 }}>// FACTOR WEIGHTS</span>
+            <h2 style={{ fontSize: 18, fontWeight: 700, margin: "2px 0 0", color: "var(--grey-900)" }}>
+              Factor Weights Calibration
+            </h2>
+          </div>
+          <span className="badge" style={{ color: "#16a34a", borderColor: "#16a34a" }}>
+            ● Active Engine
           </span>
         </div>
         <ScoringConfigForm activeConfig={activeConfig} />
       </div>
 
-      <div className="card" style={{ padding: "1.5rem" }}>
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 700, marginBottom: "1rem" }}>Version History</h2>
-        <div className="table-wrapper">
-          <table>
+      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--grey-100)" }}>
+          <span className="section-eyebrow" style={{ marginBottom: 2 }}>// AUDIT LEDGER</span>
+          <h2 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0", color: "var(--grey-900)" }}>
+            Version Snapshot History
+          </h2>
+        </div>
+        <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
+          <table className="table">
             <thead>
               <tr>
-                <th>Version</th>
-                <th>Status</th>
-                <th>Set By</th>
-                <th>On-Time</th>
-                <th>Early</th>
-                <th>Quality</th>
-                <th>Created</th>
+                <th>VERSION</th>
+                <th>STATUS</th>
+                <th>SET BY</th>
+                <th>ON-TIME</th>
+                <th>EARLY</th>
+                <th>QUALITY</th>
+                <th>CREATED</th>
               </tr>
             </thead>
             <tbody>
               {history.map((cfg) => (
-                <tr key={cfg.id}>
-                  <td><span style={{ fontWeight: 700 }}>v{cfg.version}</span></td>
+                <tr key={cfg.id} className="cyber-row-hover">
                   <td>
-                    <span className={`status-badge ${cfg.isActive ? "status-approved" : ""}`} style={{ fontSize: "11px" }}>
-                      {cfg.isActive ? "Active" : "Archived"}
+                    <span style={{ fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+                      v{cfg.version}.0
                     </span>
                   </td>
-                  <td style={{ fontSize: "0.8125rem" }}>{cfg.setByAdmin?.name ?? "—"}</td>
-                  <td>{Math.round(cfg.onTimeWeight * 100)}%</td>
-                  <td>{Math.round(cfg.earlyWeight * 100)}%</td>
-                  <td>{Math.round(cfg.qualityWeight * 100)}%</td>
-                  <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-muted))", whiteSpace: "nowrap" }}>
+                  <td>
+                    <span
+                      className="badge"
+                      style={{
+                        fontWeight: 700,
+                        color: cfg.isActive ? "#16a34a" : "var(--grey-500)",
+                      }}
+                    >
+                      {cfg.isActive ? "● Active" : "Archived"}
+                    </span>
+                  </td>
+                  <td style={{ fontSize: 13, color: "var(--grey-800)" }}>
+                    {cfg.setByAdmin?.name ?? "—"}
+                  </td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    {Math.round(cfg.onTimeWeight * 100)}%
+                  </td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    {Math.round(cfg.earlyWeight * 100)}%
+                  </td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    {Math.round(cfg.qualityWeight * 100)}%
+                  </td>
+                  <td style={{ fontSize: 12, color: "var(--grey-500)", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
                     {formatDate(cfg.createdAt)}
                   </td>
                 </tr>

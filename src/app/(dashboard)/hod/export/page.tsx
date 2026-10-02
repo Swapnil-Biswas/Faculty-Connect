@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { ExportClient } from "./ExportClient";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default async function HodExportPage() {
   const session = await auth();
   if (!session?.user || !["HOD", "ADMIN"].includes(session.user.role)) {
-    redirect("/dashboard");
+    redirect("/login");
   }
 
   // Fetch exportable records
@@ -52,25 +53,26 @@ export default async function HodExportPage() {
   ]);
 
   return (
-    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto" }}>
-      {/* BMSIT High-Tech Header */}
-      <div style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
-        <div>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "3px 10px", borderRadius: 4, background: "rgba(56, 189, 248, 0.1)", border: "1px solid rgba(56, 189, 248, 0.25)", color: "#38BDF8", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", marginBottom: 10 }}>
-            <span>●</span> DATA EXPORT HUB // COMPLIANCE ARCHIVE
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#F8FAFC", margin: "0 0 6px 0", letterSpacing: "-0.02em" }}>
-            Academic Data & Compliance Records
-          </h1>
-          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0, fontFamily: "var(--font-mono)" }}>
-            // Verified departmental exports for NBA, NAAC, NIRF & internal academic audits
-          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderRadius: 6, background: "rgba(14, 18, 27, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 8px #22C55E", display: "inline-block" }}></span>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#E2E8F0" }}>CSV ENCODING UTF-8</span>
-        </div>
-      </div>
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* 1. Page Header with BMSIT Dot Matrix */}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/hod" },
+          { label: "Data Export" },
+        ]}
+        eyebrow="HOD // ARCHIVE & COMPLIANCE"
+        dotMatrixText="EXPORTS"
+        dotMatrixFontSize={36}
+        title="Academic Data & Compliance Records"
+        ghost="dossiers."
+        subtitle="Verified departmental exports for NBA, NAAC, NIRF & internal academic audits."
+        actions={
+          <span className="badge badge-dark">
+            <span className="badge-dot" style={{ backgroundColor: "#16A34A" }} />
+            CSV UTF-8 COMPLIANT
+          </span>
+        }
+      />
 
       <ExportClient
         data={{
@@ -102,26 +104,23 @@ export default async function HodExportPage() {
             StartDate: l.startDate.toISOString().split("T")[0],
             EndDate: l.endDate.toISOString().split("T")[0],
             Status: l.status,
-            Reason: l.reason,
-            DecidedBy: l.decidedBy?.name ?? "Pending",
+            DecidedBy: l.decidedBy?.name ?? "",
           })),
           evaluations: evaluations.map((e: any) => ({
             EvaluationID: e.id,
-            Faculty: e.faculty.name,
-            FacultyEmail: e.faculty.email,
+            FacultyName: e.faculty.name,
             Evaluator: e.evaluator.name,
-            Period: e.period,
-            QualityRating: e.quality,
-            ContributionRating: e.contribution,
-            InitiativeRating: e.initiative,
+            Quality: e.quality,
+            Contribution: e.contribution,
+            Initiative: e.initiative,
             OverallRating: e.overallRating,
-            Remarks: e.remarks ?? "",
+            CreatedAt: e.createdAt.toISOString().split("T")[0],
           })),
           clusters: clusters.map((c: any) => ({
             ClusterID: c.id,
-            Name: c.name,
-            Head: c.head?.name ?? "None",
-            ActiveFacultyCount: c.members.length,
+            ClusterName: c.name,
+            Head: c.head?.name ?? "UNASSIGNED",
+            FacultyMembersCount: c.members.length,
           })),
         }}
       />

@@ -40,6 +40,8 @@ export default async function FacultyLeavePage() {
         ]}
         title="Leave Center & Absence Governance"
         subtitle="Submit casual leave applications and track transparent evaluation decisions from your Cluster Head."
+        eyebrow="// ABSENCE GOVERNANCE · LEAVE CONSOLE"
+        dotMatrixText="LEAVE"
       />
 
       {/* 2. Leave Metrics Strip (Real Database Counts) */}
@@ -56,28 +58,28 @@ export default async function FacultyLeavePage() {
           value={totalApplied}
           context="Recorded requests"
           trendType="neutral"
-          icon={<Calendar size={18} color="#FFD700" />}
+          icon={<Calendar size={18} color="#1D1D1F" />}
         />
         <MetricBlock
           label="Pending Evaluation"
           value={pendingCount}
           context={pendingCount > 0 ? "Under cluster review" : "Pipeline clear"}
           trendType={pendingCount > 0 ? "warning" : "positive"}
-          icon={<Clock size={18} color="#F59E0B" />}
+          icon={<Clock size={18} color="#D97706" />}
         />
         <MetricBlock
           label="Approved Requests"
           value={approvedCount}
           context="Institutional sanction granted"
           trendType="positive"
-          icon={<CheckCircle2 size={18} color="#4ADE80" />}
+          icon={<CheckCircle2 size={18} color="#16A34A" />}
         />
         <MetricBlock
           label="Declined / Revoked"
           value={rejectedCount}
           context="Declined by cluster lead"
           trendType="neutral"
-          icon={<AlertCircle size={18} color="#FB7185" />}
+          icon={<AlertCircle size={18} color="#E11D48" />}
         />
       </div>
 
@@ -91,15 +93,15 @@ export default async function FacultyLeavePage() {
         }}
       >
         {/* LEFT COLUMN: APPLICATION FORM */}
-        <div className="tech-card" style={{ padding: 24 }}>
-          <div style={{ marginBottom: 18, borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: 14 }}>
-            <span className="hero-eyebrow" style={{ margin: 0 }}>
+        <div className="tech-card" style={{ padding: 24, backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
+          <div style={{ marginBottom: 18, borderBottom: "1px solid #E8E8ED", paddingBottom: 14 }}>
+            <span className="hero-eyebrow" style={{ margin: 0, color: "#86868B" }}>
               // NEW ENTRY
             </span>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1D1D1F", margin: "2px 0 0 0" }}>
               Submit Absence Application
             </h2>
-            <p style={{ fontSize: 12.5, color: "#94A3B8", margin: "4px 0 0 0" }}>
+            <p style={{ fontSize: 12.5, color: "#6E6E73", margin: "4px 0 0 0" }}>
               Specify the absence duration and formal academic justification.
             </p>
           </div>
@@ -108,22 +110,22 @@ export default async function FacultyLeavePage() {
         </div>
 
         {/* RIGHT COLUMN: LEAVE HISTORY TABLE */}
-        <div className="tech-card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="tech-card" style={{ padding: 0, overflow: "hidden", backgroundColor: "#FFFFFF", border: "1px solid #E8E8ED" }}>
           <div
             style={{
               padding: "16px 22px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              borderBottom: "1px solid #E8E8ED",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              backgroundColor: "rgba(7, 9, 14, 0.6)",
+              backgroundColor: "#F5F5F7",
             }}
           >
             <div>
-              <span className="hero-eyebrow" style={{ margin: 0 }}>
+              <span className="hero-eyebrow" style={{ margin: 0, color: "#86868B" }}>
                 // PIPELINE HISTORY
               </span>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1D1D1F", margin: "2px 0 0 0" }}>
                 Leave Application Archive
               </h2>
             </div>
@@ -153,9 +155,9 @@ export default async function FacultyLeavePage() {
                 <thead>
                   <tr
                     style={{
-                      backgroundColor: "rgba(255, 255, 255, 0.02)",
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                      color: "#64748B",
+                      backgroundColor: "#F5F5F7",
+                      borderBottom: "1px solid #E8E8ED",
+                      color: "#6E6E73",
                       fontSize: 11,
                       fontFamily: "var(--font-mono)",
                       textTransform: "uppercase",
@@ -176,15 +178,15 @@ export default async function FacultyLeavePage() {
                         key={leave.id}
                         className="cyber-row-hover"
                         style={{
-                          borderBottom: idx < leaves.length - 1 ? "1px solid rgba(255, 255, 255, 0.04)" : "none",
+                          borderBottom: idx < leaves.length - 1 ? "1px solid #E8E8ED" : "none",
                           transition: "background-color 0.15s ease",
                         }}
                       >
                         <td style={{ padding: "14px 20px", verticalAlign: "top" }}>
-                          <div style={{ fontWeight: 600, color: "#F8FAFC", fontFamily: "var(--font-mono)", fontSize: 12.5, marginBottom: 3 }}>
+                          <div style={{ fontWeight: 600, color: "#1D1D1F", fontFamily: "var(--font-mono)", fontSize: 12.5, marginBottom: 3 }}>
                             {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
                           </div>
-                          <div style={{ fontSize: 12.5, color: "#94A3B8", lineHeight: 1.4, maxWidth: 320 }}>
+                          <div style={{ fontSize: 12.5, color: "#6E6E73", lineHeight: 1.4, maxWidth: 320 }}>
                             {leave.reason}
                           </div>
                           {leave.remarks && (
@@ -193,9 +195,9 @@ export default async function FacultyLeavePage() {
                                 marginTop: 6,
                                 fontSize: 11,
                                 fontFamily: "var(--font-mono)",
-                                color: "#FB7185",
-                                backgroundColor: "rgba(244, 63, 94, 0.1)",
-                                border: "1px solid rgba(244, 63, 94, 0.25)",
+                                color: "#E11D48",
+                                backgroundColor: "rgba(225, 29, 72, 0.08)",
+                                border: "1px solid rgba(225, 29, 72, 0.25)",
                                 padding: "3px 8px",
                                 borderRadius: 4,
                                 display: "inline-block",
@@ -206,14 +208,14 @@ export default async function FacultyLeavePage() {
                           )}
                         </td>
 
-                        <td style={{ padding: "14px 16px", verticalAlign: "top", color: "#64748B", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>
+                        <td style={{ padding: "14px 16px", verticalAlign: "top", color: "#6E6E73", fontFamily: "var(--font-mono)", fontSize: 12, whiteSpace: "nowrap" }}>
                           {formatDate(leave.createdAt)}
                         </td>
 
                         <td style={{ padding: "14px 16px", verticalAlign: "top" }}>
                           <StatusBadge status={leave.status} size="sm" />
                           {leave.decidedBy && (
-                            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "#64748B", marginTop: 4 }}>
+                            <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "#86868B", marginTop: 4 }}>
                               BY: {leave.decidedBy.name.split(" ")[0].toUpperCase()}
                             </div>
                           )}
