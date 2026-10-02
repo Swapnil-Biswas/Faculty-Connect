@@ -3,11 +3,14 @@ import { redirect } from 'next/navigation'
 import { db } from '@/lib/db'
 import { formatDate, getInitials } from '@/lib/utils'
 import { DecideLeaveForm } from './DecideLeaveForm'
-import { Calendar, CheckCircle2 } from 'lucide-react'
+import { Calendar, Clock, CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react'
 import type { Metadata } from 'next'
 import { PageHeader } from '@/components/ui/PageHeader'
+import { MetricBlock } from '@/components/ui/MetricBlock'
+import { StatusBadge } from '@/components/ui/StatusBadge'
+import { EmptyState } from '@/components/ui/EmptyState'
 
-export const metadata: Metadata = { title: 'Leave Requests — Cluster' }
+export const metadata: Metadata = { title: "Cluster Head // Leave Approvals" }
 
 export default async function ClusterLeavePage() {
   const session = await auth()
@@ -18,13 +21,47 @@ export default async function ClusterLeavePage() {
   const clusterId = session.user.clusterId
   if (!clusterId) {
     return (
-      <div className="page-content">
-        <div className="card">
-          <div className="empty">
-            <Calendar size={40} style={{ margin: '0 auto 10px', color: 'var(--grey-400)' }} />
-            <div className="empty-title">No cluster assigned</div>
-            <div className="empty-body">You must be assigned to an academic cluster to review leave requests.</div>
+      <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+        <PageHeader
+          breadcrumbs={[
+            { label: "CLUSTER_CONSOLE", href: "/cluster" },
+            { label: "LEAVE_APPROVALS" },
+          ]}
+          title="Cluster Leave Sanctions"
+          subtitle="Review and decide on leave applications from your cluster members."
+          dotMatrixText="LEAVE"
+        />
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "48px 24px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 8,
+              backgroundColor: "rgba(183, 121, 31, 0.1)",
+              border: "1px solid rgba(183, 121, 31, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              color: "#B7791F",
+            }}
+          >
+            <AlertTriangle size={24} />
           </div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: "#17202A", margin: "0 0 8px 0" }}>
+            No Cluster Assigned
+          </h2>
+          <p style={{ fontSize: 14, color: "#667085", maxWidth: 460, margin: "0 auto" }}>
+            You must be linked to an academic cluster to review and sanction leave requests.
+          </p>
         </div>
       </div>
     )
@@ -44,60 +81,143 @@ export default async function ClusterLeavePage() {
     }),
   ])
 
+  const approvedCount = decided.filter((l) => l.status === 'APPROVED').length
+  const rejectedCount = decided.filter((l) => ['REJECTED', 'CANCELLED'].includes(l.status)).length
+
   return (
-    <div className="page-content" style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div style={{ maxWidth: 1240, margin: '0 auto', paddingBottom: 48 }}>
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: 'Dashboard', href: '/cluster' },
-          { label: 'Leave Sanctions' },
+          { label: 'CLUSTER_CONSOLE', href: '/cluster' },
+          { label: 'LEAVE_APPROVALS' },
         ]}
         dotMatrixText="LEAVE"
-        eyebrow="ABSENCE SANCTION · CLUSTER QUEUE"
-        title="Cluster Leave Sanctions"
-        subtitle="Review and decide on leave applications from your cluster members."
+        eyebrow="// ABSENCE GOVERNANCE · CLUSTER SANCTIONS"
+        title="Cluster Leave Approvals & Sanctions"
+        subtitle="Review, evaluate, and sanction absence requests submitted by faculty in your cluster."
         actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 8, background: 'var(--grey-50)', border: '1px solid var(--grey-200)' }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: pending.length > 0 ? '#d97706' : '#16a34a', display: 'inline-block' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600, color: 'var(--grey-800)' }}>
-              {pending.length} ACTION REQUIRED
-            </span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '6px 12px',
+              borderRadius: 6,
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E4E7EC',
+              fontSize: 12,
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 600,
+              color: '#17202A',
+            }}
+          >
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: pending.length > 0 ? '#B7791F' : '#198754',
+              }}
+            />
+            {pending.length} ACTION REQUIRED
           </div>
         }
       />
 
-      {/* Pending queue */}
-      <div className="card" style={{ padding: 24 }}>
+      {/* 2. Metric Blocks */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        <MetricBlock
+          label="Pending Review"
+          value={pending.length}
+          context={pending.length > 0 ? "Awaiting your sanction decision" : "Review queue clear"}
+          trendType={pending.length > 0 ? "warning" : "positive"}
+          icon={<Clock size={18} color="#B7791F" />}
+        />
+        <MetricBlock
+          label="Sanctions Granted"
+          value={approvedCount}
+          context="Approved cluster leaves"
+          trendType="positive"
+          icon={<CheckCircle2 size={18} color="#198754" />}
+        />
+        <MetricBlock
+          label="Declined / Revoked"
+          value={rejectedCount}
+          context="Rejected or cancelled requests"
+          trendType="neutral"
+          icon={<AlertCircle size={18} color="#667085" />}
+        />
+      </div>
+
+      {/* 3. Pending Queue Card */}
+      <div
+        style={{
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E4E7EC',
+          borderRadius: 8,
+          padding: '22px 24px',
+          boxShadow: '0 1px 3px rgba(16, 24, 40, 0.05)',
+          marginBottom: 24,
+        }}
+      >
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: 20,
-            borderBottom: '1px solid var(--grey-100)',
+            marginBottom: 18,
+            borderBottom: '1px solid #F2F4F7',
             paddingBottom: 14,
           }}
         >
           <div>
-            <span className="section-eyebrow" style={{ marginBottom: 2 }}>
+            <span
+              style={{
+                fontSize: 10,
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                color: '#667085',
+                textTransform: 'uppercase',
+              }}
+            >
               // PENDING SANCTIONS
             </span>
-            <h3 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: '#17202A', margin: '2px 0 0' }}>
               Pending Cluster Applications
-            </h3>
+            </h2>
           </div>
           {pending.length > 0 && (
-            <span className="badge" style={{ color: '#d97706', borderColor: '#d97706' }}>
-              ● {pending.length} PENDING REVIEW
+            <span
+              style={{
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: '#B7791F',
+                backgroundColor: 'rgba(183, 121, 31, 0.08)',
+                padding: '3px 8px',
+                borderRadius: 4,
+                border: '1px solid rgba(183, 121, 31, 0.25)',
+              }}
+            >
+              {pending.length} PENDING REVIEW
             </span>
           )}
         </div>
 
         {pending.length === 0 ? (
-          <div className="empty">
-            <CheckCircle2 size={32} style={{ margin: '0 auto 10px', color: '#16a34a' }} />
-            <div className="empty-title">All leave requests addressed</div>
-            <div className="empty-body">No pending leave applications in your cluster queue.</div>
-          </div>
+          <EmptyState
+            icon={CheckCircle2}
+            title="All Leave Requests Addressed"
+            description="There are no pending leave applications in your cluster queue."
+          />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {pending.map((leave) => {
@@ -111,31 +231,26 @@ export default async function ClusterLeavePage() {
                 <div
                   key={leave.id}
                   style={{
-                    padding: 20,
-                    background: 'var(--grey-50)',
-                    borderRadius: 12,
-                    border: '1px solid var(--grey-200)',
+                    padding: '18px 20px',
+                    backgroundColor: '#F7F8FA',
+                    borderRadius: 6,
+                    border: '1px solid #E4E7EC',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 16,
-                    }}
-                  >
-                    {/* Avatar */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
                     <div
-                      className="avatar"
                       style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 10,
-                        background: 'var(--grey-800)',
-                        color: 'var(--white)',
+                        width: 40,
+                        height: 40,
+                        borderRadius: 6,
+                        backgroundColor: '#173B67',
+                        color: '#FFFFFF',
                         fontFamily: 'var(--font-mono)',
                         fontWeight: 700,
-                        fontSize: 14,
+                        fontSize: 13,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         flexShrink: 0,
                       }}
                     >
@@ -145,50 +260,67 @@ export default async function ClusterLeavePage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
-                          fontSize: 15,
-                          fontWeight: 700,
-                          color: 'var(--grey-900)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 12,
+                          flexWrap: 'wrap',
                           marginBottom: 4,
                         }}
                       >
-                        {leave.applicant.name}
+                        <div style={{ fontSize: 14.5, fontWeight: 600, color: '#17202A' }}>
+                          {leave.applicant.name}
+                        </div>
+                        <span
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: '#B7791F',
+                            backgroundColor: 'rgba(183, 121, 31, 0.08)',
+                            padding: '2px 8px',
+                            borderRadius: 4,
+                          }}
+                        >
+                          {days} {days === 1 ? 'Day' : 'Days'}
+                        </span>
                       </div>
+
                       <div
                         style={{
                           fontSize: 12,
-                          color: 'var(--grey-500)',
+                          color: '#667085',
                           marginBottom: 10,
                           display: 'flex',
                           gap: 12,
                           flexWrap: 'wrap',
-                          fontFamily: 'var(--font-mono)',
                         }}
                       >
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--grey-800)' }}>
-                          <Calendar size={12} />
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#17202A', fontWeight: 500 }}>
+                          <Calendar size={13} color="#667085" />
                           {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
                         </span>
-                        <span style={{ fontWeight: 700, color: '#d97706' }}>
-                          {days} day{days > 1 ? 's' : ''}
-                        </span>
-                        <span style={{ color: 'var(--grey-400)' }}>
-                          Applied {formatDate(leave.createdAt)}
-                        </span>
+                        <span>·</span>
+                        <span>Applied {formatDate(leave.createdAt)}</span>
                       </div>
-                      <p
+
+                      <div
                         style={{
                           fontSize: 13,
-                          color: 'var(--grey-700)',
-                          lineHeight: 1.6,
-                          marginBottom: 16,
-                          background: 'var(--white)',
+                          color: '#17202A',
+                          lineHeight: 1.5,
+                          marginBottom: 14,
+                          backgroundColor: '#FFFFFF',
                           padding: '10px 14px',
-                          borderRadius: 8,
-                          border: '1px solid var(--grey-200)',
+                          borderRadius: 6,
+                          border: '1px solid #E4E7EC',
                         }}
                       >
+                        <span style={{ fontWeight: 600, color: '#667085', fontSize: 11.5, display: 'block', marginBottom: 2 }}>
+                          Reason for leave:
+                        </span>
                         {leave.reason}
-                      </p>
+                      </div>
+
                       <DecideLeaveForm leaveId={leave.id} />
                     </div>
                   </div>
@@ -199,99 +331,148 @@ export default async function ClusterLeavePage() {
         )}
       </div>
 
-      {/* Decided history */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--grey-100)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* 4. Decided History Audit Log */}
+      <div
+        style={{
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E4E7EC',
+          borderRadius: 8,
+          overflow: 'hidden',
+          boxShadow: '0 1px 3px rgba(16, 24, 40, 0.05)',
+        }}
+      >
+        <div
+          style={{
+            padding: '16px 20px',
+            borderBottom: '1px solid #E4E7EC',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: '#FAFAFA',
+          }}
+        >
           <div>
-            <span className="section-eyebrow" style={{ marginBottom: 2 }}>
+            <span
+              style={{
+                fontSize: 10,
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                color: '#667085',
+                textTransform: 'uppercase',
+              }}
+            >
               // SANCTIONS AUDIT LOG
             </span>
-            <h3 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: '#17202A', margin: '2px 0 0' }}>
               Recent Cluster Decisions
-            </h3>
+            </h2>
           </div>
-          <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grey-500)' }}>
+          <span style={{ fontSize: 11.5, color: '#667085', fontWeight: 500 }}>
             {decided.length} DECISIONS LOGGED
           </span>
         </div>
 
         {decided.length === 0 ? (
-          <div className="empty" style={{ margin: 24 }}>
-            <div className="empty-title">No historical decisions</div>
-            <div className="empty-body">Past approved and rejected leave applications will appear here.</div>
-          </div>
+          <EmptyState
+            icon={Calendar}
+            title="No Historical Decisions"
+            description="Past approved and rejected leave applications will appear here."
+          />
         ) : (
-          <div className="table-wrap" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="table">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
-                <tr>
-                  <th>FACULTY</th>
-                  <th>DURATION</th>
-                  <th>STATUS</th>
-                  <th>DECIDED BY</th>
-                  <th>TIMESTAMP</th>
-                  <th>REMARKS</th>
+                <tr style={{ borderBottom: '1px solid #E4E7EC', backgroundColor: '#F7F8FA' }}>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Faculty
+                  </th>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Duration
+                  </th>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Status
+                  </th>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Decided By
+                  </th>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Decided Date
+                  </th>
+                  <th style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Remarks
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {decided.map((leave) => (
-                  <tr key={leave.id} className="cyber-row-hover">
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div
-                          className="avatar"
-                          style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 6,
-                            background: 'var(--grey-100)',
-                            color: 'var(--grey-800)',
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: 11,
-                            fontWeight: 700,
-                          }}
-                        >
-                          {getInitials(leave.applicant.name)}
-                        </div>
-                        <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--grey-900)' }}>
-                          {leave.applicant.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td style={{ fontSize: 12.5, color: 'var(--grey-600)', fontFamily: 'var(--font-mono)' }}>
-                      {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
-                    </td>
-                    <td>
-                      <span
-                        className="badge"
-                        style={{
-                          fontWeight: 700,
-                          color: leave.status === 'APPROVED' ? '#16a34a' : '#dc2626',
-                        }}
-                      >
-                        {leave.status === 'APPROVED' ? '● APPROVED' : '▲ REJECTED'}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--grey-700)' }}>
-                      {leave.decidedBy?.name ?? '—'}
-                    </td>
-                    <td style={{ fontSize: 12, color: 'var(--grey-500)', fontFamily: 'var(--font-mono)' }}>
-                      {leave.decidedAt ? formatDate(leave.decidedAt) : '—'}
-                    </td>
-                    <td
+                {decided.map((leave) => {
+                  const days =
+                    Math.ceil(
+                      (new Date(leave.endDate).getTime() - new Date(leave.startDate).getTime()) /
+                        (1000 * 60 * 60 * 24)
+                    ) + 1
+
+                  return (
+                    <tr
+                      key={leave.id}
                       style={{
-                        fontSize: 12,
-                        color: 'var(--grey-500)',
-                        maxWidth: 240,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        borderBottom: '1px solid #F2F4F7',
+                        transition: 'background-color 0.15s ease',
                       }}
                     >
-                      {leave.remarks ?? '—'}
-                    </td>
-                  </tr>
-                ))}
+                      <td style={{ padding: '12px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: 5,
+                              backgroundColor: '#F2F4F7',
+                              color: '#17202A',
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: 11,
+                              fontWeight: 700,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {getInitials(leave.applicant.name)}
+                          </div>
+                          <span style={{ fontSize: 13.5, fontWeight: 600, color: '#17202A' }}>
+                            {leave.applicant.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: 12.5, color: '#667085' }}>
+                        {formatDate(leave.startDate)} — {formatDate(leave.endDate)} ({days}d)
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <StatusBadge status={leave.status} size="sm" />
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#17202A' }}>
+                        {leave.decidedBy?.name ?? '—'}
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: 12.5, color: '#667085' }}>
+                        {leave.decidedAt ? formatDate(leave.decidedAt) : '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontSize: 12.5,
+                          color: '#667085',
+                          maxWidth: 240,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {leave.remarks ?? '—'}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

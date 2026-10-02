@@ -3,8 +3,13 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Users, CheckSquare, Calendar, Star, Award, Mail, Plus } from "lucide-react";
-import { getInitials } from "@/lib/utils";
+import { MetricBlock } from "@/components/ui/MetricBlock";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Users, CheckSquare, Star, Plus, UserCheck, AlertTriangle } from "lucide-react";
+import { getInitials, formatDate } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Cluster Head // Faculty Roster" };
 
 export default async function ClusterRosterPage() {
   const session = await auth();
@@ -12,7 +17,6 @@ export default async function ClusterRosterPage() {
     redirect("/login");
   }
 
-  // Get cluster ID for current user
   let clusterId = session.user.clusterId;
 
   if (!clusterId && ["HOD", "ADMIN"].includes(session.user.role)) {
@@ -22,11 +26,48 @@ export default async function ClusterRosterPage() {
 
   if (!clusterId) {
     return (
-      <div className="card" style={{ textAlign: "center", padding: 48 }}>
-        <h2 className="card-title">No Cluster Assigned</h2>
-        <p className="card-muted" style={{ marginTop: 8 }}>
-          You are not currently assigned to manage a faculty cluster.
-        </p>
+      <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+        <PageHeader
+          breadcrumbs={[
+            { label: "CLUSTER_CONSOLE", href: "/cluster" },
+            { label: "ROSTER" },
+          ]}
+          title="Cluster Faculty Roster"
+          subtitle="Active faculty members, workload distribution & performance metrics."
+          dotMatrixText="ROSTER"
+        />
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "48px 24px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 8,
+              backgroundColor: "rgba(183, 121, 31, 0.1)",
+              border: "1px solid rgba(183, 121, 31, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              color: "#B7791F",
+            }}
+          >
+            <AlertTriangle size={24} />
+          </div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: "#17202A", margin: "0 0 8px 0" }}>
+            No Cluster Assigned
+          </h2>
+          <p style={{ fontSize: 14, color: "#667085", maxWidth: 460, margin: "0 auto" }}>
+            You are not currently assigned to manage a faculty cluster.
+          </p>
+        </div>
       </div>
     );
   }
@@ -97,219 +138,320 @@ export default async function ClusterRosterPage() {
     };
   });
 
+  const totalInProgress = members.reduce((acc, m) => acc + m.pendingTasks, 0);
+  const totalCompleted = members.reduce((acc, m) => acc + m.completedTasks, 0);
+  const totalOverdue = members.reduce((acc, m) => acc + m.overdueTasks, 0);
+
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* 1. Page Header with BMSIT Dot Matrix */}
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Cluster Console", href: "/cluster" },
-          { label: "Faculty Roster" },
+          { label: "CLUSTER_CONSOLE", href: "/cluster" },
+          { label: "FACULTY_ROSTER" },
         ]}
-        eyebrow={`CLUSTER // ${cluster.name.toUpperCase()}`}
+        eyebrow={`// DIRECTORY · ${cluster.name.toUpperCase()}`}
         dotMatrixText="ROSTER"
-        dotMatrixFontSize={36}
         title={`${cluster.name} — Faculty Roster`}
-        ghost="directory."
-        subtitle={cluster.description ?? "Active faculty members, workload distribution & performance metrics"}
+        subtitle={cluster.description ?? "Operational roster of active cluster faculty, workload distribution, and performance standing."}
         actions={
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 10 }}>
             <Link
               href="/cluster/tasks"
-              className="btn-primary btn-sm"
-              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "8px 14px",
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: "#17202A",
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E4E7EC",
+                borderRadius: 6,
+                textDecoration: "none",
+              }}
             >
               <Plus size={14} /> ASSIGN TASK
             </Link>
             <Link
               href="/cluster/evaluations"
-              className="btn-secondary btn-sm"
-              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "8px 16px",
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: "#FFFFFF",
+                backgroundColor: "#173B67",
+                border: "1px solid #173B67",
+                borderRadius: 6,
+                textDecoration: "none",
+              }}
             >
-              <Star size={14} /> CONDUCT EVALUATION
+              <Star size={14} /> APPRAISE FACULTY
             </Link>
           </div>
         }
       />
 
-      {/* 2. Summary stats */}
-      <div className="stat-grid">
-        <div className="stat-card">
-          <div className="stat-card-num">{members.length}</div>
-          <div className="stat-card-label">ACTIVE FACULTY</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-num">
-            {members.reduce((acc: number, m: any) => acc + m.pendingTasks, 0)}
-          </div>
-          <div className="stat-card-label">TASKS IN PROGRESS</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-num" style={{ color: "#16A34A" }}>
-            {members.reduce((acc: number, m: any) => acc + m.completedTasks, 0)}
-          </div>
-          <div className="stat-card-label">TASKS COMPLETED</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-num">
-            ★ {Math.round(members.reduce((acc: number, m: any) => acc + m.totalPoints, 0))}
-          </div>
-          <div className="stat-card-label">CLUSTER STARS</div>
-        </div>
+      {/* 2. Cluster Workload Metric Blocks */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        <MetricBlock
+          label="Active Faculty"
+          value={members.length}
+          context="Enrolled cluster members"
+          trendType="neutral"
+          icon={<Users size={18} color="#173B67" />}
+        />
+        <MetricBlock
+          label="Tasks in Progress"
+          value={totalInProgress}
+          context="Active workload items"
+          trendType="neutral"
+          icon={<CheckSquare size={18} color="#2F6FED" />}
+        />
+        <MetricBlock
+          label="Tasks Completed"
+          value={totalCompleted}
+          context="Verified cluster deliverables"
+          trendType="positive"
+          icon={<UserCheck size={18} color="#198754" />}
+        />
+        <MetricBlock
+          label="Overdue Deliverables"
+          value={totalOverdue}
+          context={totalOverdue > 0 ? "Requires management attention" : "All deliverables on schedule"}
+          trendType={totalOverdue > 0 ? "danger" : "positive"}
+          icon={<AlertTriangle size={18} color={totalOverdue > 0 ? "#C0392B" : "#198754"} />}
+        />
       </div>
 
-      {/* 3. Roster Cards Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: 20 }}>
-        {members.map((faculty) => (
-          <div
-            key={faculty.id}
-            className="card card-hover"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              gap: 18,
-            }}
-          >
-            {/* Header info */}
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    background: "#1D1D1F",
-                    color: "#FFFFFF",
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 800,
-                    fontSize: 16,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  {getInitials(faculty.name)}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <h3
-                    className="card-title"
-                    style={{
-                      margin: 0,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {faculty.name}
-                  </h3>
-                  <div style={{ fontSize: 12, color: "#6E6E73", marginTop: 2 }}>
-                    {faculty.designation}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "#86868B",
-                      fontFamily: "var(--font-mono)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                      marginTop: 2,
-                    }}
-                  >
-                    <Mail size={11} />
-                    <span>{faculty.email}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Performance indicators */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: 8,
-                  background: "#FAFAFA",
-                  padding: "12px 10px",
-                  borderRadius: 10,
-                  border: "1px solid #E8E8ED",
-                  textAlign: "center",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 10, color: "#86868B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>TASKS</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>
-                    {faculty.completedTasks}/{faculty.totalTasks}
-                  </div>
-                  {faculty.overdueTasks > 0 ? (
-                    <div style={{ fontSize: 9.5, color: "#E11D48", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
-                      ▲ {faculty.overdueTasks} OVERDUE
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 9.5, color: "#16A34A", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
-                      ● ON TRACK
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 10, color: "#86868B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>STARS</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>
-                    ★ {Math.round(faculty.totalPoints)}
-                  </div>
-                  <div style={{ fontSize: 9.5, color: "#6E6E73", fontFamily: "var(--font-mono)" }}>
-                    {faculty.badgesCount} BADGES
-                  </div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 10, color: "#86868B", fontWeight: 700, fontFamily: "var(--font-mono)" }}>RATING</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, marginTop: 4, color: "#1D1D1F", fontFamily: "var(--font-mono)" }}>
-                    {faculty.latestRating ? `${faculty.latestRating}/5` : "N/A"}
-                  </div>
-                  <div style={{ fontSize: 9.5, color: "#6E6E73", fontFamily: "var(--font-mono)" }}>
-                    {faculty.latestEvalPeriod ?? "NO EVAL"}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions footer */}
-            <div
+      {/* 3. Operational Faculty Directory Data Table */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 8,
+          overflow: "hidden",
+          boxShadow: "0 1px 3px rgba(16, 24, 40, 0.05)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 20px",
+            borderBottom: "1px solid #E4E7EC",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#FAFAFA",
+          }}
+        >
+          <div>
+            <span
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingTop: 14,
-                borderTop: "1px solid #E8E8ED",
+                fontSize: 10,
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                color: "#667085",
+                textTransform: "uppercase",
               }}
             >
-              <span style={{ fontSize: 11, color: "#86868B", fontFamily: "var(--font-mono)" }}>
-                ENROLLED {new Date(faculty.joinedAt).toLocaleDateString(undefined, { month: "short", year: "numeric" }).toUpperCase()}
-              </span>
-
-              <div style={{ display: "flex", gap: 8 }}>
-                <Link
-                  href={`/cluster/tasks?facultyId=${faculty.id}`}
-                  className="btn-secondary btn-sm"
-                  style={{ padding: "4px 10px", fontSize: 11 }}
-                >
-                  TASKS
-                </Link>
-                <Link
-                  href={`/cluster/evaluations?facultyId=${faculty.id}`}
-                  className="btn-primary btn-sm"
-                  style={{ padding: "4px 10px", fontSize: 11 }}
-                >
-                  EVALUATE
-                </Link>
-              </div>
-            </div>
+              // OPERATIONAL DIRECTORY
+            </span>
+            <h2 style={{ fontSize: 16, fontWeight: 600, margin: "2px 0 0", color: "#17202A" }}>
+              Faculty Members & Workload Distribution
+            </h2>
           </div>
-        ))}
+          <span style={{ fontSize: 11.5, color: "#667085", fontWeight: 500 }}>
+            {members.length} ENROLLED FACULTY
+          </span>
+        </div>
+
+        {members.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No Faculty Enrolled"
+            description="There are currently no members enrolled in this cluster node."
+          />
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #E4E7EC", backgroundColor: "#F7F8FA" }}>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Faculty Member
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Workload (Resolved / Total)
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Merit Stars
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Latest Appraisal
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Enrolled Date
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((faculty: any) => (
+                  <tr
+                    key={faculty.id}
+                    style={{
+                      borderBottom: "1px solid #F2F4F7",
+                      transition: "background-color 0.15s ease",
+                    }}
+                  >
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <div
+                          style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: 6,
+                            backgroundColor: "#173B67",
+                            color: "#FFFFFF",
+                            fontFamily: "var(--font-mono)",
+                            fontWeight: 700,
+                            fontSize: 12,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {getInitials(faculty.name)}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: 13.5, color: "#17202A" }}>
+                            {faculty.name}
+                          </div>
+                          <div style={{ fontSize: 11.5, color: "#667085" }}>
+                            {faculty.designation} · {faculty.email}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+                          {faculty.completedTasks} / {faculty.totalTasks}
+                        </span>
+                        {faculty.overdueTasks > 0 ? (
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontWeight: 700,
+                              color: "#C0392B",
+                              backgroundColor: "rgba(192, 57, 43, 0.08)",
+                              padding: "2px 6px",
+                              borderRadius: 4,
+                            }}
+                          >
+                            {faculty.overdueTasks} OVERDUE
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontWeight: 600,
+                              color: "#198754",
+                              backgroundColor: "rgba(25, 135, 84, 0.08)",
+                              padding: "2px 6px",
+                              borderRadius: 4,
+                            }}
+                          >
+                            ON TRACK
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <span style={{ fontWeight: 700, fontSize: 13, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+                        {Math.round(faculty.totalPoints).toLocaleString()} <span style={{ fontSize: 11, color: "#667085" }}>PTS</span>
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      {faculty.latestRating ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 3,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: "#B7791F",
+                            }}
+                          >
+                            <Star size={11} fill="#B7791F" color="#B7791F" />
+                            {faculty.latestRating} / 5.0
+                          </span>
+                          <span style={{ fontSize: 11, color: "#667085" }}>
+                            ({faculty.latestEvalPeriod})
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 12, color: "#98A2B3" }}>No evaluation</span>
+                      )}
+                    </td>
+                    <td style={{ padding: "12px 16px", fontSize: 12.5, color: "#667085" }}>
+                      {formatDate(faculty.joinedAt)}
+                    </td>
+                    <td style={{ padding: "12px 16px", textAlign: "right" }}>
+                      <div style={{ display: "inline-flex", gap: 6 }}>
+                        <Link
+                          href="/cluster/tasks"
+                          style={{
+                            fontSize: 11.5,
+                            fontWeight: 600,
+                            color: "#17202A",
+                            backgroundColor: "#FFFFFF",
+                            border: "1px solid #E4E7EC",
+                            borderRadius: 4,
+                            padding: "4px 8px",
+                            textDecoration: "none",
+                          }}
+                        >
+                          Task
+                        </Link>
+                        <Link
+                          href="/cluster/evaluations"
+                          style={{
+                            fontSize: 11.5,
+                            fontWeight: 600,
+                            color: "#173B67",
+                            backgroundColor: "rgba(23, 59, 103, 0.08)",
+                            borderRadius: 4,
+                            padding: "4px 8px",
+                            textDecoration: "none",
+                          }}
+                        >
+                          Appraise
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

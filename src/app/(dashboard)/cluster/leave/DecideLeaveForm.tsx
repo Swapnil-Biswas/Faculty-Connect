@@ -22,11 +22,10 @@ export function DecideLeaveForm({ leaveId }: DecideLeaveFormProps) {
           alignItems: 'center',
           gap: 6,
           fontSize: 12,
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 700,
-          color: '#22C55E',
-          background: 'rgba(34, 197, 94, 0.12)',
-          border: '1px solid rgba(34, 197, 94, 0.25)',
+          fontWeight: 600,
+          color: '#198754',
+          backgroundColor: 'rgba(25, 135, 84, 0.08)',
+          border: '1px solid rgba(25, 135, 84, 0.25)',
           padding: '4px 10px',
           borderRadius: 6,
         }}
@@ -37,35 +36,29 @@ export function DecideLeaveForm({ leaveId }: DecideLeaveFormProps) {
   }
 
   return (
-    <form action={formAction}>
-      <input type="hidden" name="leaveId" value={leaveId} />
-      {decision && <input type="hidden" name="decision" value={decision} />}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* Primary Action Buttons */}
+      {decision !== 'REJECTED' && (
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {/* Quick approve / reject buttons that set decision then submit */}
           <button
             type="button"
             onClick={() => {
-              setDecision('APPROVED')
-              setTimeout(() => {
-                const form = document.getElementById(`decide-form-${leaveId}`)
-                ;(form as HTMLFormElement)?.requestSubmit()
-              }, 50)
+              const form = document.getElementById(`approve-form-${leaveId}`) as HTMLFormElement
+              form?.requestSubmit()
             }}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
               padding: '6px 14px',
-              fontSize: 11,
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.08) 100%)',
-              color: '#22C55E',
-              border: '1px solid rgba(34, 197, 94, 0.35)',
+              fontSize: 12,
+              fontWeight: 600,
+              backgroundColor: '#198754',
+              color: '#FFFFFF',
+              border: '1px solid #198754',
               borderRadius: 6,
               cursor: 'pointer',
+              transition: 'opacity 0.15s ease',
             }}
           >
             <CheckCircle2 size={13} /> APPROVE
@@ -79,91 +72,103 @@ export function DecideLeaveForm({ leaveId }: DecideLeaveFormProps) {
               alignItems: 'center',
               gap: 6,
               padding: '6px 14px',
-              fontSize: 11,
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 800,
-              background: 'rgba(244, 63, 94, 0.08)',
-              color: '#F43F5E',
-              border: '1px solid rgba(244, 63, 94, 0.3)',
+              fontSize: 12,
+              fontWeight: 600,
+              backgroundColor: '#FFFFFF',
+              color: '#C0392B',
+              border: '1px solid #E4E7EC',
               borderRadius: 6,
               cursor: 'pointer',
+              transition: 'all 0.15s ease',
             }}
           >
             <XCircle size={13} /> REJECT
           </button>
         </div>
+      )}
 
-        {/* Remarks field — show when rejecting (required reasoning) */}
-        {decision === 'REJECTED' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
-            <textarea
-              name="remarks"
-              rows={2}
-              placeholder="Reason for rejection (optional)…"
-              style={{
-                resize: 'none',
-                fontSize: 12,
-                fontFamily: 'var(--font-mono)',
-                background: '#07090E',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: 6,
-                padding: '8px 12px',
-                color: '#F8FAFC',
-                outline: 'none',
-              }}
-            />
-            {state.error && (
-              <span style={{ fontSize: 11, color: '#F43F5E', fontFamily: 'var(--font-mono)' }}>
-                {state.error}
-              </span>
-            )}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <SubmitButton
-                label="CONFIRM REJECT"
-                pendingLabel="REJECTING…"
-                style={{
-                  padding: '6px 12px',
-                  fontSize: 11,
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 800,
-                  background: 'rgba(244, 63, 94, 0.2)',
-                  color: '#F43F5E',
-                  border: '1px solid rgba(244, 63, 94, 0.4)',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setDecision(null)}
-                style={{
-                  padding: '6px 12px',
-                  fontSize: 11,
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 600,
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#94A3B8',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                }}
-              >
-                CANCEL
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Hidden form for programmatic submit (approve path) */}
+      {/* Hidden form for instant Approve submission */}
       <form
-        id={`decide-form-${leaveId}`}
+        id={`approve-form-${leaveId}`}
         action={formAction}
         style={{ display: 'none' }}
       >
         <input type="hidden" name="leaveId" value={leaveId} />
         <input type="hidden" name="decision" value="APPROVED" />
       </form>
-    </form>
+
+      {/* Rejection Remarks Form */}
+      {decision === 'REJECTED' && (
+        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+          <input type="hidden" name="leaveId" value={leaveId} />
+          <input type="hidden" name="decision" value="REJECTED" />
+
+          <label
+            style={{
+              fontSize: 11.5,
+              fontWeight: 600,
+              color: '#17202A',
+            }}
+          >
+            Reason for Rejection (Optional)
+          </label>
+          <textarea
+            name="remarks"
+            rows={2}
+            placeholder="Specify reason for sanction refusal…"
+            style={{
+              resize: 'none',
+              fontSize: 12.5,
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E4E7EC',
+              borderRadius: 6,
+              padding: '8px 12px',
+              color: '#17202A',
+              outline: 'none',
+              fontFamily: 'inherit',
+            }}
+          />
+
+          {state.error && (
+            <span style={{ fontSize: 11.5, color: '#C0392B' }}>
+              {state.error}
+            </span>
+          )}
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <SubmitButton
+              label="CONFIRM REJECTION"
+              pendingLabel="REJECTING…"
+              style={{
+                padding: '6px 14px',
+                fontSize: 11.5,
+                fontWeight: 600,
+                backgroundColor: '#C0392B',
+                color: '#FFFFFF',
+                border: '1px solid #C0392B',
+                borderRadius: 6,
+                cursor: 'pointer',
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setDecision(null)}
+              style={{
+                padding: '6px 12px',
+                fontSize: 11.5,
+                fontWeight: 600,
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E4E7EC',
+                color: '#667085',
+                borderRadius: 6,
+                cursor: 'pointer',
+              }}
+            >
+              CANCEL
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
   )
 }

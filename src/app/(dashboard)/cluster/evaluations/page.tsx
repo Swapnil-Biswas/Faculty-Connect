@@ -2,9 +2,14 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { CreateEvaluationModal } from "./CreateEvaluationModal";
-import { Star, UserCheck, Award } from "lucide-react";
+import { Star, UserCheck, Award, AlertTriangle } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { MetricBlock } from "@/components/ui/MetricBlock";
+import { EmptyState } from "@/components/ui/EmptyState";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Cluster Head // Faculty Evaluations" };
 
 export default async function ClusterEvaluationsPage() {
   const session = await auth();
@@ -15,7 +20,6 @@ export default async function ClusterEvaluationsPage() {
     redirect("/faculty");
   }
 
-  // Find cluster
   const effectiveClusterId = clusterId;
   const cluster = effectiveClusterId
     ? await db.cluster.findUnique({
@@ -29,9 +33,57 @@ export default async function ClusterEvaluationsPage() {
       })
     : null;
 
+  if (!cluster) {
+    return (
+      <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+        <PageHeader
+          breadcrumbs={[
+            { label: "CLUSTER_CONSOLE", href: "/cluster" },
+            { label: "EVALUATIONS" },
+          ]}
+          title="Faculty Evaluations"
+          subtitle="Record periodic appraisals across quality, contribution & initiative."
+          dotMatrixText="EVALS"
+        />
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "48px 24px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 8,
+              backgroundColor: "rgba(183, 121, 31, 0.1)",
+              border: "1px solid rgba(183, 121, 31, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              color: "#B7791F",
+            }}
+          >
+            <AlertTriangle size={24} />
+          </div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: "#17202A", margin: "0 0 8px 0" }}>
+            No Cluster Assigned
+          </h2>
+          <p style={{ fontSize: 14, color: "#667085", maxWidth: 460, margin: "0 auto" }}>
+            You must be linked to an academic cluster to conduct faculty appraisals.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Filter out the evaluator themselves from faculty dropdown
   const facultyMembers =
-    cluster?.members
+    cluster.members
       .filter((m) => m.userId !== userId && m.user.deletedAt === null)
       .map((m) => ({
         id: m.user.id,
@@ -44,7 +96,7 @@ export default async function ClusterEvaluationsPage() {
     where: {
       OR: [
         { evaluatorId: userId },
-        ...(cluster?.members.map((m) => ({ facultyId: m.userId })) ?? []),
+        ...(cluster.members.map((m) => ({ facultyId: m.userId })) ?? []),
       ],
     },
     include: {
@@ -63,16 +115,17 @@ export default async function ClusterEvaluationsPage() {
       : "0.0";
 
   return (
-    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/cluster" },
-          { label: "Evaluations" },
+          { label: "CLUSTER_CONSOLE", href: "/cluster" },
+          { label: "EVALUATIONS" },
         ]}
         dotMatrixText="EVALS"
-        eyebrow="PERFORMANCE EVALUATION · ACADEMIC APPRAISALS"
+        eyebrow="// ACADEMIC GOVERNANCE · APPRAISAL LEDGER"
         title="Faculty Evaluations & Appraisals"
-        subtitle="Evaluate faculty across quality, contribution & initiative — awards verified Recognition Stars."
+        subtitle="Evaluate faculty across quality, contribution & initiative — awards verified recognition stars."
         actions={
           facultyMembers.length > 0 ? (
             <CreateEvaluationModal facultyMembers={facultyMembers} />
@@ -80,136 +133,204 @@ export default async function ClusterEvaluationsPage() {
         }
       />
 
-      {/* Cluster Overview Stats */}
-      <div className="stat-grid">
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Evaluations Submitted</span>
-            <Award size={16} color="var(--grey-600)" />
-          </div>
-          <div className="stat-card-num">{evaluations.length}</div>
-        </div>
-
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Avg Cluster Rating</span>
-            <Star size={16} color="#d97706" />
-          </div>
-          <div className="stat-card-num" style={{ color: "#d97706" }}>
-            {avgRating} <span style={{ fontSize: 16, color: "var(--grey-400)", fontWeight: 500 }}>/ 5.0</span>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Eligible Faculty</span>
-            <UserCheck size={16} color="#16a34a" />
-          </div>
-          <div className="stat-card-num" style={{ color: "#16a34a" }}>
-            {facultyMembers.length}
-          </div>
-        </div>
+      {/* 2. Cluster Overview Metric Blocks */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        <MetricBlock
+          label="Evaluations Recorded"
+          value={evaluations.length}
+          context="Verified appraisals in audit ledger"
+          trendType="neutral"
+          icon={<Award size={18} color="#173B67" />}
+        />
+        <MetricBlock
+          label="Avg Cluster Rating"
+          value={`${avgRating} / 5.0`}
+          context="Composite cluster appraisal score"
+          trendType="positive"
+          icon={<Star size={18} color="#B7791F" />}
+        />
+        <MetricBlock
+          label="Eligible Faculty"
+          value={facultyMembers.length}
+          context="Candidates in current cluster"
+          trendType="neutral"
+          icon={<UserCheck size={18} color="#2F6FED" />}
+        />
       </div>
 
-      {/* Evaluations History Table */}
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--grey-100)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {/* 3. Evaluations History Table Card */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 8,
+          overflow: "hidden",
+          boxShadow: "0 1px 3px rgba(16, 24, 40, 0.05)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 20px",
+            borderBottom: "1px solid #E4E7EC",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#FAFAFA",
+          }}
+        >
           <div>
-            <span className="section-eyebrow" style={{ marginBottom: 2 }}>
-              // EVALUATION LOG
+            <span
+              style={{
+                fontSize: 10,
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                color: "#667085",
+                textTransform: "uppercase",
+              }}
+            >
+              // EVALUATION AUDIT LOG
             </span>
-            <h2 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0", color: "var(--grey-900)" }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, margin: "2px 0 0", color: "#17202A" }}>
               Appraisal History & Audit Ledger
             </h2>
           </div>
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--grey-500)" }}>
+          <span style={{ fontSize: 11.5, color: "#667085", fontWeight: 500 }}>
             {evaluations.length} RECORDS LOGGED
           </span>
         </div>
 
         {evaluations.length === 0 ? (
-          <div className="empty" style={{ margin: 24 }}>
-            <div className="empty-title">No evaluations registered yet</div>
-            <div className="empty-body">
-              Click &quot;Evaluate Faculty&quot; above to submit an academic appraisal for a cluster member.
-            </div>
-          </div>
+          <EmptyState
+            icon={Award}
+            title="No Evaluations Registered Yet"
+            description="Click 'Evaluate Faculty' above to submit an academic appraisal for a cluster member."
+          />
         ) : (
-          <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
-            <table className="table">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
               <thead>
-                <tr>
-                  <th>FACULTY</th>
-                  <th>PERIOD</th>
-                  <th>QUALITY</th>
-                  <th>CONTRIB</th>
-                  <th>INITIATIVE</th>
-                  <th>OVERALL</th>
-                  <th>REMARKS</th>
-                  <th>TIMESTAMP</th>
+                <tr style={{ borderBottom: "1px solid #E4E7EC", backgroundColor: "#F7F8FA" }}>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Faculty Member
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Period
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Quality
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Contrib
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Initiative
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Overall Rating
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Remarks
+                  </th>
+                  <th style={{ padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#667085", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Date
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {evaluations.map((evalItem) => (
-                  <tr key={evalItem.id} className="cyber-row-hover">
-                    <td>
+                  <tr
+                    key={evalItem.id}
+                    style={{
+                      borderBottom: "1px solid #F2F4F7",
+                      transition: "background-color 0.15s ease",
+                    }}
+                  >
+                    <td style={{ padding: "12px 16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div
-                          className="avatar"
                           style={{
                             width: 32,
                             height: 32,
                             borderRadius: 6,
-                            background: "var(--grey-100)",
-                            color: "var(--grey-800)",
+                            backgroundColor: "#173B67",
+                            color: "#FFFFFF",
                             fontFamily: "var(--font-mono)",
                             fontSize: 11,
                             fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
                           }}
                         >
                           {getInitials(evalItem.faculty.name)}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: 13, color: "var(--grey-900)" }}>
+                          <div style={{ fontWeight: 600, fontSize: 13.5, color: "#17202A" }}>
                             {evalItem.faculty.name}
                           </div>
-                          <div style={{ fontSize: 11, color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
+                          <div style={{ fontSize: 11.5, color: "#667085" }}>
                             {evalItem.faculty.designation ?? evalItem.faculty.email}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span className="badge">
+                    <td style={{ padding: "12px 16px" }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: "#17202A",
+                          backgroundColor: "#F2F4F7",
+                          padding: "2px 7px",
+                          borderRadius: 4,
+                        }}
+                      >
                         {evalItem.period}
                       </span>
                     </td>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    <td style={{ padding: "12px 16px", fontSize: 13, color: "#17202A" }}>
                       {evalItem.quality} / 5
                     </td>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    <td style={{ padding: "12px 16px", fontSize: 13, color: "#17202A" }}>
                       {evalItem.contribution} / 5
                     </td>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                    <td style={{ padding: "12px 16px", fontSize: 13, color: "#17202A" }}>
                       {evalItem.initiative} / 5
                     </td>
-                    <td>
+                    <td style={{ padding: "12px 16px" }}>
                       <span
-                        className="badge"
                         style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
+                          fontSize: 12,
                           fontWeight: 700,
-                          color: evalItem.overallRating >= 4 ? "#16a34a" : "#d97706",
+                          color: "#B7791F",
+                          backgroundColor: "rgba(183, 121, 31, 0.08)",
+                          border: "1px solid rgba(183, 121, 31, 0.25)",
+                          padding: "2px 8px",
+                          borderRadius: 4,
                         }}
                       >
-                        ★ {evalItem.overallRating} / 5
+                        <Star size={11} fill="#B7791F" color="#B7791F" />
+                        {evalItem.overallRating} / 5
                       </span>
                     </td>
-                    <td style={{ maxWidth: 260 }}>
-                      <span style={{ fontSize: 12, color: evalItem.remarks ? "var(--grey-700)" : "var(--grey-400)" }}>
+                    <td style={{ padding: "12px 16px", maxWidth: 240 }}>
+                      <span style={{ fontSize: 12.5, color: evalItem.remarks ? "#17202A" : "#98A2B3" }}>
                         {evalItem.remarks ?? "—"}
                       </span>
                     </td>
-                    <td style={{ whiteSpace: "nowrap", fontSize: 12, color: "var(--grey-500)", fontFamily: "var(--font-mono)" }}>
+                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap", fontSize: 12, color: "#667085" }}>
                       {formatDate(evalItem.createdAt)}
                     </td>
                   </tr>
