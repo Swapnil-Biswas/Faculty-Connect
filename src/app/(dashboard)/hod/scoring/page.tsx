@@ -38,7 +38,7 @@ export default async function ScoringConfigPage() {
         dotMatrixFontSize={36}
         title="Scoring Configuration"
         ghost="parameters."
-        subtitle="Adjust the weight of each performance dimension in the Recognition Engine. All changes are versioned and audited."
+        subtitle="Adjust the weight of each performance dimension in the Recognition Engine. All changes are permanently tracked and audited."
       />
 
       {/* Info Callout */}
@@ -69,9 +69,9 @@ export default async function ScoringConfigPage() {
           <Sparkles size={16} />
         </div>
         <div style={{ fontSize: 13, color: "#424245", lineHeight: 1.6 }}>
-          <strong style={{ color: "#1D1D1F" }}>Explainability Guarantee:</strong> Saving creates a new versioned configuration snapshot. Historical faculty scores remain permanently tied to the formula active when awards were computed. No historical points are retroactively altered.
+          <strong style={{ color: "#1D1D1F" }}>Explainability Guarantee:</strong> Historical faculty scores remain permanently tied to the formula active when awards were computed. No historical points are retroactively altered.
           <div style={{ marginTop: 4, fontFamily: "var(--font-mono)", fontSize: 11, color: "#6E6E73" }}>
-            Current Active Version: <span style={{ fontWeight: 700, color: "#1D1D1F" }}>v{activeConfig?.version ?? 1}</span> · Established by: <span style={{ fontWeight: 600, color: "#1D1D1F" }}>{activeConfig?.setByAdmin?.name ?? "System"}</span>
+            Status: <span style={{ fontWeight: 700, color: "#16A34A" }}>Active Heuristic</span> · Established by: <span style={{ fontWeight: 600, color: "#1D1D1F" }}>{activeConfig?.setByAdmin?.name ?? "System"}</span>
           </div>
         </div>
       </div>
@@ -98,11 +98,11 @@ export default async function ScoringConfigPage() {
               <span className="section-eyebrow">// AUDIT TRAIL</span>
               <h2 className="card-title" style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
                 <History size={18} />
-                Version History Ledger
+                Configuration History Ledger
               </h2>
             </div>
             <span className="badge badge-dark">
-              {history.length} Snapshots
+              {history.length} Changes
             </span>
           </div>
 
@@ -110,7 +110,7 @@ export default async function ScoringConfigPage() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Version</th>
+                  <th>Config Entry</th>
                   <th>Status</th>
                   <th>Set By</th>
                   <th>On-Time</th>
@@ -127,7 +127,7 @@ export default async function ScoringConfigPage() {
                   <tr key={cfg.id}>
                     <td>
                       <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "#1D1D1F" }}>
-                        v{cfg.version}
+                        #{cfg.id.slice(-6)}
                       </span>
                     </td>
                     <td>

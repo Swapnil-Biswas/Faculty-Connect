@@ -88,7 +88,7 @@ export function ScoringConfigForm({
     <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       {state.success && (
         <div className="form-success">
-          ✓ Scoring configuration saved as a new version. Future points will use these weights.
+          ✓ Scoring configuration saved successfully. Future points will use these weights.
         </div>
       )}
       {state.error && (
@@ -167,7 +167,7 @@ export function ScoringConfigForm({
 
       <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
         <SubmitButton
-          label="Save as New Version"
+          label="Save Changes"
           pendingLabel="Saving..."
           icon={<Save size={16} />}
         />

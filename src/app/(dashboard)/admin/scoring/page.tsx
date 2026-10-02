@@ -32,10 +32,11 @@ export default async function AdminScoringPage() {
         dotMatrixText="SCORING"
         eyebrow="HEURISTICS CALIBRATION · GLOBAL MULTIPLIERS"
         title="Scoring Configuration & Rules"
-        subtitle="System-level scoring heuristics. Changes create a new immutable versioned snapshot."
+        subtitle="System-level scoring heuristics, performance dimensions, and audited recognition parameters."
         actions={
-          <span className="badge" style={{ fontWeight: 700 }}>
-            CURRENT: v{activeConfig?.version ?? 1}.0 ACTIVE
+          <span className="badge status-published" style={{ fontWeight: 700 }}>
+            <span className="badge-dot" />
+            SCORING ENGINE ACTIVE
           </span>
         }
       />
@@ -59,14 +60,14 @@ export default async function AdminScoringPage() {
         <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--grey-100)" }}>
           <span className="section-eyebrow" style={{ marginBottom: 2 }}>// AUDIT LEDGER</span>
           <h2 style={{ fontSize: 16, fontWeight: 700, margin: "2px 0 0", color: "var(--grey-900)" }}>
-            Version Snapshot History
+            Configuration Audit History
           </h2>
         </div>
         <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
           <table className="table">
             <thead>
               <tr>
-                <th>VERSION</th>
+                <th>CONFIGURATION</th>
                 <th>STATUS</th>
                 <th>SET BY</th>
                 <th>ON-TIME</th>
@@ -80,7 +81,7 @@ export default async function AdminScoringPage() {
                 <tr key={cfg.id} className="cyber-row-hover">
                   <td>
                     <span style={{ fontWeight: 700, fontFamily: "var(--font-mono)" }}>
-                      v{cfg.version}.0
+                      Config #{cfg.id.slice(-6)}
                     </span>
                   </td>
                   <td>

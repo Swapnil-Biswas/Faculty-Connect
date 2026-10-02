@@ -89,7 +89,7 @@ export default async function AdminDashboard() {
           { label: "USER ACCOUNTS", value: totalUsers, color: "var(--grey-900)" },
           { label: "CLUSTER UNITS", value: totalClusters, color: "#d97706" },
           { label: "AUDIT LOGS", value: recentAuditLogs.length, color: "#16a34a" },
-          { label: "SCORING RULES", value: `v${scoringConfig?.version ?? 1}.0`, color: "var(--grey-800)" },
+          { label: "SCORING RULES", value: "ACTIVE", color: "var(--grey-800)" },
         ]}
       />
 
@@ -116,7 +116,7 @@ export default async function AdminDashboard() {
             <span className="stat-card-label">Scoring Engine</span>
             <Settings size={16} color="var(--grey-600)" />
           </div>
-          <div className="stat-card-num">v{scoringConfig?.version ?? 1}.0</div>
+          <div className="stat-card-num" style={{ color: "#16a34a" }}>ONLINE</div>
         </div>
 
         <div className="stat-card">

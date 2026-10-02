@@ -345,7 +345,7 @@ export default function LoginPage() {
                 letterSpacing: "0.08em",
               }}
             >
-              AUTH_PORTAL_V2.6 // SSL_256
+              AUTH_PORTAL // SSL_256
             </div>
           </div>
 
@@ -627,7 +627,7 @@ export default function LoginPage() {
             "DEPT OF COMPUTER SCIENCE & ENGINEERING",
             "AUTONOMOUS ACADEMIC OPERATING SYSTEM",
             "NBA & NAAC ACCREDITATION DOSSIER ENGINE",
-            "FACULTY CONNECT v2.4",
+            "FACULTY CONNECT ACADEMIC OS",
             "ENTER ONCE · USE EVERYWHERE",
           ]}
           speed={20}
