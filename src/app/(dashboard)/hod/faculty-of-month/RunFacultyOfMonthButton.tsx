@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { runFacultyOfMonth, LeaderboardActionState } from "@/actions/leaderboard";
-import { Star } from "lucide-react";
+import { Award, CheckCircle, AlertCircle } from "lucide-react";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
 const initial: LeaderboardActionState = { success: false };
@@ -22,38 +22,40 @@ export function RunFacultyOfMonthButton({
   );
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
       <form action={formAction}>
         <SubmitButton
           label={label}
-          pendingLabel="COMPUTING..."
-          icon={<Star size={15} fill="#0A0D14" color="#0A0D14" />}
+          pendingLabel="Computing Honoree…"
+          icon={<Award size={15} color="#FFFFFF" />}
           style={{
-            background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-            color: "#0A0D14",
+            backgroundColor: "#173B67",
+            color: "#FFFFFF",
             border: "none",
-            borderRadius: 8,
-            padding: "9px 18px",
-            fontFamily: "var(--font-mono)",
-            fontSize: 12,
-            fontWeight: 800,
+            borderRadius: 6,
+            padding: "8px 16px",
+            fontSize: 13,
+            fontWeight: 600,
             cursor: "pointer",
-            boxShadow: "0 0 16px rgba(245, 158, 11, 0.35)",
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
+            fontFamily: "inherit",
+            transition: "background-color 0.15s ease",
           }}
         />
       </form>
       {state.message && (
-        <p style={{ marginTop: "0.5rem", fontSize: "0.8125rem", color: "#22C55E", fontFamily: "var(--font-mono)" }}>
-          ● {state.message}
-        </p>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "#198754" }}>
+          <CheckCircle size={13} />
+          <span>{state.message}</span>
+        </div>
       )}
       {state.error && (
-        <p style={{ marginTop: "0.5rem", fontSize: "0.8125rem", color: "#F43F5E", fontFamily: "var(--font-mono)" }}>
-          ▲ {state.error}
-        </p>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "#C0392B" }}>
+          <AlertCircle size={13} />
+          <span>{state.error}</span>
+        </div>
       )}
     </div>
   );
