@@ -50,64 +50,96 @@ export function AssignTaskForm({
     )
   }
 
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: 12,
+    fontWeight: 600,
+    color: '#17202A',
+    marginBottom: 6,
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '9px 12px',
+    fontSize: 13,
+    color: '#17202A',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E4E7EC',
+    borderRadius: 6,
+    outline: 'none',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+  }
+
   return (
     <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div className="form-group">
-        <label className="form-label" htmlFor="hod-task-title">Title</label>
+      <div>
+        <label style={labelStyle} htmlFor="hod-task-title">
+          Deliverable Title <span style={{ color: '#C0392B' }}>*</span>
+        </label>
         <input
           id="hod-task-title"
           name="title"
           type="text"
-          className="form-input"
-          placeholder="e.g. Update accreditation records"
+          style={inputStyle}
+          placeholder="e.g. Update NBA Criterion 5 records"
           required
           minLength={3}
         />
         {state.fieldErrors?.title && (
-          <span className="form-error">{state.fieldErrors.title[0]}</span>
+          <span style={{ fontSize: 11.5, color: '#C0392B', marginTop: 4, display: 'block' }}>
+            {state.fieldErrors.title[0]}
+          </span>
         )}
       </div>
 
-      <div className="form-group">
-        <label className="form-label" htmlFor="hod-task-desc">Description</label>
+      <div>
+        <label style={labelStyle} htmlFor="hod-task-desc">
+          Description
+        </label>
         <textarea
           id="hod-task-desc"
           name="description"
-          className="form-input"
-          rows={2}
-          placeholder="Optional details…"
-          style={{ resize: 'vertical' }}
+          style={inputStyle}
+          rows={3}
+          placeholder="Detailed expectations and scope…"
         />
       </div>
 
-      <div className="form-group">
-        <label className="form-label" htmlFor="hod-task-assignee">Assign To</label>
+      <div>
+        <label style={labelStyle} htmlFor="hod-task-assignee">
+          Assign To Faculty <span style={{ color: '#C0392B' }}>*</span>
+        </label>
         <select
           id="hod-task-assignee"
           name="assignedToId"
-          className="form-input"
+          style={inputStyle}
           required
           defaultValue=""
         >
-          <option value="" disabled>Select faculty member…</option>
+          <option value="" disabled>Select faculty member across clusters…</option>
           {faculty.map((f) => (
             <option key={f.id} value={f.id}>
-              {f.name}{f.designation ? ` — ${f.designation}` : ''}
+              {f.name}{f.designation ? ` (${f.designation})` : ''}
             </option>
           ))}
         </select>
         {state.fieldErrors?.assignedToId && (
-          <span className="form-error">{state.fieldErrors.assignedToId[0]}</span>
+          <span style={{ fontSize: 11.5, color: '#C0392B', marginTop: 4, display: 'block' }}>
+            {state.fieldErrors.assignedToId[0]}
+          </span>
         )}
       </div>
 
-      <div className="grid-2" style={{ gap: 12 }}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="hod-task-priority">Priority</label>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div>
+          <label style={labelStyle} htmlFor="hod-task-priority">
+            Priority
+          </label>
           <select
             id="hod-task-priority"
             name="priority"
-            className="form-input"
+            style={inputStyle}
             defaultValue="MEDIUM"
           >
             <option value="LOW">Low</option>
@@ -117,13 +149,15 @@ export function AssignTaskForm({
           </select>
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="hod-task-deadline">Deadline</label>
+        <div>
+          <label style={labelStyle} htmlFor="hod-task-deadline">
+            Deadline <span style={{ color: '#C0392B' }}>*</span>
+          </label>
           <input
             id="hod-task-deadline"
             name="deadline"
             type="date"
-            className="form-input"
+            style={inputStyle}
             required
             min={new Date().toISOString().split('T')[0]}
           />
@@ -134,18 +168,18 @@ export function AssignTaskForm({
         <div
           style={{
             padding: '10px 14px',
-            background: 'hsl(0 84% 60% / 0.08)',
-            border: '1px solid hsl(0 84% 60% / 0.2)',
-            borderRadius: 8,
-            fontSize: 13,
-            color: 'hsl(0 70% 50%)',
+            backgroundColor: '#FDECEA',
+            border: '1px solid #F5C6CB',
+            borderRadius: 6,
+            fontSize: 12.5,
+            color: '#C0392B',
           }}
         >
           {state.error}
         </div>
       )}
 
-      <SubmitButton label="Assign Task" pendingLabel="Assigning…" />
+      <SubmitButton label="Dispatch Task" pendingLabel="Dispatching…" />
     </form>
   )
 }

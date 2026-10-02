@@ -1,232 +1,535 @@
-import { auth } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-import { db } from '@/lib/db'
-import { formatDate, getInitials } from '@/lib/utils'
-import { HodDecideLeaveForm } from './HodDecideLeaveForm'
-import { PageHeader } from '@/components/ui/PageHeader'
-import { Calendar, Filter } from 'lucide-react'
-import type { Metadata } from 'next'
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { formatDate, getInitials } from "@/lib/utils";
+import { HodDecideLeaveForm } from "./HodDecideLeaveForm";
+import { HodLeaveFilters } from "./HodLeaveFilters";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Calendar, Clock, CheckCircle2, XCircle, AlertTriangle, Layers, User } from "lucide-react";
+import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: 'Department Leave — HOD' }
+export const metadata: Metadata = { title: "Department Leave — HOD Console" };
 
 export default async function HodLeavePage({
   searchParams,
 }: {
-  searchParams: Promise<{ cluster?: string; status?: string }>
+  searchParams: Promise<{ cluster?: string; status?: string }>;
 }) {
-  const session = await auth()
-  if (!session || !['HOD', 'ADMIN'].includes(session.user.role)) {
-    redirect('/login')
+  const session = await auth();
+  if (!session || !["HOD", "ADMIN"].includes(session.user.role)) {
+    redirect("/login");
   }
 
-  const params = await searchParams
-  const clusterFilter = params.cluster
-  const statusFilter = params.status ?? 'PENDING'
+  const params = await searchParams;
+  const clusterFilter = params.cluster;
+  const statusFilter = params.status ?? "PENDING";
 
-  const [clusters, leaves] = await Promise.all([
-    db.cluster.findMany({ where: { deletedAt: null }, select: { id: true, name: true } }),
+  const [clusters, leaves, counts] = await Promise.all([
+    db.cluster.findMany({
+      where: { deletedAt: null },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
     db.leaveApplication.findMany({
       where: {
         ...(clusterFilter ? { clusterId: clusterFilter } : {}),
-        ...(statusFilter ? { status: statusFilter as never } : {}),
+        ...(statusFilter && statusFilter !== "ALL" ? { status: statusFilter as never } : {}),
       },
       include: {
-        applicant: true,
-        cluster: { select: { name: true } },
-        decidedBy: { select: { name: true } },
+        applicant: { select: { id: true, name: true, designation: true, email: true } },
+        cluster: { select: { id: true, name: true } },
+        decidedBy: { select: { id: true, name: true } },
       },
-      orderBy: { createdAt: 'desc' },
-      take: 50,
+      orderBy: { createdAt: "desc" },
+      take: 60,
     }),
-  ])
-
-  const pendingCount = await db.leaveApplication.count({ where: { status: 'PENDING' } })
+    Promise.all([
+      db.leaveApplication.count({ where: { status: "PENDING" } }),
+      db.leaveApplication.count({ where: { status: "APPROVED" } }),
+      db.leaveApplication.count({ where: { status: "REJECTED" } }),
+      db.leaveApplication.count(),
+    ]).then(([pending, approved, rejected, all]) => ({
+      PENDING: pending,
+      APPROVED: approved,
+      REJECTED: rejected,
+      ALL: all,
+    })),
+  ]);
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* 1. Page Header with BMSIT Dot Matrix */}
+    <div style={{ maxWidth: 1280, margin: "0 auto", paddingBottom: 48 }}>
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/hod" },
-          { label: "Leave Requests" },
+          { label: "HOD_CONSOLE", href: "/hod" },
+          { label: "LEAVE_PIPELINE" },
         ]}
-        eyebrow="HOD // GOVERNANCE WORKFLOWS"
-        dotMatrixText="LEAVE"
-        dotMatrixFontSize={36}
-        title="Department Leave Reviews"
-        ghost="absence."
+        eyebrow="// FACULTY GOVERNANCE · LEAVE PIPELINE"
+        title="Department Leave Approvals"
         subtitle="Review, audit, and approve faculty leave applications across all academic clusters."
-        actions={
-          pendingCount > 0 ? (
-            <span className="badge" style={{ borderColor: 'rgba(217, 119, 6, 0.3)', color: '#D97706', background: '#FFFBEB' }}>
-              <span className="badge-dot" style={{ backgroundColor: '#D97706' }} />
-              {pendingCount} PENDING REVIEWS
-            </span>
-          ) : (
-            <span className="badge status-published">
-              <span className="badge-dot" />
-              ALL REVIEWS CLEARED
-            </span>
-          )
-        }
+        showDotMatrix={false}
       />
 
-      {/* Filters Bar */}
+      {/* 2. Top Metric Bar */}
       <div
-        className="card"
         style={{
-          padding: '12px 18px',
-          display: 'flex',
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: 12,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          background: '#FAFAFA',
+          marginBottom: 24,
         }}
       >
-        <span
+        <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 5,
-            fontSize: 12,
-            fontWeight: 600,
-            fontFamily: 'var(--font-mono)',
-            color: '#6E6E73',
+            backgroundColor: counts.PENDING > 0 ? "rgba(183, 121, 31, 0.05)" : "#FFFFFF",
+            border: `1px solid ${counts.PENDING > 0 ? "rgba(183, 121, 31, 0.3)" : "#E4E7EC"}`,
+            borderRadius: 8,
+            padding: "14px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
           }}
         >
-          <Filter size={13} /> FILTER:
-        </span>
-        <form method="GET" style={{ display: 'flex', gap: 10 }}>
-          <select
-            name="cluster"
-            className="select"
-            style={{ fontSize: 12, padding: '6px 12px', height: 34, width: 'auto' }}
-            defaultValue={clusterFilter ?? ''}
-            onChange={(e) => (e.target.form as HTMLFormElement).submit()}
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: counts.PENDING > 0 ? "#B7791F" : "#667085",
+              fontFamily: "var(--font-mono)",
+            }}
           >
-            <option value="">All Clusters</option>
-            {clusters.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
+            PENDING REVIEWS
+          </span>
+          <span
+            style={{
+              fontSize: 26,
+              fontWeight: 700,
+              color: counts.PENDING > 0 ? "#B7791F" : "#17202A",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            {counts.PENDING}
+          </span>
+        </div>
 
-          <select
-            name="status"
-            className="select"
-            style={{ fontSize: 12, padding: '6px 12px', height: 34, width: 'auto' }}
-            defaultValue={statusFilter}
-            onChange={(e) => (e.target.form as HTMLFormElement).submit()}
-          >
-            {['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'].map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-            <option value="">ALL STATUSES</option>
-          </select>
-        </form>
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "14px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+          }}
+        >
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+            APPROVED THIS TERM
+          </span>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#198754", fontFamily: "var(--font-mono)" }}>
+            {counts.APPROVED}
+          </span>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "14px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+          }}
+        >
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+            REJECTED
+          </span>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#C0392B", fontFamily: "var(--font-mono)" }}>
+            {counts.REJECTED}
+          </span>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            padding: "14px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+          }}
+        >
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+            TOTAL APPLICATIONS
+          </span>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+            {counts.ALL}
+          </span>
+        </div>
       </div>
 
-      {/* Leave list */}
-      {leaves.length === 0 ? (
-        <div className="card" style={{ padding: 48, textAlign: 'center' }}>
-          <Calendar size={36} style={{ color: '#B0B0B5', margin: '0 auto 8px' }} />
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#1D1D1F' }}>No leave requests match current filters</div>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {leaves.map((leave) => {
-            const days =
-              Math.ceil(
-                (new Date(leave.endDate).getTime() - new Date(leave.startDate).getTime()) /
-                  (1000 * 60 * 60 * 24)
-              ) + 1
+      {/* 3. Interactive Filters Bar */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 8,
+          padding: "12px 16px",
+          marginBottom: 16,
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+        }}
+      >
+        <HodLeaveFilters
+          clusters={clusters}
+          currentCluster={clusterFilter}
+          currentStatus={statusFilter}
+          counts={counts}
+        />
+      </div>
 
-            return (
-              <div key={leave.id} className="card cyber-card-hover" style={{ padding: '20px 24px', background: '#FFFFFF' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                  <div
-                    style={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: 10,
-                      background: '#1D1D1F',
-                      color: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 14,
-                      fontWeight: 700,
-                      fontFamily: 'var(--font-mono)',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {getInitials(leave.applicant.name)}
-                  </div>
+      {/* 4. Leave Queue Content */}
+      {statusFilter === "PENDING" ? (
+        /* Prominent Pending Review Cards */
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {leaves.length === 0 ? (
+            <div
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E4E7EC",
+                borderRadius: 8,
+                padding: "48px 24px",
+              }}
+            >
+              <EmptyState
+                title="All Leave Reviews Complete"
+                description="There are currently no pending leave requests awaiting departmental review."
+                icon={CheckCircle2}
+              />
+            </div>
+          ) : (
+            leaves.map((l) => {
+              const start = new Date(l.startDate);
+              const end = new Date(l.endDate);
+              const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: '#1D1D1F' }}>
-                        {leave.applicant.name}
-                      </span>
-                      <span className="badge" style={{ fontSize: 10, padding: '2px 8px' }}>
-                        {leave.cluster?.name}
-                      </span>
-                      <span
-                        className={`badge ${
-                          leave.status === 'APPROVED'
-                            ? 'status-published'
-                            : leave.status === 'REJECTED'
-                            ? 'btn-danger'
-                            : 'status-draft'
-                        }`}
-                        style={{ fontSize: 10, padding: '2px 8px' }}
-                      >
-                        <span className="badge-dot" />
-                        {leave.status}
-                      </span>
-                    </div>
-
+              return (
+                <div
+                  key={l.id}
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E4E7EC",
+                    borderRadius: 8,
+                    padding: 18,
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: 20,
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 14, minWidth: 280, flex: 1 }}>
                     <div
                       style={{
-                        fontSize: 12.5,
-                        color: '#6E6E73',
-                        display: 'flex',
-                        gap: 14,
-                        marginBottom: 8,
-                        flexWrap: 'wrap',
-                        fontFamily: 'var(--font-mono)',
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        backgroundColor: "#173B67",
+                        color: "#FFFFFF",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
                       }}
                     >
-                      <span>
-                        {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
-                      </span>
-                      <span style={{ color: '#1D1D1F', fontWeight: 600 }}>
-                        {days} day{days > 1 ? 's' : ''}
-                      </span>
+                      {getInitials(l.applicant.name)}
                     </div>
-
-                    <p style={{ fontSize: 13, color: '#424245', lineHeight: 1.5, marginBottom: 12 }}>
-                      {leave.reason}
-                    </p>
-
-                    {leave.status === 'PENDING' && (
-                      <div style={{ marginTop: 8 }}>
-                        <HodDecideLeaveForm leaveId={leave.id} />
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: "#17202A" }}>
+                          {l.applicant.name}
+                        </span>
+                        {l.applicant.designation && (
+                          <span style={{ fontSize: 12, color: "#667085" }}>
+                            · {l.applicant.designation}
+                          </span>
+                        )}
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                            fontSize: 11,
+                            fontWeight: 500,
+                            color: "#173B67",
+                            backgroundColor: "rgba(23, 59, 103, 0.06)",
+                            padding: "2px 7px",
+                            borderRadius: 4,
+                          }}
+                        >
+                          <Layers size={10} />
+                          {l.cluster.name}
+                        </span>
                       </div>
-                    )}
 
-                    {leave.status !== 'PENDING' && leave.decidedBy && (
-                      <div style={{ fontSize: 12, color: '#86868B', fontFamily: 'var(--font-mono)', marginTop: 8 }}>
-                        Decided by {leave.decidedBy.name} on {formatDate(leave.decidedAt!)}
-                        {leave.remarks && ` — "${leave.remarks}"`}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          fontSize: 12,
+                          color: "#17202A",
+                          margin: "6px 0",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        <Calendar size={13} color="#667085" />
+                        <span>
+                          {formatDate(l.startDate)} → {formatDate(l.endDate)}
+                        </span>
+                        <span
+                          style={{
+                            backgroundColor: "rgba(183, 121, 31, 0.1)",
+                            color: "#B7791F",
+                            fontWeight: 600,
+                            padding: "1px 6px",
+                            borderRadius: 4,
+                            fontSize: 11,
+                          }}
+                        >
+                          {days} {days === 1 ? "day" : "days"}
+                        </span>
                       </div>
-                    )}
+
+                      <div
+                        style={{
+                          fontSize: 13,
+                          color: "#475467",
+                          lineHeight: 1.45,
+                          backgroundColor: "#F8FAFC",
+                          padding: "8px 12px",
+                          borderRadius: 6,
+                          border: "1px solid #F2F4F7",
+                          marginTop: 4,
+                        }}
+                      >
+                        <span style={{ fontWeight: 600, color: "#17202A" }}>Reason: </span>
+                        {l.reason}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Decision Form */}
+                  <div style={{ flexShrink: 0 }}>
+                    <HodDecideLeaveForm leaveId={l.id} />
                   </div>
                 </div>
-              </div>
-            )
-          })}
+              );
+            })
+          )}
+        </div>
+      ) : (
+        /* History & Decided Applications Table */
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 8,
+            overflow: "hidden",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+          }}
+        >
+          <div
+            style={{
+              padding: "14px 18px",
+              borderBottom: "1px solid #E4E7EC",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: "#F8FAFC",
+            }}
+          >
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
+              Leave Applications ({leaves.length})
+            </span>
+            <span style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#667085" }}>
+              Status: {statusFilter}
+            </span>
+          </div>
+
+          {leaves.length === 0 ? (
+            <div style={{ padding: "48px 24px" }}>
+              <EmptyState
+                title="No Applications Recorded"
+                description={`No applications found with status "${statusFilter}".`}
+                icon={Calendar}
+              />
+            </div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #E4E7EC", backgroundColor: "#F8FAFC" }}>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      FACULTY MEMBER
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      CLUSTER
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      DATES & DURATION
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      STATUS
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      DECIDED BY
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 16px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      REASON / REMARKS
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaves.map((l) => {
+                    const start = new Date(l.startDate);
+                    const end = new Date(l.endDate);
+                    const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+
+                    return (
+                      <tr
+                        key={l.id}
+                        style={{
+                          borderBottom: "1px solid #F2F4F7",
+                          transition: "background-color 0.15s ease",
+                        }}
+                      >
+                        <td style={{ padding: "12px 16px" }}>
+                          <div style={{ fontSize: 13.5, fontWeight: 600, color: "#17202A" }}>
+                            {l.applicant.name}
+                          </div>
+                          <div style={{ fontSize: 11.5, color: "#667085" }}>
+                            {l.applicant.designation ?? l.applicant.email}
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              fontSize: 11.5,
+                              fontWeight: 500,
+                              color: "#173B67",
+                              backgroundColor: "rgba(23, 59, 103, 0.06)",
+                              padding: "2px 7px",
+                              borderRadius: 4,
+                            }}
+                          >
+                            <Layers size={10} />
+                            {l.cluster.name}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <div style={{ fontSize: 12.5, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+                            {formatDate(l.startDate)} → {formatDate(l.endDate)}
+                          </div>
+                          <div style={{ fontSize: 11, color: "#667085" }}>
+                            {days} {days === 1 ? "day" : "days"}
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <StatusBadge status={l.status} size="sm" />
+                        </td>
+                        <td style={{ padding: "12px 16px" }}>
+                          {l.decidedBy ? (
+                            <div>
+                              <div style={{ fontSize: 12.5, fontWeight: 600, color: "#17202A" }}>
+                                {l.decidedBy.name}
+                              </div>
+                              {l.decidedAt && (
+                                <div style={{ fontSize: 11, color: "#667085", fontFamily: "var(--font-mono)" }}>
+                                  {formatDate(l.decidedAt)}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: 12, color: "#98A2B3" }}>—</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "12px 16px", maxWidth: 260 }}>
+                          <div style={{ fontSize: 12.5, color: "#17202A" }}>
+                            {l.reason}
+                          </div>
+                          {l.remarks && (
+                            <div style={{ fontSize: 11.5, color: "#667085", fontStyle: "italic", marginTop: 2 }}>
+                              Note: {l.remarks}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </div>
-  )
+  );
 }

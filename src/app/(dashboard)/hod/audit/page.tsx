@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Shield, Clock, User, Filter, AlertCircle } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
+import { HodAuditFilters } from "./HodAuditFilters";
+
 export default async function HodAuditPage({
   searchParams,
 }: {
@@ -58,26 +60,7 @@ export default async function HodAuditPage({
         title="Department Audit Trail"
         ghost="ledger."
         subtitle="Immutable log of key departmental decisions, approvals, task reassignments, and administrative actions."
-        actions={
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#6E6E73" }}>FILTER:</span>
-            <form method="get">
-              <select
-                name="action"
-                defaultValue={action ?? "ALL"}
-                className="select"
-                style={{ fontSize: 12, padding: "6px 12px", height: 34, width: "auto" }}
-                onChange={(e) => e.target.form?.submit()}
-              >
-                {actionTypes.map((a) => (
-                  <option key={a} value={a}>
-                    {a.replace(/_/g, " ")}
-                  </option>
-                ))}
-              </select>
-            </form>
-          </div>
-        }
+        actions={<HodAuditFilters actionTypes={actionTypes} currentAction={action} />}
       />
 
       {/* Logs Table */}
