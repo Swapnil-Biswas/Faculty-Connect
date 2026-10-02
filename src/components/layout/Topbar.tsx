@@ -79,10 +79,10 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
         top: 0,
         zIndex: 30,
         height: 60,
-        backgroundColor: "rgba(7, 9, 14, 0.88)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        borderBottom: "1px solid var(--grey-100, #E8E8ED)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -91,13 +91,13 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
     >
       {/* Left: BMSIT Coding Club Live Telemetry Ribbon */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div className="tech-ticker">
-          <span className="tech-led led-green" />
-          <span style={{ color: "#F8FAFC", fontWeight: 600 }}>SYSTEM ONLINE</span>
-          <span style={{ opacity: 0.3 }}>//</span>
-          <span>BMSIT · {deptName.includes("Computer") ? "DEPT OF CSE" : "INSTITUTION"}</span>
-          <span style={{ opacity: 0.3 }}>//</span>
-          <span style={{ color: "#FFD700", fontWeight: 600 }}>AY 2026-27</span>
+        <div className="hero-status-row" style={{ margin: 0, fontSize: 11 }}>
+          <span className="hero-status-led" />
+          <span className="hero-status-label" style={{ fontWeight: 600, color: "var(--grey-800, #1D1D1F)" }}>SYSTEM ONLINE</span>
+          <span className="hero-status-divider">·</span>
+          <span className="hero-status-label">BMSIT // {deptName.includes("Computer") ? "CSE" : "INSTITUTE"}</span>
+          <span className="hero-status-divider">·</span>
+          <span className="hero-status-label" style={{ fontWeight: 600, color: "var(--grey-800, #1D1D1F)" }}>AY 2026-27</span>
         </div>
       </div>
 
@@ -108,17 +108,17 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: 11,
-            color: "#94A3B8",
+            color: "var(--grey-600, #424245)",
             padding: "4px 10px",
-            borderRadius: 4,
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.07)",
+            borderRadius: 6,
+            background: "var(--grey-50, #F5F5F7)",
+            border: "1px solid var(--grey-200, #D2D2D7)",
             display: "flex",
             alignItems: "center",
             gap: 6,
           }}
         >
-          <Activity size={12} color="#38BDF8" />
+          <Activity size={12} color="#0284c7" />
           <span>AUTONOMOUS VTU</span>
         </div>
 
@@ -136,10 +136,10 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 6,
-              border: "1px solid " + (showNotif ? "rgba(255, 215, 0, 0.35)" : "rgba(255, 255, 255, 0.1)"),
-              backgroundColor: showNotif ? "rgba(255, 215, 0, 0.08)" : "rgba(255, 255, 255, 0.03)",
-              color: showNotif ? "#FFD700" : "#94A3B8",
+              borderRadius: 8,
+              border: "1px solid " + (showNotif ? "var(--grey-800, #1D1D1F)" : "var(--grey-200, #D2D2D7)"),
+              backgroundColor: showNotif ? "var(--grey-100, #E8E8ED)" : "var(--white, #FFFFFF)",
+              color: "var(--grey-800, #1D1D1F)",
               cursor: "pointer",
               transition: "all 0.15s ease",
             }}
@@ -151,7 +151,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                   position: "absolute",
                   top: -3,
                   right: -3,
-                  backgroundColor: "#F43F5E",
+                  backgroundColor: "var(--grey-900, #0A0A0A)",
                   color: "#FFFFFF",
                   fontFamily: "var(--font-mono)",
                   fontSize: 10,
@@ -163,8 +163,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  border: "2px solid #07090E",
-                  boxShadow: "0 0 8px rgba(244, 63, 94, 0.5)",
+                  border: "2px solid #FFFFFF",
                 }}
               >
                 {unread > 99 ? "99+" : unread}
@@ -181,10 +180,10 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                 right: 0,
                 top: 46,
                 width: 390,
-                backgroundColor: "#0E121B",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                borderRadius: 12,
-                boxShadow: "0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.08)",
+                backgroundColor: "#FFFFFF",
+                border: "1px solid var(--grey-200, #D2D2D7)",
+                borderRadius: 14,
+                boxShadow: "0 20px 50px -12px rgba(0, 0, 0, 0.15)",
                 zIndex: 50,
                 overflow: "hidden",
               }}
@@ -196,12 +195,12 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: "12px 16px",
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                  backgroundColor: "rgba(7, 9, 14, 0.6)",
+                  borderBottom: "1px solid var(--grey-100, #E8E8ED)",
+                  backgroundColor: "var(--grey-50, #F5F5F7)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 12, color: "#FFD700", letterSpacing: "0.06em" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 11, color: "var(--grey-800, #1D1D1F)", letterSpacing: "0.06em" }}>
                     // NOTIFICATIONS
                   </span>
                   {unread > 0 && (
@@ -210,11 +209,10 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                         fontFamily: "var(--font-mono)",
                         fontSize: 10,
                         fontWeight: 700,
-                        backgroundColor: "rgba(255, 215, 0, 0.15)",
-                        color: "#FFD700",
+                        backgroundColor: "var(--grey-800, #1D1D1F)",
+                        color: "#FFFFFF",
                         padding: "1px 6px",
                         borderRadius: 4,
-                        border: "1px solid rgba(255, 215, 0, 0.3)",
                       }}
                     >
                       {unread} NEW
@@ -228,7 +226,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                       style={{
                         fontSize: 11,
                         fontFamily: "var(--font-mono)",
-                        color: "#38BDF8",
+                        color: "var(--grey-600, #424245)",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
@@ -250,7 +248,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                       border: "none",
                       cursor: "pointer",
                       padding: 2,
-                      color: "#64748B",
+                      color: "var(--grey-400, #86868B)",
                       display: "flex",
                     }}
                   >
@@ -263,11 +261,11 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               <div style={{ maxHeight: 360, overflowY: "auto" }}>
                 {localNotifs.length === 0 ? (
                   <div style={{ padding: "36px 16px", textAlign: "center" }}>
-                    <Bell size={28} style={{ color: "#334155", margin: "0 auto 8px" }} />
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#94A3B8", fontFamily: "var(--font-mono)" }}>
+                    <Bell size={28} style={{ color: "var(--grey-300, #B0B0B5)", margin: "0 auto 8px" }} />
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--grey-700, #2D2D2D)", fontFamily: "var(--font-mono)" }}>
                       ALL CAUGHT UP
                     </div>
-                    <div style={{ fontSize: 12, color: "#64748B", marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: "var(--grey-500, #6E6E73)", marginTop: 4 }}>
                       No unread academic notices or alerts.
                     </div>
                   </div>
@@ -276,21 +274,16 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                     <div
                       key={n.id}
                       onClick={() => handleNotificationClick(n.id, n.isRead)}
+                      className="cyber-row-hover"
                       style={{
                         display: "flex",
                         alignItems: "flex-start",
                         gap: 12,
                         padding: "12px 16px",
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-                        backgroundColor: n.isRead ? "transparent" : "rgba(255, 215, 0, 0.03)",
+                        borderBottom: "1px solid var(--grey-100, #E8E8ED)",
+                        backgroundColor: n.isRead ? "transparent" : "var(--grey-50, #F5F5F7)",
                         cursor: "pointer",
                         transition: "background-color 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = n.isRead ? "transparent" : "rgba(255, 215, 0, 0.03)";
                       }}
                     >
                       <div
@@ -299,9 +292,9 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                           height: 8,
                           borderRadius: "50%",
                           backgroundColor: n.isRead
-                            ? "transparent"
-                            : (EVENT_COLORS[n.eventType] ?? "#38BDF8"),
-                          boxShadow: n.isRead ? "none" : `0 0 6px ${EVENT_COLORS[n.eventType] ?? "#38BDF8"}`,
+                            ? "var(--grey-300, #B0B0B5)"
+                            : (EVENT_COLORS[n.eventType] ?? "#0284c7"),
+                          boxShadow: n.isRead ? "none" : `0 0 6px ${EVENT_COLORS[n.eventType] ?? "#0284c7"}`,
                           flexShrink: 0,
                           marginTop: 5,
                         }}
@@ -311,7 +304,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                           style={{
                             fontSize: 13,
                             fontWeight: n.isRead ? 500 : 700,
-                            color: n.isRead ? "#94A3B8" : "#F8FAFC",
+                            color: n.isRead ? "var(--grey-500, #6E6E73)" : "var(--grey-900, #0A0A0A)",
                             marginBottom: 2,
                           }}
                         >
@@ -320,14 +313,14 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                         <div
                           style={{
                             fontSize: 12,
-                            color: "#64748B",
+                            color: "var(--grey-600, #424245)",
                             lineHeight: 1.4,
                             marginBottom: 4,
                           }}
                         >
                           {n.message}
                         </div>
-                        <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "#475569" }}>
+                        <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--grey-400, #86868B)" }}>
                           {formatDate(n.createdAt)}
                         </div>
                       </div>
@@ -340,8 +333,8 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                 <div
                   style={{
                     padding: "10px 16px",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-                    backgroundColor: "rgba(7, 9, 14, 0.6)",
+                    borderTop: "1px solid var(--grey-100, #E8E8ED)",
+                    backgroundColor: "var(--grey-50, #F5F5F7)",
                     textAlign: "center",
                   }}
                 >
@@ -351,7 +344,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                     style={{
                       fontSize: 11,
                       fontFamily: "var(--font-mono)",
-                      color: "#FFD700",
+                      color: "var(--grey-800, #1D1D1F)",
                       textDecoration: "none",
                       fontWeight: 600,
                       letterSpacing: "0.04em",
@@ -373,25 +366,24 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               alignItems: "center",
               gap: 10,
               paddingLeft: 12,
-              borderLeft: "1px solid rgba(255, 255, 255, 0.1)",
+              borderLeft: "1px solid var(--grey-200, #D2D2D7)",
             }}
           >
             <div
+              className="avatar"
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                backgroundColor: "#07090E",
-                border: "1.5px solid #FFD700",
-                color: "#FFD700",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                width: 32,
+                height: 32,
+                backgroundColor: "var(--grey-800, #1D1D1F)",
+                color: "#FFFFFF",
                 fontSize: 11,
                 fontWeight: 700,
                 fontFamily: "var(--font-mono)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
                 flexShrink: 0,
-                boxShadow: "0 0 8px rgba(255, 215, 0, 0.2)",
               }}
             >
               {getInitials(session.user.name ?? "User")}
@@ -401,7 +393,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                 style={{
                   fontSize: 12.5,
                   fontWeight: 600,
-                  color: "#F8FAFC",
+                  color: "var(--grey-900, #0A0A0A)",
                   maxWidth: 130,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -410,7 +402,7 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               >
                 {session.user.name}
               </span>
-              <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "#FFD700", letterSpacing: "0.04em" }}>
+              <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--grey-500, #6E6E73)", letterSpacing: "0.04em" }}>
                 {getRoleLabel(session.user.role)}
               </span>
             </div>

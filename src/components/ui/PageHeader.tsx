@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { DotMatrixCanvas } from "./DotMatrixCanvas";
 
 interface BreadcrumbItem {
   label: string;
@@ -15,6 +16,9 @@ interface PageHeaderProps {
   ghost?: string;
   actions?: React.ReactNode;
   className?: string;
+  showDotMatrix?: boolean;
+  dotMatrixText?: string;
+  dotMatrixFontSize?: number;
 }
 
 export function PageHeader({
@@ -25,6 +29,9 @@ export function PageHeader({
   ghost,
   actions,
   className = "",
+  showDotMatrix = true,
+  dotMatrixText,
+  dotMatrixFontSize = 36,
 }: PageHeaderProps) {
   return (
     <div
@@ -32,7 +39,7 @@ export function PageHeader({
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 6,
+        gap: 8,
         marginBottom: 24,
       }}
     >
@@ -45,7 +52,7 @@ export function PageHeader({
             gap: 6,
             fontSize: 11,
             fontFamily: "var(--font-mono)",
-            color: "#64748B",
+            color: "#6E6E73",
             marginBottom: 2,
             letterSpacing: "0.04em",
           }}
@@ -54,12 +61,12 @@ export function PageHeader({
             const isLast = i === breadcrumbs.length - 1;
             return (
               <React.Fragment key={i}>
-                {i > 0 && <ChevronRight size={11} color="#475569" />}
+                {i > 0 && <ChevronRight size={11} color="#D2D2D7" />}
                 {isLast || !b.href ? (
                   <span
                     style={{
                       fontWeight: isLast ? 600 : 400,
-                      color: isLast ? "#FFD700" : "#64748B",
+                      color: isLast ? "#1D1D1F" : "#6E6E73",
                     }}
                   >
                     {b.label}
@@ -69,7 +76,7 @@ export function PageHeader({
                     href={b.href}
                     className="cyber-link-hover"
                     style={{
-                      color: "#94A3B8",
+                      color: "#6E6E73",
                       textDecoration: "none",
                     }}
                   >
@@ -93,31 +100,59 @@ export function PageHeader({
       >
         <div style={{ flex: 1, minWidth: 260 }}>
           {eyebrow && (
-            <span
-              className="section-eyebrow"
+            <div
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,
                 fontWeight: 600,
-                letterSpacing: "0.18em",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "rgba(255, 215, 0, 0.75)",
-                display: "block",
-                marginBottom: 4,
+                color: "#86868B",
+                marginBottom: 6,
               }}
             >
-              {eyebrow}
-            </span>
+              <span
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  backgroundColor: "#16A34A",
+                  display: "inline-block",
+                }}
+              />
+              <span>{eyebrow}</span>
+            </div>
           )}
+
+          {showDotMatrix && (
+            <div
+              style={{
+                marginBottom: 8,
+                maxWidth: "100%",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+              }}
+            >
+              <DotMatrixCanvas
+                text={dotMatrixText || title}
+                fontSize={dotMatrixFontSize}
+                color="#1D1D1F"
+              />
+            </div>
+          )}
+
           <h1
             className="page-title"
             style={{
-              fontSize: 24,
-              fontWeight: 800,
-              color: "#F8FAFC",
-              lineHeight: 1.2,
+              fontSize: 20,
+              fontWeight: 700,
+              color: "#1D1D1F",
+              lineHeight: 1.25,
               margin: 0,
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
             }}
           >
             {title} {ghost && <span className="ghost">{ghost}</span>}
@@ -126,8 +161,8 @@ export function PageHeader({
           {subtitle && (
             <p
               style={{
-                fontSize: 13.5,
-                color: "#94A3B8",
+                fontSize: 13,
+                color: "#6E6E73",
                 margin: "4px 0 0 0",
                 lineHeight: 1.45,
               }}

@@ -230,11 +230,10 @@ export function Sidebar() {
           <div 
             className="avatar avatar-sm" 
             style={{ 
-              background: "#0E121B", 
-              border: "1.5px solid #FFD700", 
-              color: "#FFD700",
+              background: "var(--grey-800, #1D1D1F)", 
+              border: "1px solid var(--grey-800, #1D1D1F)", 
+              color: "#FFFFFF",
               fontWeight: 700,
-              boxShadow: "0 0 10px rgba(255, 215, 0, 0.2)"
             }}
           >
             {getInitials(session.user.name)}
@@ -247,10 +246,10 @@ export function Sidebar() {
                   fontFamily: "var(--font-mono)", 
                   fontSize: 10, 
                   fontWeight: 600,
-                  color: "#FFD700",
+                  color: "var(--grey-600, #424245)",
                   letterSpacing: "0.04em",
-                  background: "rgba(255, 215, 0, 0.1)",
-                  border: "1px solid rgba(255, 215, 0, 0.25)",
+                  background: "var(--grey-100, #E8E8ED)",
+                  border: "1px solid var(--grey-200, #D2D2D7)",
                   padding: "1px 6px",
                   borderRadius: 4
                 }}
@@ -267,16 +266,8 @@ export function Sidebar() {
             style={{
               padding: 6,
               borderRadius: 6,
-              color: "#94A3B8",
+              color: "var(--grey-500, #6E6E73)",
               transition: "all 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#F43F5E";
-              e.currentTarget.style.background = "rgba(244, 63, 94, 0.12)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#94A3B8";
-              e.currentTarget.style.background = "transparent";
             }}
           >
             <LogOut size={16} />

@@ -224,42 +224,32 @@ export function DotMatrixPattern({
           const activeCell = gridMap[key];
 
           if (activeCell) {
-            // Render 3D sphere projected character in luminous Gold
+            // Render 3D sphere projected character in crisp Nothing/Apple dark charcoal
             const finalOpacity = baseOpacity * activeCell.opacity;
             const fontSize = Math.max(10, Math.round(11 + activeCell.z * 5));
 
             ctx.font = `${activeCell.z > 0.3 ? "700" : "500"} ${fontSize}px var(--font-mono, monospace)`;
-            ctx.fillStyle = `rgba(255, 215, 0, ${finalOpacity})`;
-            if (activeCell.z > 0.2) {
-              ctx.shadowColor = "rgba(255, 215, 0, 0.4)";
-              ctx.shadowBlur = 8;
-            } else {
-              ctx.shadowBlur = 0;
-            }
+            ctx.fillStyle = `rgba(29, 29, 31, ${finalOpacity * 0.95})`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(activeCell.char, px, py);
-            ctx.shadowBlur = 0;
           } else if (isNearMouse) {
-            // Reveal binary noise in Cyber Cyan near mouse
+            // Reveal binary noise in Cyber Cyan/Blue near mouse
             const hoverStrength = (mouseRadius - distToMouse) / mouseRadius;
             const finalOpacity = baseOpacity * hoverStrength * 0.85;
             const binChar = (c + r + Math.floor(Date.now() / 250)) % 2 === 0 ? "1" : "0";
 
             ctx.font = `600 10px var(--font-mono, monospace)`;
-            ctx.fillStyle = `rgba(56, 189, 248, ${finalOpacity})`;
-            ctx.shadowColor = "rgba(56, 189, 248, 0.5)";
-            ctx.shadowBlur = 6;
+            ctx.fillStyle = `rgba(2, 132, 199, ${finalOpacity})`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(binChar, px, py);
-            ctx.shadowBlur = 0;
           } else {
-            // Background dot matrix field
-            const finalOpacity = baseOpacity * 0.18;
+            // Background dot matrix field in light theme
+            const finalOpacity = baseOpacity * 0.14;
             ctx.beginPath();
             ctx.arc(px, py, baseRadius * (0.35 + baseOpacity * 0.65), 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${finalOpacity})`;
+            ctx.fillStyle = `rgba(0, 0, 0, ${finalOpacity})`;
             ctx.fill();
           }
         }

@@ -20,25 +20,25 @@ export function MetricBlock({
   style = {},
 }: MetricBlockProps) {
   const trendColors = {
-    positive: "#22C55E",
-    warning: "#F59E0B",
-    danger: "#F43F5E",
-    neutral: "#94A3B8",
+    positive: "#16A34A",
+    warning: "#D97706",
+    danger: "#E11D48",
+    neutral: "#6E6E73",
   };
 
   return (
     <div
       className={`tech-card ${className}`}
       style={{
-        backgroundColor: "#0E121B",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        backgroundColor: "#FFFFFF",
+        border: "1px solid #E8E8ED",
         borderRadius: 10,
         padding: "16px 18px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 100,
-        boxShadow: "0 4px 14px -2px rgba(0, 0, 0, 0.5)",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
         position: "relative",
         overflow: "hidden",
         transition: "all 0.2s ease",
@@ -51,10 +51,10 @@ export function MetricBlock({
           position: "absolute",
           top: 0,
           right: 0,
-          width: 24,
-          height: 24,
-          borderRight: "1px solid rgba(255, 215, 0, 0.2)",
-          borderTop: "1px solid rgba(255, 215, 0, 0.2)",
+          width: 20,
+          height: 20,
+          borderRight: "1px solid #E8E8ED",
+          borderTop: "1px solid #E8E8ED",
           pointerEvents: "none"
         }}
       />
@@ -73,7 +73,7 @@ export function MetricBlock({
             fontWeight: 600,
             textTransform: "uppercase",
             letterSpacing: "0.1em",
-            color: "#64748B",
+            color: "#6E6E73",
             fontFamily: "var(--font-mono)",
           }}
         >
@@ -82,8 +82,8 @@ export function MetricBlock({
         {icon && (
           <div
             style={{
-              color: "#FFD700",
-              opacity: 0.9,
+              color: "#1D1D1F",
+              opacity: 0.8,
               display: "flex",
               alignItems: "center",
             }}
@@ -98,7 +98,7 @@ export function MetricBlock({
           style={{
             fontSize: 28,
             fontWeight: 700,
-            color: "#F8FAFC",
+            color: "#1D1D1F",
             lineHeight: 1.1,
             fontFamily: "var(--font-mono)",
             letterSpacing: "-0.02em",

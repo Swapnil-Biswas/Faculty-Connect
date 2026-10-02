@@ -27,8 +27,8 @@ export function DotMatrixHero({
   eyebrow = "// 01 NODE · BMSIT CSE ACADEMIC OS",
   tagline = "Autonomous Academic Synchronization & Merit Appraisal Engine",
   stats,
-  color1 = "#FFD700",
-  color2 = "#38BDF8",
+  color1 = "#1d1d1f",
+  color2 = "#424245",
   className = "",
 }: DotMatrixHeroProps) {
   return (
@@ -37,12 +37,12 @@ export function DotMatrixHero({
       style={{
         padding: "24px 28px",
         marginBottom: 24,
-        background: "linear-gradient(135deg, rgba(14, 18, 27, 0.95) 0%, rgba(7, 9, 14, 0.98) 100%)",
-        border: "1px solid rgba(255, 215, 0, 0.2)",
+        background: "#ffffff",
+        border: "1px solid #e8e8ed",
         borderRadius: 14,
         position: "relative",
         overflow: "hidden",
-        boxShadow: "0 8px 32px -4px rgba(0, 0, 0, 0.5)",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.04)",
       }}
     >
       {/* Background ambient corner glow */}
@@ -54,7 +54,7 @@ export function DotMatrixHero({
           width: 240,
           height: 240,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255, 215, 0, 0.12) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(0, 0, 0, 0.025) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -87,7 +87,7 @@ export function DotMatrixHero({
                 fontWeight: 600,
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                color: "#FFD700",
+                color: "#6e6e73",
               }}
             >
               {eyebrow}
@@ -98,12 +98,12 @@ export function DotMatrixHero({
           <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
             <DotMatrixCanvas
               text={titleLine1}
-              fontSize={44}
+              fontSize={48}
               color={color1}
             />
             <DotMatrixCanvas
               text={titleLine2}
-              fontSize={44}
+              fontSize={48}
               color={color2}
             />
           </div>
@@ -111,7 +111,7 @@ export function DotMatrixHero({
           <p
             style={{
               fontSize: 13,
-              color: "#94A3B8",
+              color: "#6e6e73",
               margin: 0,
               maxWidth: 480,
               lineHeight: 1.5,
@@ -130,7 +130,7 @@ export function DotMatrixHero({
                 gap: 18,
                 marginTop: 18,
                 paddingTop: 14,
-                borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                borderTop: "1px solid #e8e8ed",
                 flexWrap: "wrap",
               }}
             >
@@ -141,7 +141,7 @@ export function DotMatrixHero({
                       fontFamily: "var(--font-mono, monospace)",
                       fontSize: 18,
                       fontWeight: 700,
-                      color: s.color || "#F8FAFC",
+                      color: s.color || "#1d1d1f",
                       lineHeight: 1.1,
                     }}
                   >
@@ -154,7 +154,7 @@ export function DotMatrixHero({
                       fontWeight: 600,
                       letterSpacing: "0.12em",
                       textTransform: "uppercase",
-                      color: "#64748B",
+                      color: "#86868b",
                     }}
                   >
                     {s.label}
@@ -178,8 +178,8 @@ export function DotMatrixHero({
         >
           <DotMatrixPattern
             style={{ width: 240, height: 200 }}
-            color="#FFD700"
-            accentColor="#38BDF8"
+            color="#1d1d1f"
+            accentColor="#0284c7"
           />
         </div>
       </div>

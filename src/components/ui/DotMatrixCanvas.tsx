@@ -66,7 +66,7 @@ export function DotMatrixCanvas({
   fontSize = 44,
   dotRadius,
   dotGap,
-  color = "#FFD700",
+  color = "#1d1d1f",
   animate = false,
   animDelay = 0,
   style,
