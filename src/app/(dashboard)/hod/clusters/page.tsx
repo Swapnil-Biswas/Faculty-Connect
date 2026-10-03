@@ -61,15 +61,23 @@ export default async function HodClustersPage() {
   );
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", paddingBottom: 48 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "CLUSTERS_OVERSIGHT" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Academic Clusters" },
         ]}
-        eyebrow="// ACADEMIC TOPOLOGY · GOVERNANCE"
-        title="Department Cluster Nodes"
+        title="Academic Clusters"
         subtitle="High-level operational overview of all faculty clusters, appointed leadership, and execution velocity."
         showDotMatrix={false}
         actions={
@@ -103,7 +111,6 @@ export default async function HodClustersPage() {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: 12,
-          marginBottom: 24,
         }}
       >
         <div
@@ -117,10 +124,10 @@ export default async function HodClustersPage() {
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             ACTIVE CLUSTERS
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A" }}>
             {totalClusters}
           </span>
         </div>
@@ -136,10 +143,10 @@ export default async function HodClustersPage() {
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             DEPARTMENT FACULTY
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A" }}>
             {totalFaculty}
           </span>
         </div>
@@ -155,10 +162,10 @@ export default async function HodClustersPage() {
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             TOTAL ALLOCATED TASKS
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#2F6FED", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#2F6FED" }}>
             {totalTasks}
           </span>
         </div>
@@ -179,7 +186,6 @@ export default async function HodClustersPage() {
               fontSize: 11,
               fontWeight: 600,
               color: totalOverdue > 0 ? "#C0392B" : "#667085",
-              fontFamily: "var(--font-mono)",
             }}
           >
             DEPARTMENT OVERDUE
@@ -189,7 +195,6 @@ export default async function HodClustersPage() {
               fontSize: 26,
               fontWeight: 700,
               color: totalOverdue > 0 ? "#C0392B" : "#17202A",
-              fontFamily: "var(--font-mono)",
             }}
           >
             {totalOverdue}
@@ -248,7 +253,6 @@ export default async function HodClustersPage() {
                           justifyContent: "center",
                           fontSize: 15,
                           fontWeight: 700,
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         {cluster.name.charAt(0)}
@@ -257,7 +261,7 @@ export default async function HodClustersPage() {
                         <h3 style={{ fontSize: 16, fontWeight: 700, color: "#17202A", margin: 0 }}>
                           {cluster.name}
                         </h3>
-                        <span style={{ fontSize: 12, color: "#667085", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ fontSize: 12, color: "#667085" }}>
                           {cluster.members.length} {cluster.members.length === 1 ? "faculty member" : "faculty members"}
                         </span>
                       </div>
@@ -266,7 +270,6 @@ export default async function HodClustersPage() {
                     <span
                       style={{
                         fontSize: 11,
-                        fontFamily: "var(--font-mono)",
                         fontWeight: 600,
                         padding: "2px 8px",
                         borderRadius: 4,
@@ -320,7 +323,6 @@ export default async function HodClustersPage() {
                           fontWeight: 700,
                           color: "#667085",
                           letterSpacing: "0.08em",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         CLUSTER HEAD
@@ -344,7 +346,7 @@ export default async function HodClustersPage() {
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 6 }}>
                       <span style={{ fontWeight: 600, color: "#17202A" }}>Deliverables Velocity</span>
-                      <span style={{ color: "#667085", fontFamily: "var(--font-mono)" }}>
+                      <span style={{ color: "#667085" }}>
                         {completedTasks}/{cluster.tasks.length} ({completionPct}%)
                       </span>
                     </div>
@@ -369,7 +371,6 @@ export default async function HodClustersPage() {
                         fontSize: 11.5,
                         color: "#667085",
                         marginTop: 8,
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       <span>In Flight: {inProgressTasks}</span>
