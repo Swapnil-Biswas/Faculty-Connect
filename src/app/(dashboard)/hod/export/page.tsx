@@ -3,6 +3,11 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { ExportClient } from "./ExportClient";
 import { PageHeader } from "@/components/ui/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Data Export — HOD Console",
+};
 
 export default async function HodExportPage() {
   const session = await auth();
@@ -53,27 +58,28 @@ export default async function HodExportPage() {
   ]);
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* 1. Page Header with BMSIT Dot Matrix */}
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/hod" },
-          { label: "Data Export" },
+          { label: "HOD_CONSOLE", href: "/hod" },
+          { label: "DATA_EXPORT" },
         ]}
-        eyebrow="HOD // ARCHIVE & COMPLIANCE"
-        dotMatrixText="EXPORTS"
-        dotMatrixFontSize={36}
-        title="Academic Data & Compliance Records"
-        ghost="dossiers."
-        subtitle="Verified departmental exports for NBA, NAAC, NIRF & internal academic audits."
-        actions={
-          <span className="badge badge-dark">
-            <span className="badge-dot" style={{ backgroundColor: "#16A34A" }} />
-            CSV UTF-8 COMPLIANT
-          </span>
-        }
+        title="Data Export"
+        subtitle="Export verified departmental datasets for institutional governance, NBA/NAAC compliance, and administrative audits."
+        showDotMatrix={false}
       />
 
+      {/* 2. Export Client Ledger */}
       <ExportClient
         data={{
           faculty: faculty.map((f: any) => ({

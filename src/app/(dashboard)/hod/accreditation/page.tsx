@@ -3,6 +3,11 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { AccreditationClient } from "./AccreditationClient";
 import { PageHeader } from "@/components/ui/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Accreditation & Compliance — HOD Console",
+};
 
 export default async function HodAccreditationPage() {
   const session = await auth();
@@ -65,27 +70,43 @@ export default async function HodAccreditationPage() {
   const pubsPerFaculty = totalFaculty > 0 ? (totalPubs / totalFaculty).toFixed(2) : "0";
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* BMSIT Dot Matrix Page Header */}
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/hod" },
-          { label: "Accreditation" },
+          { label: "HOD_CONSOLE", href: "/hod" },
+          { label: "ACCREDITATION" },
         ]}
-        eyebrow="HOD // COMPLIANCE & SSR DOSSIER"
-        dotMatrixText="ACCREDIT"
-        dotMatrixFontSize={34}
-        title="NBA & NAAC Accreditation Dossier"
-        ghost="criterion 5."
-        subtitle="Automated Criterion 5 calculations, Cadre Ratio verification & Self-Study Report (SSR) export"
+        title="Accreditation & Compliance"
+        subtitle="Criterion 5 Self-Study Report (SSR) dossier, Faculty-Student Ratio (SFR) modeling, and Form 5A compliance matrix."
+        showDotMatrix={false}
         actions={
-          <span className="badge badge-dark">
-            <span className="badge-dot" style={{ backgroundColor: "#16A34A" }} />
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              padding: "4px 10px",
+              backgroundColor: "rgba(25, 135, 84, 0.1)",
+              color: "#198754",
+              borderRadius: 6,
+              border: "1px solid rgba(25, 135, 84, 0.25)",
+            }}
+          >
             AY 2026-27 COMPLIANT
           </span>
         }
       />
 
+      {/* 2. Accreditation Interactive Client */}
       <AccreditationClient
         metrics={{
           totalFaculty,

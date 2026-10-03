@@ -2,10 +2,49 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Shield, Clock, User, Filter, AlertCircle } from "lucide-react";
+import { Shield } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-
 import { HodAuditFilters } from "./HodAuditFilters";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Audit Ledger — HOD Console",
+};
+
+function getActionBadgeStyle(action: string) {
+  switch (action) {
+    case "TASK_COMPLETED":
+    case "LEAVE_APPROVED":
+      return {
+        color: "#198754",
+        backgroundColor: "rgba(25, 135, 84, 0.08)",
+        borderColor: "rgba(25, 135, 84, 0.25)",
+      };
+    case "TASK_UPDATED":
+    case "USER_ROLE_UPDATED":
+      return {
+        color: "#B7791F",
+        backgroundColor: "rgba(183, 121, 31, 0.08)",
+        borderColor: "rgba(183, 121, 31, 0.25)",
+      };
+    case "LEAVE_REJECTED":
+      return {
+        color: "#C0392B",
+        backgroundColor: "rgba(192, 57, 43, 0.08)",
+        borderColor: "rgba(192, 57, 43, 0.25)",
+      };
+    case "TASK_CREATED":
+    case "LEAVE_APPLIED":
+    case "EVALUATION_SUBMITTED":
+    case "CLUSTER_CREATED":
+    default:
+      return {
+        color: "#2F6FED",
+        backgroundColor: "rgba(47, 111, 237, 0.08)",
+        borderColor: "rgba(47, 111, 237, 0.25)",
+      };
+  }
+}
 
 export default async function HodAuditPage({
   searchParams,
@@ -47,82 +86,230 @@ export default async function HodAuditPage({
   ];
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* 1. Page Header with BMSIT Dot Matrix */}
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
+      {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/hod" },
-          { label: "Audit Ledger" },
+          { label: "HOD_CONSOLE", href: "/hod" },
+          { label: "AUDIT_LEDGER" },
         ]}
-        eyebrow="HOD // SECURITY & COMPLIANCE"
-        dotMatrixText="AUDIT"
-        dotMatrixFontSize={36}
-        title="Department Audit Trail"
-        ghost="ledger."
-        subtitle="Immutable log of key departmental decisions, approvals, task reassignments, and administrative actions."
+        title="Audit Ledger"
+        subtitle="Chronological institutional transaction record and administrative decision trail."
+        showDotMatrix={false}
         actions={<HodAuditFilters actionTypes={actionTypes} currentAction={action} />}
       />
 
-      {/* Logs Table */}
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+      {/* 2. Audit Logs Table */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 8,
+          overflow: "hidden",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+        }}
+      >
         <div
           style={{
-            padding: "16px 24px",
-            borderBottom: "1px solid #E8E8ED",
+            padding: "16px 20px",
+            borderBottom: "1px solid #E4E7EC",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            background: "#FAFAFA",
+            flexWrap: "wrap",
+            gap: 12,
+            backgroundColor: "#FFFFFF",
           }}
         >
-          <span className="section-eyebrow">// TRANSACTION TIMELINE</span>
-          <span className="badge badge-dark">{logs.length} Logged Events</span>
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#17202A", margin: 0 }}>
+              Department Audit Trail
+            </h2>
+            <p style={{ fontSize: 13, color: "#667085", margin: "2px 0 0 0" }}>
+              Immutable transaction timeline showing the last 50 recorded governance events.
+            </p>
+          </div>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 500,
+              padding: "4px 10px",
+              backgroundColor: "#F2F4F7",
+              color: "#17202A",
+              borderRadius: 6,
+              border: "1px solid #E4E7EC",
+            }}
+          >
+            {logs.length} Logged Events
+          </span>
         </div>
 
         {logs.length === 0 ? (
-          <div style={{ padding: 48, textAlign: "center" }}>
-            <Shield size={36} style={{ color: "#B0B0B5", margin: "0 auto 8px" }} />
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F" }}>No audit log entries recorded</div>
+          <div style={{ padding: "48px 24px", textAlign: "center" }}>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 8,
+                backgroundColor: "#F2F4F7",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 12px",
+                color: "#667085",
+              }}
+            >
+              <Shield size={22} />
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#17202A" }}>
+              No audit log entries recorded
+            </div>
+            <div style={{ fontSize: 13, color: "#667085", marginTop: 4 }}>
+              No governance actions match the selected filter criteria.
+            </div>
           </div>
         ) : (
-          <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
-            <table className="table">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
               <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Actor</th>
-                  <th>Action</th>
-                  <th>Entity Target</th>
-                  <th>Security Context</th>
+                <tr style={{ borderBottom: "1px solid #E4E7EC", backgroundColor: "#F7F8FA" }}>
+                  <th
+                    style={{
+                      padding: "12px 18px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#667085",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    TIMESTAMP
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 18px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#667085",
+                    }}
+                  >
+                    ACTOR
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 18px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#667085",
+                    }}
+                  >
+                    ACTION
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 18px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#667085",
+                    }}
+                  >
+                    ENTITY TARGET
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 18px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#667085",
+                    }}
+                  >
+                    SECURITY CONTEXT
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {logs.map((log) => (
-                  <tr key={log.id}>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "#6E6E73", whiteSpace: "nowrap" }}>
-                      {formatDate(log.timestamp)}
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600, color: "#1D1D1F", fontSize: 13 }}>
-                        {log.actor?.name ?? "System"}
-                      </div>
-                      <div style={{ fontSize: 11, color: "#86868B", fontFamily: "var(--font-mono)" }}>
-                        {log.actor?.role ?? "AUTOMATED"}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge">
-                        {log.action.replace(/_/g, " ")}
-                      </span>
-                    </td>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#1D1D1F" }}>
-                      {log.entityType ? `${log.entityType}#${log.entityId ?? "—"}` : "—"}
-                    </td>
-                    <td style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#86868B" }}>
-                      IP: {log.ipAddress ?? "127.0.0.1"}
-                    </td>
-                  </tr>
-                ))}
+                {logs.map((log) => {
+                  const badgeStyle = getActionBadgeStyle(log.action);
+                  return (
+                    <tr
+                      key={log.id}
+                      style={{
+                        borderBottom: "1px solid #F2F4F7",
+                        transition: "background-color 0.15s ease",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "14px 18px",
+                          fontSize: 12.5,
+                          color: "#667085",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {formatDate(log.timestamp)}
+                      </td>
+                      <td style={{ padding: "14px 18px" }}>
+                        <div style={{ fontWeight: 600, color: "#17202A", fontSize: 13.5 }}>
+                          {log.actor?.name ?? "System"}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#667085" }}>
+                          {log.actor?.role ?? "AUTOMATED"}
+                        </div>
+                      </td>
+                      <td style={{ padding: "14px 18px" }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "3px 8px",
+                            fontSize: 11.5,
+                            fontWeight: 600,
+                            borderRadius: 4,
+                            border: `1px solid ${badgeStyle.borderColor}`,
+                            backgroundColor: badgeStyle.backgroundColor,
+                            color: badgeStyle.color,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {log.action.replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 18px" }}>
+                        <div style={{ fontSize: 13, color: "#17202A" }}>
+                          <span>{log.entityType ?? "System"}</span>{" "}
+                          {log.entityId && (
+                            <span
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                fontSize: 12,
+                                color: "#667085",
+                              }}
+                            >
+                              #{log.entityId}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td
+                        style={{
+                          padding: "14px 18px",
+                          fontSize: 12,
+                          fontFamily: "var(--font-mono)",
+                          color: "#667085",
+                        }}
+                      >
+                        IP: {log.ipAddress ?? "127.0.0.1"}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
