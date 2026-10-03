@@ -88,38 +88,38 @@ const NAV_BY_ROLE: Record<Role, { section: string; code: string; items: NavItem[
   ],
   HOD: [
     {
-      section: "Overview",
-      code: "// 01 EXECUTIVE",
+      section: "Attention",
+      code: "ATTENTION",
       items: [
-        { href: "/hod", icon: <LayoutDashboard size={17} />, label: "Dept Overview" },
-        { href: "/hod/clusters", icon: <Users size={17} />, label: "Cluster Nodes" },
-        { href: "/hod/tasks", icon: <CheckSquare size={17} />, label: "All Tasks" },
-        { href: "/hod/leave", icon: <Calendar size={17} />, label: "Leave Pipeline" },
+        { href: "/hod", icon: <LayoutDashboard size={17} />, label: "Department Overview" },
       ],
     },
     {
-      section: "Recognition",
-      code: "// 02 RECOGNITION",
+      section: "Academic Operations",
+      code: "ACADEMIC OPERATIONS",
       items: [
-        { href: "/hod/leaderboard", icon: <Trophy size={17} />, label: "Dept Leaderboard" },
-        { href: "/hod/faculty-of-month", icon: <Star size={17} />, label: "Faculty of Month" },
+        { href: "/hod/tasks", icon: <CheckSquare size={17} />, label: "Tasks Matrix" },
+        { href: "/hod/leave", icon: <Calendar size={17} />, label: "Leave Approvals" },
       ],
     },
     {
-      section: "Reports",
-      code: "// 03 COMPLIANCE",
+      section: "Oversight & Recognition",
+      code: "OVERSIGHT & RECOGNITION",
       items: [
-        { href: "/hod/analytics", icon: <BarChart3 size={17} />, label: "Dept Analytics" },
-        { href: "/hod/accreditation", icon: <Award size={17} />, label: "NBA / NAAC Dossier" },
-        { href: "/hod/export", icon: <ClipboardList size={17} />, label: "Export Archive" },
+        { href: "/hod/clusters", icon: <Users size={17} />, label: "Academic Clusters" },
+        { href: "/hod/analytics", icon: <BarChart3 size={17} />, label: "Department Analytics" },
+        { href: "/hod/leaderboard", icon: <Trophy size={17} />, label: "Faculty Leaderboard" },
+        { href: "/hod/faculty-of-month", icon: <Star size={17} />, label: "Faculty of the Month" },
+      ],
+    },
+    {
+      section: "Compliance & Governance",
+      code: "COMPLIANCE & GOVERNANCE",
+      items: [
+        { href: "/hod/accreditation", icon: <Award size={17} />, label: "Accreditation & SSR" },
         { href: "/hod/audit", icon: <Shield size={17} />, label: "Audit Ledger" },
-      ],
-    },
-    {
-      section: "Config",
-      code: "// 04 GOVERNANCE",
-      items: [
-        { href: "/hod/scoring", icon: <Settings size={17} />, label: "Scoring Engine" },
+        { href: "/hod/export", icon: <ClipboardList size={17} />, label: "Data Export" },
+        { href: "/hod/scoring", icon: <Settings size={17} />, label: "Scoring System" },
       ],
     },
   ],
@@ -173,30 +173,29 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar" aria-label="Main navigation">
-      {/* Brand Header with BMSIT Coding Club Tech Console Style */}
+      {/* Institutional Brand Header */}
       <div className="sidebar-brand">
-        <div className="sidebar-logo">FC</div>
+        <div className="sidebar-logo" style={{ backgroundColor: "#173B67", border: "1px solid #173B67" }}>FC</div>
         <div className="sidebar-brand-text">
           <div className="sidebar-brand-name">
             <span>FACULTY CONNECT</span>
           </div>
           <div className="sidebar-brand-dept" title={deptName}>
-            BMSIT // {deptName.includes("Computer") ? "CSE" : "INSTITUTE"}
+            {deptName}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-            <span className="tech-led led-green" />
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "#22C55E", letterSpacing: "0.06em", fontWeight: 600 }}>
-              SYSTEM ONLINE
+          <div style={{ marginTop: 4 }}>
+            <span style={{ fontSize: 11, fontWeight: 500, color: "#667085" }}>
+              Academic Year 2026–27
             </span>
           </div>
         </div>
       </div>
 
-      {/* Nav with Monospace Eyebrow Headers */}
+      {/* Primary Navigation */}
       <nav className="sidebar-nav" aria-label="Primary navigation">
         {navGroups.map((group) => (
-          <div key={group.section} style={{ marginBottom: 6 }}>
-            <div className="sidebar-section-label">
+          <div key={group.section} style={{ marginBottom: 8 }}>
+            <div className="sidebar-section-label" style={{ fontFamily: "var(--font-sans, Inter)", letterSpacing: "0.06em", color: "#667085" }}>
               <span>{group.code}</span>
             </div>
             {group.items.map((item) => {

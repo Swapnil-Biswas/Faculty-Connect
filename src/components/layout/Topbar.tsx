@@ -89,37 +89,36 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
         padding: "0 28px",
       }}
     >
-      {/* Left: BMSIT Coding Club Live Telemetry Ribbon */}
+      {/* Left: Department & Institutional Identity */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div className="hero-status-row" style={{ margin: 0, fontSize: 11 }}>
-          <span className="hero-status-led" />
-          <span className="hero-status-label" style={{ fontWeight: 600, color: "var(--grey-800, #1D1D1F)" }}>SYSTEM ONLINE</span>
-          <span className="hero-status-divider">·</span>
-          <span className="hero-status-label">BMSIT // {deptName.includes("Computer") ? "CSE" : "INSTITUTE"}</span>
-          <span className="hero-status-divider">·</span>
-          <span className="hero-status-label" style={{ fontWeight: 600, color: "var(--grey-800, #1D1D1F)" }}>AY 2026-27</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
+          <span style={{ fontWeight: 600, color: "#17202A" }}>Faculty Connect</span>
+          <span style={{ color: "#D2D2D7" }}>·</span>
+          <span style={{ color: "#667085" }}>{deptName}</span>
+          <span style={{ color: "#D2D2D7" }}>·</span>
+          <span style={{ fontWeight: 500, color: "#667085" }}>Academic Year 2026–27</span>
         </div>
       </div>
 
       {/* Right: Notification control & user identity */}
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        {/* Monospace Quick Status Chip */}
+        {/* Institutional Accreditation / Affiliation Chip */}
         <div
           style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 11,
-            color: "var(--grey-600, #424245)",
+            fontSize: 11.5,
+            fontWeight: 500,
+            color: "#667085",
             padding: "4px 10px",
             borderRadius: 6,
-            background: "var(--grey-50, #F5F5F7)",
-            border: "1px solid var(--grey-200, #D2D2D7)",
+            backgroundColor: "#F2F4F7",
+            border: "1px solid #E4E7EC",
             display: "flex",
             alignItems: "center",
             gap: 6,
           }}
         >
-          <Activity size={12} color="#0284c7" />
-          <span>AUTONOMOUS VTU</span>
+          <Activity size={12} color="#2F6FED" />
+          <span>Autonomous Institution · VTU</span>
         </div>
 
         {/* Notification Bell */}
