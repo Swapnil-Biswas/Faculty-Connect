@@ -26,14 +26,22 @@ export default async function ScoringConfigPage() {
   });
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
           { label: "Dashboard", href: "/hod" },
           { label: "Scoring Configuration" },
         ]}
-        eyebrow="// GOVERNANCE · RECOGNITION PARAMETERS"
         title="Scoring Configuration"
         subtitle="Configure the relative weight distribution of performance dimensions governing departmental scoring. All modifications are versioned and audited."
         showDotMatrix={false}
