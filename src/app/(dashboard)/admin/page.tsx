@@ -1,23 +1,22 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { StatCard } from "@/components/ui/StatCard";
-import { RoleBadge } from "@/components/ui/RoleBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { DotMatrixHero } from "@/components/dashboard/DotMatrixHero";
-import { Users, Shield, Settings, BarChart3, Clock, Database } from "lucide-react";
-import { formatDate, getInitials } from "@/lib/utils";
+import { MetricBlock } from "@/components/ui/MetricBlock";
+import { RoleBadge } from "@/components/ui/RoleBadge";
+import { Users, Shield, Settings, FolderGit2, ArrowRight, UserCheck, Clock, Award, Bell, Globe, Cpu } from "lucide-react";
+import { formatDate, getInitials, getRoleLabel } from "@/lib/utils";
 import { Role } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Admin Console // System Overview" };
+export const metadata: Metadata = { title: "System Overview — Admin | Faculty Connect" };
 
-const ROLE_GLYPHS: Record<Role, string> = {
-  FACULTY: "◆",
-  CLUSTER_HEAD: "▣",
-  HOD: "◈",
-  ADMIN: "★",
+const ROLE_DESCRIPTIONS: Record<Role, string> = {
+  FACULTY: "Teaching and research faculty members submitting tasks, publications, and leave requests.",
+  CLUSTER_HEAD: "Academic leadership coordinating cluster faculty members and reviewing submissions.",
+  HOD: "Head of Department with supervisory oversight, faculty approvals, and accreditation reporting.",
+  ADMIN: "System administrators with full authority over identity, scoring, jobs, and security configuration.",
 };
 
 export default async function AdminDashboard() {
@@ -26,171 +25,438 @@ export default async function AdminDashboard() {
     redirect("/login");
   }
 
-  const [totalUsers, totalClusters, recentAuditLogs, recentUsers, scoringConfig] = await Promise.all([
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const [
+    totalUsers,
+    totalClusters,
+    clusters,
+    recentAuditLogs,
+    todayAuditCount,
+    recentUsers,
+    scoringConfig,
+    roleBreakdown,
+  ] = await Promise.all([
     db.user.count({ where: { deletedAt: null } }),
     db.cluster.count({ where: { deletedAt: null } }),
+    db.cluster.findMany({
+      where: { deletedAt: null },
+      include: {
+        head: { select: { id: true, name: true, email: true } },
+        members: { where: { leftAt: null }, select: { id: true } },
+      },
+      orderBy: { name: "asc" },
+      take: 6,
+    }),
     db.auditLog.findMany({
       orderBy: { timestamp: "desc" },
-      take: 8,
+      take: 6,
       include: { actor: true },
+    }),
+    db.auditLog.count({
+      where: { timestamp: { gte: todayStart } },
     }),
     db.user.findMany({
       where: { deletedAt: null },
       orderBy: { createdAt: "desc" },
-      take: 6,
-      include: { clusterMemberships: { include: { cluster: true } } },
+      take: 5,
+      include: {
+        clusterMemberships: {
+          where: { leftAt: null },
+          include: { cluster: { select: { name: true } } },
+        },
+      },
     }),
     db.scoringConfig.findFirst({ where: { isActive: true }, orderBy: { version: "desc" } }),
+    db.user.groupBy({
+      by: ["role"],
+      where: { deletedAt: null },
+      _count: { role: true },
+    }),
   ]);
 
-  const roleBreakdown = await db.user.groupBy({
-    by: ["role"],
-    where: { deletedAt: null },
-    _count: { role: true },
-  });
-
-  const roleCounts: Record<string, number> = {};
+  const roleCounts: Record<Role, number> = {
+    FACULTY: 0,
+    CLUSTER_HEAD: 0,
+    HOD: 0,
+    ADMIN: 0,
+  };
   for (const r of roleBreakdown) {
     roleCounts[r.role] = r._count.role;
   }
 
-  const todayAuditCount = recentAuditLogs.filter((l) =>
-    new Date(l.timestamp).toDateString() === new Date().toDateString()
-  ).length;
-
   return (
-    <div className="page-content" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       <PageHeader
         breadcrumbs={[
-          { label: "SYSTEM_ROOT" },
-          { label: "ADMIN_CONSOLE" },
+          { label: "Dashboard", href: "/admin" },
+          { label: "System Overview" },
         ]}
-        dotMatrixText="ADMIN"
-        eyebrow="ROOT INFRASTRUCTURE · BMSIT CSE ENGINE"
-        title="Infrastructure & System Console"
-        subtitle="Full administrative control over identity directory, scoring heuristics, background engines, and cryptographic audit logs."
+        title="System Overview"
+        subtitle="Institutional identity directory, academic cluster topology, operational engines, and security audit ledger."
         actions={
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderRadius: 8, background: "var(--grey-50)", border: "1px solid var(--grey-200)" }}>
-            <span className="tech-led led-green" />
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: "var(--grey-800)" }}>
-              CLUSTER STATE: HEALTHY
-            </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Link
+              href="/admin/users"
+              className="btn-outline"
+              style={{
+                fontSize: 12.5,
+                fontWeight: 600,
+                padding: "8px 14px",
+                borderRadius: 8,
+                backgroundColor: "#FFFFFF",
+                borderColor: "#E4E7EC",
+                color: "#17202A",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <Users size={14} color="#667085" />
+              User Directory
+            </Link>
+            <Link
+              href="/admin/clusters"
+              className="btn-primary"
+              style={{
+                fontSize: 12.5,
+                fontWeight: 600,
+                padding: "8px 14px",
+                borderRadius: 8,
+                backgroundColor: "#173B67",
+                color: "#FFFFFF",
+                border: "none",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <FolderGit2 size={14} color="#FFFFFF" />
+              Academic Clusters
+            </Link>
           </div>
         }
       />
 
-      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
-      <DotMatrixHero
-        titleLine1="ADMIN"
-        titleLine2="GOVERNANCE"
-        eyebrow="// ROOT INFRASTRUCTURE · BMSIT CSE ENGINE"
-        tagline="Autonomous multi-cluster orchestration, scoring heuristics calibration, and cryptographic audit registry."
-        stats={[
-          { label: "USER ACCOUNTS", value: totalUsers, color: "var(--grey-900)" },
-          { label: "CLUSTER UNITS", value: totalClusters, color: "#d97706" },
-          { label: "AUDIT LOGS", value: recentAuditLogs.length, color: "#16a34a" },
-          { label: "SCORING RULES", value: "ACTIVE", color: "var(--grey-800)" },
-        ]}
-      />
-
-      {/* System Telemetry Stat Cards */}
-      <div className="stat-grid">
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Active Accounts</span>
-            <Users size={16} color="var(--grey-600)" />
-          </div>
-          <div className="stat-card-num">{totalUsers}</div>
-        </div>
-
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Cluster Units</span>
-            <BarChart3 size={16} color="#d97706" />
-          </div>
-          <div className="stat-card-num" style={{ color: "#d97706" }}>{totalClusters}</div>
-        </div>
-
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Scoring Engine</span>
-            <Settings size={16} color="var(--grey-600)" />
-          </div>
-          <div className="stat-card-num" style={{ color: "#16a34a" }}>ONLINE</div>
-        </div>
-
-        <div className="stat-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span className="stat-card-label">Security Events Today</span>
-            <Shield size={16} color="#16a34a" />
-          </div>
-          <div className="stat-card-num" style={{ color: "#16a34a" }}>{todayAuditCount}</div>
-        </div>
+      {/* Top Metric Blocks */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+        }}
+      >
+        <MetricBlock
+          label="Total Enrolled Users"
+          value={totalUsers}
+          context="Active institutional accounts"
+          trendType="neutral"
+          icon={<Users size={18} />}
+        />
+        <MetricBlock
+          label="Academic Clusters"
+          value={totalClusters}
+          context="Departmental topology units"
+          trendType="neutral"
+          icon={<FolderGit2 size={18} />}
+        />
+        <MetricBlock
+          label="Security Events Today"
+          value={todayAuditCount}
+          context="Immutable ledger activities"
+          trendType="neutral"
+          icon={<Shield size={18} />}
+        />
+        <MetricBlock
+          label="Scoring Engine"
+          value={scoringConfig ? `v${scoringConfig.version}` : "Active"}
+          context="Heuristic calibration rules"
+          trendType="positive"
+          icon={<Settings size={18} />}
+        />
       </div>
 
-      {/* Role Breakdown Grid */}
-      <div className="card" style={{ padding: "20px 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-          <span className="section-eyebrow" style={{ margin: 0 }}>
-            // DIRECTORY DISTRIBUTION BY ROLE
-          </span>
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--grey-500)" }}>
-            TOTAL IDENTITIES: {totalUsers}
-          </span>
+      {/* Identity & Role Distribution */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 18,
+            paddingBottom: 14,
+            borderBottom: "1px solid #F2F4F7",
+          }}
+        >
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#17202A", margin: 0 }}>
+              Identity & Role Distribution
+            </h2>
+            <p style={{ fontSize: 13, color: "#667085", margin: "4px 0 0 0" }}>
+              Breakdown of enrolled personnel across institutional role boundaries.
+            </p>
+          </div>
+          <Link
+            href="/admin/users"
+            style={{
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: "#2F6FED",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <span>View User Directory</span>
+            <ArrowRight size={14} />
+          </Link>
         </div>
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-          {Object.values(Role).map((role) => (
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 16,
+          }}
+        >
+          {(["FACULTY", "CLUSTER_HEAD", "HOD", "ADMIN"] as Role[]).map((role) => (
             <div
               key={role}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 18px",
-                background: "var(--grey-50)",
+                backgroundColor: "#F7F8FA",
+                border: "1px solid #E4E7EC",
                 borderRadius: 10,
-                border: "1px solid var(--grey-200)",
-                minWidth: 150,
+                padding: "16px 18px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: 12,
               }}
             >
               <div>
-                <div
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 800,
-                    color: "var(--grey-900)",
-                    fontFamily: "var(--font-mono)",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {roleCounts[role] ?? 0}
-                </div>
-                <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ color: "var(--grey-700)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
-                    {ROLE_GLYPHS[role]}
-                  </span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                   <RoleBadge role={role} />
+                  <span style={{ fontSize: 20, fontWeight: 700, color: "#17202A" }}>
+                    {roleCounts[role]}
+                  </span>
                 </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A", marginBottom: 4 }}>
+                  {getRoleLabel(role)}
+                </div>
+                <p style={{ fontSize: 12, color: "#667085", lineHeight: 1.45, margin: 0 }}>
+                  {ROLE_DESCRIPTIONS[role]}
+                </p>
+              </div>
+              <div
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 500,
+                  color: "#667085",
+                  paddingTop: 8,
+                  borderTop: "1px solid #E4E7EC",
+                }}
+              >
+                {totalUsers > 0 ? Math.round((roleCounts[role] / totalUsers) * 100) : 0}% of directory
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-2" style={{ alignItems: "start", gap: 24 }}>
-        {/* Recent Users Card */}
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+      {/* Academic Topology Preview */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 16,
+            paddingBottom: 14,
+            borderBottom: "1px solid #F2F4F7",
+          }}
+        >
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#17202A", margin: 0 }}>
+              Academic Clusters Topology
+            </h2>
+            <p style={{ fontSize: 13, color: "#667085", margin: "4px 0 0 0" }}>
+              Departmental cluster units, leadership assignments, and faculty allocations.
+            </p>
+          </div>
+          <Link
+            href="/admin/clusters"
+            style={{
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: "#2F6FED",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <span>Configure Clusters</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        {clusters.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "32px 0", color: "#667085" }}>
+            <FolderGit2 size={32} style={{ color: "#98A2B3", margin: "0 auto 8px" }} />
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#17202A" }}>No Academic Clusters Configured</div>
+            <p style={{ fontSize: 12.5, color: "#667085", margin: "4px 0 0 0" }}>
+              Create cluster units to organize faculty workflows.
+            </p>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gap: 16,
+            }}
+          >
+            {clusters.map((cluster) => (
+              <div
+                key={cluster.id}
+                style={{
+                  backgroundColor: "#F7F8FA",
+                  border: "1px solid #E4E7EC",
+                  borderRadius: 10,
+                  padding: "16px 18px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: 12,
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                    <h3 style={{ fontSize: 14.5, fontWeight: 700, color: "#17202A", margin: 0 }}>
+                      {cluster.name}
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: 11.5,
+                        fontWeight: 600,
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #E4E7EC",
+                        padding: "2px 8px",
+                        borderRadius: 6,
+                        color: "#173B67",
+                      }}
+                    >
+                      {cluster.members.length} {cluster.members.length === 1 ? "Member" : "Members"}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12.5, color: "#667085", marginTop: 4 }}>
+                    <span style={{ fontWeight: 500 }}>Cluster Head: </span>
+                    {cluster.head ? (
+                      <span style={{ fontWeight: 600, color: "#17202A" }}>{cluster.head.name}</span>
+                    ) : (
+                      <span style={{ color: "#C0392B", fontWeight: 500 }}>Not Appointed</span>
+                    )}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingTop: 10,
+                    borderTop: "1px solid #E4E7EC",
+                    fontSize: 11.5,
+                    color: "#667085",
+                  }}
+                >
+                  <span>{cluster.head?.email ?? "Action required"}</span>
+                  <Link
+                    href="/admin/clusters"
+                    style={{ fontSize: 11.5, fontWeight: 600, color: "#2F6FED", textDecoration: "none" }}
+                  >
+                    Edit →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Split Grid: Recent Users & Recent Audit Events */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 24 }}>
+        {/* Recently Enrolled Users */}
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 16,
+              paddingBottom: 12,
+              borderBottom: "1px solid #F2F4F7",
+            }}
+          >
             <div>
-              <span className="section-eyebrow" style={{ margin: 0 }}>
-                // RECENT PROVISIONING
-              </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--grey-900)", margin: "2px 0 0 0" }}>
-                Identity Directory
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "#17202A", margin: 0 }}>
+                Recent Identity Provisioning
               </h3>
+              <p style={{ fontSize: 12.5, color: "#667085", margin: "3px 0 0 0" }}>
+                Latest user accounts created in the system.
+              </p>
             </div>
-            <Link href="/admin/users" className="btn-primary btn-sm">
-              USER MATRIX →
+            <Link
+              href="/admin/users"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#2F6FED",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span>Directory</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
 
@@ -201,63 +467,115 @@ export default async function AdminDashboard() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 12,
-                  padding: "10px 14px",
-                  background: "var(--grey-50)",
+                  justifyContent: "space-between",
+                  padding: "10px 12px",
                   borderRadius: 8,
-                  border: "1px solid var(--grey-200)",
+                  backgroundColor: "#F7F8FA",
+                  border: "1px solid #E4E7EC",
                 }}
               >
-                <div
-                  className="avatar avatar-sm"
-                  style={{
-                    background: "var(--grey-800)",
-                    color: "var(--white)",
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                  }}
-                >
-                  {getInitials(u.name)}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--grey-900)" }}>
-                    {u.name}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      backgroundColor: "#173B67",
+                      color: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {getInitials(u.name)}
                   </div>
-                  <div style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "var(--grey-500)" }}>
-                    {u.email}
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#17202A",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {u.name}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11.5,
+                        color: "#667085",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {u.email}
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                   <RoleBadge role={u.role} />
-                  <div style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", color: "var(--grey-400)" }}>
-                    {formatDate(u.createdAt)}
-                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Audit Log preview */}
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        {/* Security Audit Trail */}
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E4E7EC",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 16,
+              paddingBottom: 12,
+              borderBottom: "1px solid #F2F4F7",
+            }}
+          >
             <div>
-              <span className="section-eyebrow" style={{ margin: 0 }}>
-                // LEDGER TRAIL
-              </span>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--grey-900)", margin: "2px 0 0 0" }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "#17202A", margin: 0 }}>
                 Security Audit Ledger
               </h3>
+              <p style={{ fontSize: 12.5, color: "#667085", margin: "3px 0 0 0" }}>
+                Immutable administrative and operational activity log.
+              </p>
             </div>
-            <Link href="/admin/audit" className="btn-secondary btn-sm">
-              FULL LEDGER →
+            <Link
+              href="/admin/audit"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#2F6FED",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span>Full Ledger</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
 
           {recentAuditLogs.length === 0 ? (
-            <div className="empty">
-              <Shield size={32} style={{ color: "var(--grey-300)", margin: "0 auto 8px" }} />
-              <div className="empty-title">No audit events recorded</div>
+            <div style={{ textAlign: "center", padding: "28px 0", color: "#667085" }}>
+              <Shield size={28} style={{ color: "#98A2B3", margin: "0 auto 6px" }} />
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>No Audit Events Recorded</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -267,38 +585,34 @@ export default async function AdminDashboard() {
                   style={{
                     display: "flex",
                     alignItems: "flex-start",
-                    gap: 12,
-                    padding: "10px 14px",
-                    background: log.isImpersonated
-                      ? "rgba(220, 38, 38, 0.06)"
-                      : "var(--grey-50)",
+                    justifyContent: "space-between",
+                    padding: "10px 12px",
                     borderRadius: 8,
-                    border: log.isImpersonated
-                      ? "1px solid rgba(220, 38, 38, 0.25)"
-                      : "1px solid var(--grey-200)",
+                    backgroundColor: log.isImpersonated ? "rgba(192, 57, 43, 0.04)" : "#F7F8FA",
+                    border: `1px solid ${log.isImpersonated ? "rgba(192, 57, 43, 0.25)" : "#E4E7EC"}`,
+                    gap: 12,
                   }}
                 >
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      marginTop: 5,
-                      background: log.isImpersonated ? "#dc2626" : "var(--grey-800)",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 700, fontFamily: "var(--font-mono)", color: "var(--grey-900)" }}>
-                      {log.action}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: "#17202A",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        {log.action}
+                      </span>
                       {log.isImpersonated && (
                         <span
                           style={{
                             fontSize: 10,
-                            color: "#dc2626",
-                            marginLeft: 6,
-                            background: "rgba(220, 38, 38, 0.1)",
-                            padding: "1px 6px",
+                            fontWeight: 700,
+                            color: "#C0392B",
+                            backgroundColor: "rgba(192, 57, 43, 0.1)",
+                            padding: "1px 5px",
                             borderRadius: 4,
                           }}
                         >
@@ -306,15 +620,14 @@ export default async function AdminDashboard() {
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 11.5, color: "var(--grey-500)", marginTop: 2 }}>
-                      BY: {log.actor.name.toUpperCase()} // ENTITY: {log.entityType} #{log.entityId.slice(0, 8)}
+                    <div style={{ fontSize: 11.5, color: "#667085", marginTop: 2 }}>
+                      By {log.actor.name} · Entity: {log.entityType}
                     </div>
                   </div>
                   <div
                     style={{
                       fontSize: 11,
-                      fontFamily: "var(--font-mono)",
-                      color: "var(--grey-400)",
+                      color: "#98A2B3",
                       display: "flex",
                       alignItems: "center",
                       gap: 4,
@@ -331,46 +644,95 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* Admin Quick Configuration Navigation */}
-      <div className="card" style={{ padding: 24 }}>
+      {/* Administrative Subsystem Navigation */}
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E4E7EC",
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+        }}
+      >
         <div style={{ marginBottom: 16 }}>
-          <span className="section-eyebrow" style={{ margin: 0 }}>
-            // SYSTEM CONTROLS
-          </span>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--grey-900)", margin: "2px 0 0 0" }}>
-            Operational Engine Configuration
-          </h3>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#17202A", margin: 0 }}>
+            Administrative Subsystems & Governance
+          </h2>
+          <p style={{ fontSize: 13, color: "#667085", margin: "4px 0 0 0" }}>
+            Direct access to institutional configuration, heuristics, and operational subsystems.
+          </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 14,
+          }}
+        >
           {[
-            { href: "/admin/users", icon: <Users size={18} />, label: "Identity & Roles Directory",
-              desc: "Manage faculty profiles, cluster roles, and account provisioning" },
-            { href: "/admin/clusters", icon: <BarChart3 size={18} />, label: "Cluster Topology Units",
-              desc: "Configure departmental cluster nodes and leader assignments" },
-            { href: "/admin/jobs", icon: <Clock size={18} />, label: "Automated Jobs & Cron",
-              desc: "Monitor live cron timers, snapshot generators, and evaluation triggers" },
-            { href: "/admin/webhooks", icon: <Database size={18} />, label: "Webhooks & Outbound API",
-              desc: "Dispatch endpoints, delivery verification, and external sync" },
-            { href: "/admin/scoring", icon: <Settings size={18} />, label: "Points Scoring Engine",
-              desc: "Calibrate global multiplier rules and evaluation heuristics" },
-            { href: "/admin/badges", icon: <Shield size={18} />, label: "Merit Badge Registry",
-              desc: "Configure achievement rules and gamification criteria" },
-          ].map((a) => (
+            {
+              href: "/admin/users",
+              icon: <Users size={18} color="#173B67" />,
+              label: "User Directory",
+              desc: "Manage personnel profiles, institutional roles, and account provisioning.",
+            },
+            {
+              href: "/admin/clusters",
+              icon: <FolderGit2 size={18} color="#173B67" />,
+              label: "Academic Clusters",
+              desc: "Configure departmental cluster topology and assign faculty leadership.",
+            },
+            {
+              href: "/admin/scoring",
+              icon: <Settings size={18} color="#173B67" />,
+              label: "Scoring Configuration",
+              desc: "Calibrate global multiplier heuristics, baseline benchmarks, and evaluation weights.",
+            },
+            {
+              href: "/admin/badges",
+              icon: <Award size={18} color="#173B67" />,
+              label: "Merit Badges",
+              desc: "Registry of academic achievement criteria and recognition milestones.",
+            },
+            {
+              href: "/admin/notifications",
+              icon: <Bell size={18} color="#173B67" />,
+              label: "Notification Rules",
+              desc: "Configure automated notification dispatch criteria and recipient channels.",
+            },
+            {
+              href: "/admin/jobs",
+              icon: <Clock size={18} color="#173B67" />,
+              label: "Automation Jobs",
+              desc: "Monitor recurring background engines, snapshot aggregators, and system daemons.",
+            },
+            {
+              href: "/admin/webhooks",
+              icon: <Globe size={18} color="#173B67" />,
+              label: "External Webhooks",
+              desc: "Manage outbound event subscriptions, payload delivery, and integration endpoints.",
+            },
+            {
+              href: "/admin/audit",
+              icon: <Shield size={18} color="#173B67" />,
+              label: "Security Audit Ledger",
+              desc: "Comprehensive immutable record of all administrative and privileged transactions.",
+            },
+          ].map((subsystem) => (
             <Link
-              key={a.href}
-              href={a.href}
-              className="cyber-card-hover"
+              key={subsystem.href}
+              href={subsystem.href}
               style={{
-                padding: "16px",
-                borderRadius: 12,
-                background: "var(--grey-50)",
-                border: "1px solid var(--grey-200)",
-                textDecoration: "none",
-                transition: "all 0.18s ease",
                 display: "flex",
-                flexDirection: "column",
-                gap: 8,
+                alignItems: "flex-start",
+                gap: 14,
+                padding: "16px 18px",
+                borderRadius: 10,
+                backgroundColor: "#F7F8FA",
+                border: "1px solid #E4E7EC",
+                textDecoration: "none",
+                transition: "all 0.15s ease",
               }}
             >
               <div
@@ -378,21 +740,24 @@ export default async function AdminDashboard() {
                   width: 36,
                   height: 36,
                   borderRadius: 8,
-                  background: "var(--white)",
-                  border: "1px solid var(--grey-200)",
-                  color: "var(--grey-800)",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E4E7EC",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexShrink: 0,
+                  marginTop: 2,
                 }}
               >
-                {a.icon}
+                {subsystem.icon}
               </div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--grey-900)" }}>
-                {a.label}
-              </div>
-              <div style={{ fontSize: 12, color: "var(--grey-500)", lineHeight: 1.45 }}>
-                {a.desc}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: "#17202A", marginBottom: 3 }}>
+                  {subsystem.label}
+                </div>
+                <div style={{ fontSize: 12, color: "#667085", lineHeight: 1.45 }}>
+                  {subsystem.desc}
+                </div>
               </div>
             </Link>
           ))}

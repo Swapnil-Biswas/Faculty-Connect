@@ -125,30 +125,36 @@ const NAV_BY_ROLE: Record<Role, { section: string; code: string; items: NavItem[
   ],
   ADMIN: [
     {
-      section: "System",
-      code: "// 01 INFRASTRUCTURE",
+      section: "System Architecture",
+      code: "SYSTEM ARCHITECTURE",
       items: [
-        { href: "/admin", icon: <LayoutDashboard size={17} />, label: "System Console" },
+        { href: "/admin", icon: <LayoutDashboard size={17} />, label: "System Overview" },
+      ],
+    },
+    {
+      section: "Identity & Topology",
+      code: "IDENTITY & TOPOLOGY",
+      items: [
         { href: "/admin/users", icon: <Users size={17} />, label: "User Directory" },
-        { href: "/admin/clusters", icon: <UserCheck size={17} />, label: "Cluster Units" },
-        { href: "/admin/jobs", icon: <Clock size={17} />, label: "Cron & Automations" },
-        { href: "/admin/webhooks", icon: <Globe size={17} />, label: "Webhooks & API" },
+        { href: "/admin/clusters", icon: <UserCheck size={17} />, label: "Academic Clusters" },
       ],
     },
     {
-      section: "Configuration",
-      code: "// 02 CONFIGURATION",
+      section: "Governance & Heuristics",
+      code: "GOVERNANCE & HEURISTICS",
       items: [
-        { href: "/admin/scoring", icon: <Star size={17} />, label: "Global Scoring" },
-        { href: "/admin/notifications", icon: <Bell size={17} />, label: "Dispatch Rules" },
-        { href: "/admin/badges", icon: <Trophy size={17} />, label: "Badge Registry" },
+        { href: "/admin/scoring", icon: <Star size={17} />, label: "Scoring Configuration" },
+        { href: "/admin/badges", icon: <Trophy size={17} />, label: "Merit Badges" },
+        { href: "/admin/notifications", icon: <Bell size={17} />, label: "Notification Rules" },
       ],
     },
     {
-      section: "Audit",
-      code: "// 03 AUDIT & LOGS",
+      section: "Operations & Audit",
+      code: "OPERATIONS & AUDIT",
       items: [
-        { href: "/admin/audit", icon: <Shield size={17} />, label: "Security Audit" },
+        { href: "/admin/jobs", icon: <Clock size={17} />, label: "Automation Jobs" },
+        { href: "/admin/webhooks", icon: <Globe size={17} />, label: "External Webhooks" },
+        { href: "/admin/audit", icon: <Shield size={17} />, label: "Security Audit Ledger" },
       ],
     },
   ],

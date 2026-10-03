@@ -2,15 +2,20 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { ClusterManagerClient } from "./ClusterManagerClient";
+import { PageHeader } from "@/components/ui/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Academic Clusters — Admin | Faculty Connect" };
 
 export default async function AdminClustersPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect("/login");
   }
 
-  // Fetch all clusters with head and member counts
+  // Fetch all clusters with head, members, and tasks
   const clusters = await db.cluster.findMany({
+    where: { deletedAt: null },
     include: {
       head: {
         select: { id: true, name: true, email: true, designation: true },
@@ -40,13 +45,24 @@ export default async function AdminClustersPage() {
   });
 
   return (
-    <div className="page-content">
-      <div style={{ marginBottom: 28 }}>
-        <h1 className="page-title">Cluster Management</h1>
-        <p className="page-subtitle">
-          Create clusters, appoint Cluster Heads, and view departmental grouping configurations.
-        </p>
-      </div>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
+      <PageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/admin" },
+          { label: "Academic Clusters" },
+        ]}
+        title="Academic Clusters"
+        subtitle="Configure departmental cluster topology, assign academic leadership, and monitor operational progress."
+      />
 
       <ClusterManagerClient
         initialClusters={clusters.map((c) => ({

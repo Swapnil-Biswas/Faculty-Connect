@@ -5,7 +5,7 @@ import { updateUserRole, assignUserToCluster, softDeleteUser } from '@/actions/a
 import { SubmitButton } from '@/components/ui/SubmitButton'
 import { useRouter } from 'next/navigation'
 import { Role } from '@prisma/client'
-import { MoreVertical, Pencil, Trash2, Users } from 'lucide-react'
+import { MoreVertical, Pencil, Trash2, Users, AlertTriangle } from 'lucide-react'
 
 interface Props {
   userId: string
@@ -20,9 +20,22 @@ export function UserActionsMenu({ userId, currentRole, clusters }: Props) {
   return (
     <div style={{ position: 'relative' }}>
       <button
-        className="btn-ghost"
         onClick={() => setOpen((v) => !v)}
         aria-label="User actions"
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: '6px',
+          borderRadius: 6,
+          cursor: 'pointer',
+          color: '#667085',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'color 0.15s ease, background-color 0.15s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F2F4F7')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
       >
         <MoreVertical size={16} />
       </button>
@@ -40,42 +53,90 @@ export function UserActionsMenu({ userId, currentRole, clusters }: Props) {
               right: 0,
               top: '110%',
               zIndex: 50,
-              background: 'hsl(var(--bg-surface))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 10,
-              boxShadow: 'var(--shadow-lg)',
-              minWidth: mode ? 240 : 170,
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E4E7EC',
+              borderRadius: 8,
+              boxShadow: '0 10px 25px -5px rgba(16, 24, 40, 0.1), 0 8px 10px -6px rgba(16, 24, 40, 0.05)',
+              minWidth: mode ? 240 : 180,
               padding: 6,
             }}
           >
             {!mode && (
-              <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <button
-                  className="dropdown-item"
                   onClick={() => setMode('role')}
-                  style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#17202A',
+                    fontSize: 12.5,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F7F8FA')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <Pencil size={14} /> Change Role
+                  <Pencil size={14} color="#667085" />
+                  <span>Change Role</span>
                 </button>
+
                 <button
-                  className="dropdown-item"
                   onClick={() => setMode('cluster')}
-                  style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#17202A',
+                    fontSize: 12.5,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F7F8FA')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <Users size={14} /> Assign Cluster
+                  <Users size={14} color="#667085" />
+                  <span>Assign Cluster</span>
                 </button>
-                <div style={{ height: 1, background: 'hsl(var(--border))', margin: '4px 0' }} />
+
+                <div style={{ height: 1, backgroundColor: '#F2F4F7', margin: '4px 0' }} />
+
                 <button
-                  className="dropdown-item"
                   onClick={() => setMode('delete')}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    color: 'hsl(var(--color-danger))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#C0392B',
+                    fontSize: 12.5,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    textAlign: 'left',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(192, 57, 43, 0.06)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <Trash2 size={14} /> Delete User
+                  <Trash2 size={14} color="#C0392B" />
+                  <span>Deactivate User</span>
                 </button>
-              </>
+              </div>
             )}
 
             {mode === 'role' && (
@@ -120,18 +181,62 @@ function ChangeRoleForm({
   if (state.success) { onDone(); return null }
 
   return (
-    <form action={formAction} style={{ padding: '8px 4px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <form action={formAction} style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <input type="hidden" name="userId" value={userId} />
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: 'hsl(var(--text-primary))' }}>
-        Change Role
+      <div style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
+        Change Institutional Role
       </div>
-      <select name="role" className="form-input" defaultValue={currentRole} style={{ fontSize: 13 }}>
+      <select
+        name="role"
+        defaultValue={currentRole}
+        style={{
+          width: '100%',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E4E7EC',
+          borderRadius: 6,
+          padding: '7px 10px',
+          fontSize: 12.5,
+          color: '#17202A',
+          outline: 'none',
+        }}
+      >
         {(['FACULTY', 'CLUSTER_HEAD', 'HOD', 'ADMIN'] as Role[]).map((r) => (
           <option key={r} value={r}>{r.replace('_', ' ')}</option>
         ))}
       </select>
-      {state.error && <span style={{ fontSize: 12, color: 'hsl(var(--color-danger))' }}>{state.error}</span>}
-      <SubmitButton label="Save" pendingLabel="Saving…" />
+      {state.error && <span style={{ fontSize: 11.5, color: '#C0392B' }}>{state.error}</span>}
+      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+        <SubmitButton
+          label="Save"
+          pendingLabel="Saving…"
+          style={{
+            flex: 1,
+            backgroundColor: '#173B67',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        />
+        <button
+          type="button"
+          onClick={onDone}
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E4E7EC',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            color: '#667085',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   )
 }
@@ -149,19 +254,63 @@ function AssignClusterForm({
   if (state.success) { onDone(); return null }
 
   return (
-    <form action={formAction} style={{ padding: '8px 4px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <form action={formAction} style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <input type="hidden" name="userId" value={userId} />
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: 'hsl(var(--text-primary))' }}>
-        Assign to Cluster
+      <div style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
+        Assign Academic Cluster
       </div>
-      <select name="clusterId" className="form-input" defaultValue="" style={{ fontSize: 13 }}>
+      <select
+        name="clusterId"
+        defaultValue=""
+        style={{
+          width: '100%',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E4E7EC',
+          borderRadius: 6,
+          padding: '7px 10px',
+          fontSize: 12.5,
+          color: '#17202A',
+          outline: 'none',
+        }}
+      >
         <option value="" disabled>Select cluster…</option>
         {clusters.map((c) => (
           <option key={c.id} value={c.id}>{c.name}</option>
         ))}
       </select>
-      {state.error && <span style={{ fontSize: 12, color: 'hsl(var(--color-danger))' }}>{state.error}</span>}
-      <SubmitButton label="Assign" pendingLabel="Assigning…" />
+      {state.error && <span style={{ fontSize: 11.5, color: '#C0392B' }}>{state.error}</span>}
+      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+        <SubmitButton
+          label="Assign"
+          pendingLabel="Assigning…"
+          style={{
+            flex: 1,
+            backgroundColor: '#173B67',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        />
+        <button
+          type="button"
+          onClick={onDone}
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E4E7EC',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            color: '#667085',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   )
 }
@@ -172,19 +321,18 @@ function DeleteUserConfirm({ userId, onDone }: { userId: string; onDone: () => v
   const [error, setError] = useState<string | null>(null)
 
   return (
-    <div style={{ padding: '8px 4px' }}>
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: 'hsl(var(--color-danger))', marginBottom: 8 }}>
-        Soft-delete this user?
+    <div style={{ padding: '8px 6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: '#C0392B', marginBottom: 6 }}>
+        <AlertTriangle size={15} />
+        <span>Deactivate Account</span>
       </div>
-      <div style={{ fontSize: 12, color: 'hsl(var(--text-secondary))', marginBottom: 10 }}>
-        They will be deactivated and cannot log in. Audit logs are preserved.
+      <div style={{ fontSize: 12, color: '#667085', lineHeight: 1.4, marginBottom: 12 }}>
+        The user will be soft-deleted and prevented from logging in. Audit logs remain intact.
       </div>
-      {error && <div style={{ fontSize: 12, color: 'hsl(var(--color-danger))', marginBottom: 8 }}>{error}</div>}
+      {error && <div style={{ fontSize: 11.5, color: '#C0392B', marginBottom: 8 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
         <button
           disabled={isPending}
-          className="btn-outline"
-          style={{ fontSize: 12, padding: '6px 14px', flex: 1, color: 'hsl(var(--color-danger))', borderColor: 'hsl(var(--color-danger) / 0.3)' }}
           onClick={() => {
             startTransition(async () => {
               const res = await softDeleteUser(userId)
@@ -192,10 +340,34 @@ function DeleteUserConfirm({ userId, onDone }: { userId: string; onDone: () => v
               else setError(res.error ?? 'Error')
             })
           }}
+          style={{
+            flex: 1,
+            backgroundColor: '#C0392B',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: isPending ? 'not-allowed' : 'pointer',
+          }}
         >
-          {isPending ? 'Deleting…' : 'Confirm Delete'}
+          {isPending ? 'Deactivating…' : 'Deactivate'}
         </button>
-        <button className="btn-ghost" onClick={onDone} style={{ fontSize: 12 }}>Cancel</button>
+        <button
+          onClick={onDone}
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E4E7EC',
+            borderRadius: 6,
+            padding: '7px 12px',
+            fontSize: 12,
+            color: '#667085',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   )
