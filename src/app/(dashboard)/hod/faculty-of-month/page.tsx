@@ -40,14 +40,22 @@ export default async function FacultyOfMonthPage() {
   const pendingCurrentMonth = !currentAward;
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
           { label: "Dashboard", href: "/hod" },
           { label: "Faculty of the Month" },
         ]}
-        eyebrow="// INSTITUTIONAL RECOGNITION · EXECUTIVE SPOTLIGHT"
         title="Faculty of the Month"
         subtitle="Departmental monthly faculty recognition record determined by verified PointsLedger aggregates, deliverable velocity, and evaluation ratings."
         showDotMatrix={false}

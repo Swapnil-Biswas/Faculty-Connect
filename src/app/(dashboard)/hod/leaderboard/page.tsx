@@ -37,14 +37,22 @@ export default async function HodLeaderboardPage() {
   const totalTasksCompleted = leaderboard.reduce((s, e) => s + e.completedTasks, 0);
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
           { label: "Dashboard", href: "/hod" },
-          { label: "Performance Ledger" },
+          { label: "Faculty Leaderboard" },
         ]}
-        eyebrow="// INSTITUTIONAL PERFORMANCE · RECOGNITION"
         title="Department Performance"
         subtitle="Comprehensive department-wide performance standings derived from verified PointsLedger aggregates, deliverable velocity, and evaluation ratings."
         showDotMatrix={false}
