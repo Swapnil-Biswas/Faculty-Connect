@@ -71,8 +71,8 @@ export default async function HodExportPage() {
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "DATA_EXPORT" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Data Export" },
         ]}
         title="Data Export"
         subtitle="Export verified departmental datasets for institutional governance, NBA/NAAC compliance, and administrative audits."

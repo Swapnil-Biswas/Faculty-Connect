@@ -91,8 +91,8 @@ export default async function HodAnalyticsPage() {
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "ANALYTICS" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Department Analytics" },
         ]}
         title="Department Analytics"
         subtitle="Cross-cluster deliverable velocity, operational equilibrium, workload distribution, and compliance readiness."

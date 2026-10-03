@@ -99,8 +99,8 @@ export default async function HodAuditPage({
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "AUDIT_LEDGER" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Audit Ledger" },
         ]}
         title="Audit Ledger"
         subtitle="Chronological institutional transaction record and administrative decision trail."

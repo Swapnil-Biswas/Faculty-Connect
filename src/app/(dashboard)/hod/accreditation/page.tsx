@@ -83,8 +83,8 @@ export default async function HodAccreditationPage() {
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "ACCREDITATION" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Accreditation & Compliance" },
         ]}
         title="Accreditation & Compliance"
         subtitle="Criterion 5 Self-Study Report (SSR) dossier, Faculty-Student Ratio (SFR) modeling, and Form 5A compliance matrix."

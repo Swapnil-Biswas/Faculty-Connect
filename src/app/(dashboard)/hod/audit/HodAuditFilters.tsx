@@ -48,7 +48,7 @@ export function HodAuditFilters({
           gap: 5,
         }}
       >
-        <Filter size={13} /> ACTION FILTER:
+        <Filter size={13} /> Action:
       </span>
       <select
         value={currentAction ?? "ALL"}
