@@ -85,14 +85,22 @@ export default async function HodDashboard() {
   ];
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", paddingBottom: 48 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "EXECUTIVE_OVERVIEW" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Department Overview" },
         ]}
-        eyebrow="// EXECUTIVE GOVERNANCE · DEPARTMENT OVERVIEW"
         title="Department Management Console"
         subtitle="Institutional operations, cross-cluster deliverables, faculty leave governance, and compliance."
         showDotMatrix={false}
@@ -346,10 +354,9 @@ export default async function HodDashboard() {
                     <th
                       style={{
                         padding: "10px 16px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       CLUSTER
@@ -357,10 +364,9 @@ export default async function HodDashboard() {
                     <th
                       style={{
                         padding: "10px 16px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       HEAD
@@ -368,10 +374,9 @@ export default async function HodDashboard() {
                     <th
                       style={{
                         padding: "10px 16px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       MEMBERS
@@ -379,10 +384,9 @@ export default async function HodDashboard() {
                     <th
                       style={{
                         padding: "10px 16px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       PROGRESS
@@ -390,10 +394,9 @@ export default async function HodDashboard() {
                     <th
                       style={{
                         padding: "10px 16px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                         textAlign: "right",
                       }}
                     >
@@ -426,9 +429,8 @@ export default async function HodDashboard() {
                         <td style={{ padding: "12px 16px" }}>
                           <span
                             style={{
-                              fontSize: 12,
+                              fontSize: 12.5,
                               color: "#667085",
-                              fontFamily: "var(--font-mono)",
                             }}
                           >
                             {c.members.length} faculty
@@ -454,7 +456,7 @@ export default async function HodDashboard() {
                                 }}
                               />
                             </div>
-                            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "#667085", minWidth: 30 }}>
+                            <span style={{ fontSize: 11.5, color: "#667085", minWidth: 32 }}>
                               {pct}%
                             </span>
                           </div>
@@ -562,10 +564,9 @@ export default async function HodDashboard() {
                       </div>
                       <div
                         style={{
-                          fontSize: 11.5,
+                          fontSize: 12,
                           color: "#667085",
                           marginTop: 2,
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         {l.cluster.name} · {formatDate(l.startDate)} → {formatDate(l.endDate)}
@@ -706,7 +707,7 @@ export default async function HodDashboard() {
               </div>
               <div>
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: "#17202A", margin: 0 }}>
-                  Recognition Engine
+                  Recognition Spotlight
                 </h3>
                 <span style={{ fontSize: 12, color: "#667085" }}>
                   Monthly faculty merit spotlight
