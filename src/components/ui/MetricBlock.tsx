@@ -69,12 +69,11 @@ export function MetricBlock({
       >
         <span
           style={{
-            fontSize: 10.5,
+            fontSize: 11.5,
             fontWeight: 600,
             textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            color: "#6E6E73",
-            fontFamily: "var(--font-mono)",
+            letterSpacing: "0.06em",
+            color: "#667085",
           }}
         >
           {label}
@@ -82,7 +81,7 @@ export function MetricBlock({
         {icon && (
           <div
             style={{
-              color: "#1D1D1F",
+              color: "#17202A",
               opacity: 0.8,
               display: "flex",
               alignItems: "center",
@@ -98,9 +97,8 @@ export function MetricBlock({
           style={{
             fontSize: 28,
             fontWeight: 700,
-            color: "#1D1D1F",
-            lineHeight: 1.1,
-            fontFamily: "var(--font-mono)",
+            color: "#17202A",
+            lineHeight: 1.15,
             letterSpacing: "-0.02em",
           }}
         >

@@ -50,11 +50,9 @@ export function PageHeader({
             display: "flex",
             alignItems: "center",
             gap: 6,
-            fontSize: 11,
-            fontFamily: "var(--font-mono)",
-            color: "#6E6E73",
-            marginBottom: 2,
-            letterSpacing: "0.04em",
+            fontSize: 12,
+            color: "#667085",
+            marginBottom: 4,
           }}
         >
           {breadcrumbs.map((b, i) => {

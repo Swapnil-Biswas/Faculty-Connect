@@ -18,7 +18,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={`tech-card ${className}`}
+      className={className}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -26,48 +26,37 @@ export function EmptyState({
         justifyContent: "center",
         padding: "48px 24px",
         textAlign: "center",
-        backgroundColor: "#0E121B",
-        border: "1px dashed rgba(255, 255, 255, 0.12)",
-        borderRadius: 12,
+        backgroundColor: "#FFFFFF",
+        border: "1px solid #E4E7EC",
+        borderRadius: 8,
         position: "relative",
       }}
     >
-      {Icon ? (
+      {Icon && (
         <div
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: 10,
-            backgroundColor: "rgba(255, 215, 0, 0.08)",
-            border: "1px solid rgba(255, 215, 0, 0.25)",
+            width: 44,
+            height: 44,
+            borderRadius: 8,
+            backgroundColor: "#F2F4F7",
+            border: "1px solid #E4E7EC",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 14,
-            color: "#FFD700",
-            boxShadow: "0 0 16px rgba(255, 215, 0, 0.1)",
+            color: "#173B67",
           }}
         >
-          <Icon size={22} />
-        </div>
-      ) : (
-        <div className="empty-glyph" style={{ display: "flex", gap: 6, marginBottom: 18 }} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
+          <Icon size={20} />
         </div>
       )}
 
       <h3
         style={{
           fontSize: 15,
-          fontWeight: 700,
-          color: "#F8FAFC",
-          fontFamily: "var(--font-mono)",
+          fontWeight: 600,
+          color: "#17202A",
           margin: "0 0 6px 0",
-          letterSpacing: "-0.01em",
         }}
       >
         {title}
@@ -77,9 +66,9 @@ export function EmptyState({
         <p
           style={{
             fontSize: 13,
-            color: "#94A3B8",
+            color: "#667085",
             margin: "0 0 16px 0",
-            maxWidth: 360,
+            maxWidth: 400,
             lineHeight: 1.5,
           }}
         >
