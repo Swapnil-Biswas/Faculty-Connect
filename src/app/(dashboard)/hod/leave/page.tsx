@@ -59,14 +59,22 @@ export default async function HodLeavePage({
   ]);
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", paddingBottom: 48 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "LEAVE_PIPELINE" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Leave Approvals" },
         ]}
-        eyebrow="// FACULTY GOVERNANCE · LEAVE PIPELINE"
         title="Department Leave Approvals"
         subtitle="Review, audit, and approve faculty leave applications across all academic clusters."
         showDotMatrix={false}
@@ -78,7 +86,6 @@ export default async function HodLeavePage({
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: 12,
-          marginBottom: 24,
         }}
       >
         <div
@@ -97,7 +104,6 @@ export default async function HodLeavePage({
               fontSize: 11,
               fontWeight: 600,
               color: counts.PENDING > 0 ? "#B7791F" : "#667085",
-              fontFamily: "var(--font-mono)",
             }}
           >
             PENDING REVIEWS
@@ -107,7 +113,6 @@ export default async function HodLeavePage({
               fontSize: 26,
               fontWeight: 700,
               color: counts.PENDING > 0 ? "#B7791F" : "#17202A",
-              fontFamily: "var(--font-mono)",
             }}
           >
             {counts.PENDING}
@@ -125,10 +130,10 @@ export default async function HodLeavePage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             APPROVED THIS TERM
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#198754", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#198754" }}>
             {counts.APPROVED}
           </span>
         </div>
@@ -144,10 +149,10 @@ export default async function HodLeavePage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             REJECTED
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#C0392B", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#C0392B" }}>
             {counts.REJECTED}
           </span>
         </div>
@@ -163,10 +168,10 @@ export default async function HodLeavePage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             TOTAL APPLICATIONS
           </span>
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#17202A" }}>
             {counts.ALL}
           </span>
         </div>
@@ -286,7 +291,6 @@ export default async function HodLeavePage({
                           fontSize: 12,
                           color: "#17202A",
                           margin: "6px 0",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         <Calendar size={13} color="#667085" />
@@ -358,7 +362,7 @@ export default async function HodLeavePage({
             <span style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
               Leave Applications ({leaves.length})
             </span>
-            <span style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#667085" }}>
+            <span style={{ fontSize: 11.5, color: "#667085" }}>
               Status: {statusFilter}
             </span>
           </div>
@@ -382,7 +386,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       FACULTY MEMBER
@@ -393,7 +396,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       CLUSTER
@@ -404,7 +406,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       DATES & DURATION
@@ -415,7 +416,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       STATUS
@@ -426,7 +426,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       DECIDED BY
@@ -437,7 +436,6 @@ export default async function HodLeavePage({
                         fontSize: 11,
                         fontWeight: 600,
                         color: "#667085",
-                        fontFamily: "var(--font-mono)",
                       }}
                     >
                       REASON / REMARKS
@@ -485,7 +483,7 @@ export default async function HodLeavePage({
                           </span>
                         </td>
                         <td style={{ padding: "12px 16px" }}>
-                          <div style={{ fontSize: 12.5, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+                          <div style={{ fontSize: 12.5, color: "#17202A" }}>
                             {formatDate(l.startDate)} → {formatDate(l.endDate)}
                           </div>
                           <div style={{ fontSize: 11, color: "#667085" }}>
@@ -502,7 +500,7 @@ export default async function HodLeavePage({
                                 {l.decidedBy.name}
                               </div>
                               {l.decidedAt && (
-                                <div style={{ fontSize: 11, color: "#667085", fontFamily: "var(--font-mono)" }}>
+                                <div style={{ fontSize: 11, color: "#667085" }}>
                                   {formatDate(l.decidedAt)}
                                 </div>
                               )}

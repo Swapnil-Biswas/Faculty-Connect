@@ -76,14 +76,22 @@ export default async function HodTasksPage({
   };
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", paddingBottom: 48 }}>
+    <div
+      style={{
+        padding: "28px 32px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        backgroundColor: "#F7F8FA",
+        minHeight: "100%",
+      }}
+    >
       {/* 1. Page Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "HOD_CONSOLE", href: "/hod" },
-          { label: "TASKS_MATRIX" },
+          { label: "Dashboard", href: "/hod" },
+          { label: "Tasks Matrix" },
         ]}
-        eyebrow="// ACADEMIC OPERATIONS · ALL CLUSTERS"
         title="Department Tasks Matrix"
         subtitle="View, allocate, and monitor deliverables across all departmental clusters."
         showDotMatrix={false}
@@ -95,7 +103,6 @@ export default async function HodTasksPage({
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
           gap: 12,
-          marginBottom: 24,
         }}
       >
         <div
@@ -109,10 +116,10 @@ export default async function HodTasksPage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             TOTAL DELIVERABLES
           </span>
-          <span style={{ fontSize: 24, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 24, fontWeight: 700, color: "#17202A" }}>
             {statsMap.TOTAL}
           </span>
         </div>
@@ -128,10 +135,10 @@ export default async function HodTasksPage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             IN PROGRESS
           </span>
-          <span style={{ fontSize: 24, fontWeight: 700, color: "#2F6FED", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 24, fontWeight: 700, color: "#2F6FED" }}>
             {statsMap.IN_PROGRESS}
           </span>
         </div>
@@ -147,10 +154,10 @@ export default async function HodTasksPage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             OPEN FOR CLAIM
           </span>
-          <span style={{ fontSize: 24, fontWeight: 700, color: "#17202A", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 24, fontWeight: 700, color: "#17202A" }}>
             {statsMap.OPEN}
           </span>
         </div>
@@ -166,10 +173,10 @@ export default async function HodTasksPage({
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#667085" }}>
             COMPLETED
           </span>
-          <span style={{ fontSize: 24, fontWeight: 700, color: "#198754", fontFamily: "var(--font-mono)" }}>
+          <span style={{ fontSize: 24, fontWeight: 700, color: "#198754" }}>
             {statsMap.COMPLETED}
           </span>
         </div>
@@ -190,7 +197,6 @@ export default async function HodTasksPage({
               fontSize: 11,
               fontWeight: 600,
               color: statsMap.OVERDUE > 0 ? "#C0392B" : "#667085",
-              fontFamily: "var(--font-mono)",
             }}
           >
             OVERDUE ESCALATIONS
@@ -200,7 +206,6 @@ export default async function HodTasksPage({
               fontSize: 24,
               fontWeight: 700,
               color: statsMap.OVERDUE > 0 ? "#C0392B" : "#17202A",
-              fontFamily: "var(--font-mono)",
             }}
           >
             {statsMap.OVERDUE}
@@ -291,7 +296,7 @@ export default async function HodTasksPage({
               <span style={{ fontSize: 13, fontWeight: 600, color: "#17202A" }}>
                 Deliverables Ledger ({tasks.length})
               </span>
-              <span style={{ fontSize: 11.5, fontFamily: "var(--font-mono)", color: "#667085" }}>
+              <span style={{ fontSize: 11.5, color: "#667085" }}>
                 {clusterFilter
                   ? `Cluster: ${clusters.find((c) => c.id === clusterFilter)?.name ?? "Selected"}`
                   : "All Departmental Clusters"}
@@ -317,7 +322,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         TASK DELIVERABLE
@@ -328,7 +332,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         CLUSTER
@@ -339,7 +342,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         ASSIGNED TO
@@ -350,7 +352,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         PRIORITY
@@ -361,7 +362,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         STATUS
@@ -372,7 +372,6 @@ export default async function HodTasksPage({
                           fontSize: 11,
                           fontWeight: 600,
                           color: "#667085",
-                          fontFamily: "var(--font-mono)",
                         }}
                       >
                         DEADLINE
@@ -469,7 +468,6 @@ export default async function HodTasksPage({
                                 display: "inline-block",
                                 fontSize: 10.5,
                                 fontWeight: 600,
-                                fontFamily: "var(--font-mono)",
                                 padding: "2px 7px",
                                 borderRadius: 4,
                                 backgroundColor: priorityStyle.bg,
@@ -490,7 +488,6 @@ export default async function HodTasksPage({
                                 alignItems: "center",
                                 gap: 6,
                                 fontSize: 12,
-                                fontFamily: "var(--font-mono)",
                                 color: isPastDeadline ? "#C0392B" : "#17202A",
                                 fontWeight: isPastDeadline ? 600 : 400,
                               }}

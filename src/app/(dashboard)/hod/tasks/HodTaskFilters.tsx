@@ -55,7 +55,7 @@ export function HodTaskFilters({
         }}
       >
         <Filter size={14} />
-        <span>FILTER:</span>
+        <span>Filter:</span>
       </div>
 
       {/* Cluster Select */}

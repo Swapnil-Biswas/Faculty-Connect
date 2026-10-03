@@ -129,7 +129,7 @@ export function HodLeaveFilters({
             gap: 4,
           }}
         >
-          <Filter size={13} /> CLUSTER:
+          <Filter size={13} /> Cluster:
         </span>
         <select
           value={currentCluster}
