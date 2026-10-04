@@ -3,8 +3,16 @@
 import { useState, useTransition } from "react";
 import { updateNotificationRule } from "@/actions/notifications";
 import {
-  Bell, CheckSquare, Calendar, Star, Award, ShieldAlert,
-  Sparkles, Trophy, Save, RefreshCw, Check
+  Bell,
+  CheckSquare,
+  Calendar,
+  Star,
+  Award,
+  ShieldAlert,
+  Sparkles,
+  Trophy,
+  Check,
+  UserCheck,
 } from "lucide-react";
 
 interface RuleItem {
@@ -18,74 +26,78 @@ interface Props {
   initialRules: RuleItem[];
 }
 
-const META: Record<string, { label: string; desc: string; icon: React.ReactNode; color: string; hasThreshold?: boolean; thresholdLabel?: string }> = {
+interface EventMeta {
+  label: string;
+  desc: string;
+  icon: React.ReactNode;
+  hasThreshold?: boolean;
+  thresholdLabel?: string;
+  thresholdHelp?: string;
+}
+
+const META: Record<string, EventMeta> = {
   TASK_ASSIGNED: {
     label: "Task Assigned",
-    desc: "Alert faculty when a Cluster Head assigns a new task to them.",
+    desc: "Alert faculty when a Cluster Head assigns a new task deliverable to them.",
     icon: <CheckSquare size={18} />,
-    color: "#7C3AED",
   },
   TASK_COMPLETED: {
     label: "Task Completed",
-    desc: "Notify assigner when a faculty member marks their task as completed.",
+    desc: "Notify assigner and cluster leadership when a faculty member completes a deliverable.",
     icon: <Check size={18} />,
-    color: "#10B981",
   },
   TASK_OVERDUE: {
     label: "Task Overdue Warning",
     desc: "Trigger high-priority alert when a task passes its deadline without completion.",
     icon: <ShieldAlert size={18} />,
-    color: "#EF4444",
   },
   LEAVE_APPLIED: {
     label: "Leave Application Submitted",
     desc: "Alert Cluster Head and HOD when faculty requests casual or duty leave.",
     icon: <Calendar size={18} />,
-    color: "#06B6D4",
   },
   LEAVE_APPROVED: {
     label: "Leave Approved",
     desc: "Inform faculty when their pending leave application has been approved.",
     icon: <Check size={18} />,
-    color: "#10B981",
   },
   LEAVE_REJECTED: {
     label: "Leave Rejected",
-    desc: "Notify faculty if their leave application is rejected, including remarks.",
+    desc: "Notify faculty if their leave application is rejected, including decision remarks.",
     icon: <ShieldAlert size={18} />,
-    color: "#EF4444",
   },
   STARS_AWARDED: {
     label: "Stars & Points Awarded",
-    desc: "Celebrate recognition points earned through task velocity or evaluation.",
+    desc: "Celebrate recognition points earned through task velocity or evaluation scores.",
     icon: <Star size={18} />,
-    color: "#F59E0B",
   },
   BADGE_EARNED: {
     label: "Badge / Achievement Unlocked",
-    desc: "Notify faculty when gamified milestone criteria are achieved.",
+    desc: "Notify faculty when gamified milestone criteria and merit badges are unlocked.",
     icon: <Award size={18} />,
-    color: "#EC4899",
   },
   EVALUATION_RECEIVED: {
     label: "Evaluation Recorded",
     desc: "Send score report notification when Cluster Head submits an evaluation.",
     icon: <Sparkles size={18} />,
-    color: "#3B82F6",
+  },
+  FACULTY_OF_MONTH: {
+    label: "Faculty of the Month Spotlight",
+    desc: "Congratulate and notify faculty selected as Faculty of the Month for the preceding period.",
+    icon: <Award size={18} />,
   },
   ROLE_CHANGED: {
-    label: "Role / Permission Change",
-    desc: "Security alert when user role or cluster assignment is altered by Admin.",
-    icon: <Bell size={18} />,
-    color: "#8B5CF6",
+    label: "Role & Permission Changed",
+    desc: "Security alert when user role or cluster topology assignment is altered by Admin.",
+    icon: <UserCheck size={18} />,
   },
   LEADERBOARD_REFRESHED: {
     label: "Leaderboard Recomputed",
-    desc: "Alert top-ranking faculty members when weekly/monthly ranks are recalculated.",
+    desc: "Configures top-N threshold alerting for leaderboard ranking updates.",
     icon: <Trophy size={18} />,
-    color: "#F59E0B",
     hasThreshold: true,
     thresholdLabel: "Notify Top N Faculty",
+    thresholdHelp: "Applies when leaderboard rankings are recalculated.",
   },
 };
 
@@ -135,13 +147,18 @@ export function NotificationRulesClient({ initialRules }: Props) {
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 18 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+        gap: 18,
+      }}
+    >
       {rules.map((rule) => {
         const meta = META[rule.eventType] ?? {
-          label: rule.eventType,
+          label: rule.eventType.replace(/_/g, " "),
           desc: "System automated notification rule trigger.",
           icon: <Bell size={18} />,
-          color: "hsl(var(--color-primary))",
         };
 
         const isSaved = savedStatus[rule.eventType];
@@ -149,134 +166,215 @@ export function NotificationRulesClient({ initialRules }: Props) {
         return (
           <div
             key={rule.eventType}
-            className="card"
             style={{
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E4E7EC",
+              borderTop: rule.enabled ? "3px solid #173B67" : "3px solid #E4E7EC",
+              borderRadius: 10,
               padding: "20px 22px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
               gap: 16,
-              borderTop: `3px solid ${rule.enabled ? meta.color : "hsl(var(--border))"}`,
-              opacity: rule.enabled ? 1 : 0.7,
-              transition: "all 0.2s ease",
+              boxShadow: "0 1px 3px rgba(16, 24, 40, 0.04)",
+              opacity: rule.enabled ? 1 : 0.82,
+              transition: "all 0.15s ease",
             }}
           >
-            {/* Top row */}
+            {/* Top row: Icon, Label, Event Code, Switch */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 12,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      background: `${meta.color}15`,
-                      color: meta.color,
+                      width: 38,
+                      height: 38,
+                      borderRadius: 8,
+                      backgroundColor: "#F0F4F8",
+                      border: "1px solid #D0D7DE",
+                      color: "#173B67",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      flexShrink: 0,
                     }}
                   >
                     {meta.icon}
                   </div>
                   <div>
-                    <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>{meta.label}</h3>
-                    <code style={{ fontSize: 11, color: "hsl(var(--text-muted))" }}>{rule.eventType}</code>
+                    <h3
+                      style={{
+                        fontSize: 14.5,
+                        fontWeight: 700,
+                        color: "#17202A",
+                        margin: 0,
+                        lineHeight: 1.25,
+                      }}
+                    >
+                      {meta.label}
+                    </h3>
+                    <code
+                      style={{
+                        fontSize: 11,
+                        color: "#667085",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      {rule.eventType}
+                    </code>
                   </div>
                 </div>
 
-                {/* Toggle switch */}
-                <label
+                {/* Accessible Institutional Switch */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={rule.enabled}
+                  aria-label={`Toggle notifications for ${meta.label}`}
+                  disabled={isPending}
+                  onClick={() => handleToggle(rule.eventType, rule.enabled, rule.threshold)}
                   style={{
-                    position: "relative",
-                    display: "inline-block",
                     width: 44,
                     height: 24,
-                    cursor: "pointer",
+                    borderRadius: 24,
+                    backgroundColor: rule.enabled ? "#173B67" : "#E4E7EC",
+                    position: "relative",
+                    border: "none",
+                    cursor: isPending ? "not-allowed" : "pointer",
+                    transition: "background-color 0.2s ease",
+                    padding: 0,
+                    flexShrink: 0,
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    checked={rule.enabled}
-                    onChange={() => handleToggle(rule.eventType, rule.enabled, rule.threshold)}
-                    style={{ opacity: 0, width: 0, height: 0 }}
-                  />
                   <span
                     style={{
                       position: "absolute",
-                      cursor: "pointer",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: rule.enabled ? meta.color : "hsl(var(--border-strong))",
-                      transition: "0.2s",
-                      borderRadius: 24,
+                      top: 3,
+                      left: rule.enabled ? 23 : 3,
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      backgroundColor: "#FFFFFF",
+                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+                      transition: "left 0.2s ease",
                     }}
-                  >
-                    <span
-                      style={{
-                        position: "absolute",
-                        height: 18,
-                        width: 18,
-                        left: rule.enabled ? 22 : 3,
-                        bottom: 3,
-                        backgroundColor: "white",
-                        transition: "0.2s",
-                        borderRadius: "50%",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                      }}
-                    />
-                  </span>
-                </label>
+                  />
+                </button>
               </div>
 
-              <p style={{ fontSize: 13, color: "hsl(var(--text-secondary))", lineHeight: 1.5, margin: 0 }}>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: "#667085",
+                  lineHeight: 1.45,
+                  margin: 0,
+                }}
+              >
                 {meta.desc}
               </p>
             </div>
 
-            {/* Threshold config if applicable */}
+            {/* Threshold config where applicable */}
             {meta.hasThreshold && (
               <div
                 style={{
-                  background: "hsl(var(--bg-subtle))",
+                  backgroundColor: "#F7F8FA",
                   padding: "10px 14px",
-                  borderRadius: "var(--radius-sm)",
+                  borderRadius: 6,
+                  border: "1px solid #E4E7EC",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                   gap: 12,
                 }}
               >
-                <span style={{ fontSize: 12, fontWeight: 600 }}>{meta.thresholdLabel}</span>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#17202A" }}>
+                    {meta.thresholdLabel}
+                  </div>
+                  {meta.thresholdHelp && (
+                    <div style={{ fontSize: 11, color: "#667085", marginTop: 2 }}>
+                      {meta.thresholdHelp}
+                    </div>
+                  )}
+                </div>
                 <input
                   type="number"
                   min={1}
                   max={50}
-                  className="form-input"
-                  style={{ width: 70, padding: "4px 8px", fontSize: 13, textAlign: "center" }}
+                  aria-label={meta.thresholdLabel}
+                  style={{
+                    width: 64,
+                    padding: "4px 8px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    textAlign: "center",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #D0D7DE",
+                    borderRadius: 6,
+                    color: "#17202A",
+                  }}
                   value={rule.threshold ?? 5}
-                  onChange={(e) => handleThresholdChange(rule.eventType, e.target.value, rule.enabled)}
+                  onChange={(e) =>
+                    handleThresholdChange(rule.eventType, e.target.value, rule.enabled)
+                  }
                 />
               </div>
             )}
 
-            {/* Footer status */}
+            {/* Footer status & save confirmation */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                paddingTop: 10,
-                borderTop: "1px solid hsl(var(--border))",
-                fontSize: 11.5,
-                color: "hsl(var(--text-muted))",
+                paddingTop: 12,
+                borderTop: "1px solid #F2F4F7",
+                fontSize: 12,
               }}
             >
-              <span>Status: <strong style={{ color: rule.enabled ? "hsl(var(--color-success))" : "inherit" }}>{rule.enabled ? "Active" : "Disabled"}</strong></span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: "#667085" }}>Status:</span>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    padding: "2px 7px",
+                    borderRadius: 4,
+                    backgroundColor: rule.enabled ? "#F0FDF4" : "#F2F4F7",
+                    color: rule.enabled ? "#166534" : "#667085",
+                    border: `1px solid ${rule.enabled ? "#BBF7D0" : "#E4E7EC"}`,
+                  }}
+                >
+                  {rule.enabled ? "● Active" : "Disabled"}
+                </span>
+              </div>
+
               {isSaved && (
-                <span style={{ color: "hsl(var(--color-success))", display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                <span
+                  style={{
+                    color: "#166534",
+                    backgroundColor: "#F0FDF4",
+                    border: "1px solid #BBF7D0",
+                    padding: "2px 8px",
+                    borderRadius: 4,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                  }}
+                >
                   <Check size={12} /> Saved
                 </span>
               )}

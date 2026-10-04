@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { writeAudit } from '@/lib/audit'
 import { NotificationEventType } from '@prisma/client'
 import { z } from 'zod'
 
@@ -112,7 +113,11 @@ export async function updateNotificationRule(
       return { success: false, error: 'Invalid form data' }
     }
 
-    await db.notificationRule.upsert({
+    const existing = await db.notificationRule.findUnique({
+      where: { eventType: parsed.data.eventType },
+    })
+
+    const rule = await db.notificationRule.upsert({
       where: { eventType: parsed.data.eventType },
       create: {
         eventType: parsed.data.eventType,
@@ -122,6 +127,25 @@ export async function updateNotificationRule(
       update: {
         enabled: parsed.data.enabled,
         threshold: parsed.data.threshold ?? null,
+      },
+    })
+
+    await writeAudit({
+      actorId: session.user.id,
+      action: 'NOTIFICATION_RULE_UPDATED',
+      entityType: 'NotificationRule',
+      entityId: rule.id,
+      beforeState: existing
+        ? {
+            eventType: existing.eventType,
+            enabled: existing.enabled,
+            threshold: existing.threshold,
+          }
+        : null,
+      afterState: {
+        eventType: rule.eventType,
+        enabled: rule.enabled,
+        threshold: rule.threshold,
       },
     })
 
