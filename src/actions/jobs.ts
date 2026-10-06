@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { sync } from '@/services/syncEngine'
 import { snapshotLeaderboard, computeFacultyOfMonth } from '@/services/recognition'
+import { writeAudit } from '@/lib/audit'
 
 export type JobResult = {
   success: boolean
@@ -21,8 +22,9 @@ async function requireAdminOrHod() {
 }
 
 export async function runOverdueTaskCheck(): Promise<JobResult> {
+  let session: Awaited<ReturnType<typeof requireAdminOrHod>> | null = null
   try {
-    await requireAdminOrHod()
+    session = await requireAdminOrHod()
     const now = new Date()
 
     const overdueTasks = await db.task.findMany({
@@ -34,7 +36,22 @@ export async function runOverdueTaskCheck(): Promise<JobResult> {
     })
 
     if (overdueTasks.length === 0) {
-      return { success: true, message: 'No new overdue tasks found.' }
+      const message = 'No new overdue tasks found.'
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'overdue_tasks',
+        afterState: {
+          jobKey: 'overdue_tasks',
+          jobName: 'Nightly Overdue Task Sweeper',
+          success: true,
+          overdueCount: 0,
+          message,
+        },
+      }).catch(() => {})
+
+      return { success: true, message }
     }
 
     const updated = await db.task.updateMany({
@@ -58,19 +75,50 @@ export async function runOverdueTaskCheck(): Promise<JobResult> {
     revalidatePath('/cluster/tasks')
     revalidatePath('/faculty/tasks')
 
+    const message = `Successfully processed ${updated.count} overdue tasks and dispatched alerts.`
+
+    await writeAudit({
+      actorId: session.user.id,
+      action: 'JOB_MANUALLY_DISPATCHED',
+      entityType: 'SystemJob',
+      entityId: 'overdue_tasks',
+      afterState: {
+        jobKey: 'overdue_tasks',
+        jobName: 'Nightly Overdue Task Sweeper',
+        success: true,
+        overdueCount: updated.count,
+        message,
+      },
+    }).catch(() => {})
+
     return {
       success: true,
-      message: `Successfully processed ${updated.count} overdue tasks and dispatched alerts.`,
+      message,
       details: { count: updated.count },
     }
   } catch (err: any) {
+    if (session?.user?.id) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'overdue_tasks',
+        afterState: {
+          jobKey: 'overdue_tasks',
+          jobName: 'Nightly Overdue Task Sweeper',
+          success: false,
+          error: err.message || 'Job failed',
+        },
+      }).catch(() => {})
+    }
     return { success: false, message: err.message || 'Job failed' }
   }
 }
 
 export async function runLeaderboardSnapshot(): Promise<JobResult> {
+  let session: Awaited<ReturnType<typeof requireAdminOrHod>> | null = null
   try {
-    await requireAdminOrHod()
+    session = await requireAdminOrHod()
     const now = new Date()
     const currentPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
@@ -80,51 +128,169 @@ export async function runLeaderboardSnapshot(): Promise<JobResult> {
     revalidatePath('/cluster/leaderboard')
     revalidatePath('/faculty/leaderboard')
 
+    const message = `Leaderboard snapshot generated for period ${currentPeriod} (${res.count} faculty records).`
+
+    await writeAudit({
+      actorId: session.user.id,
+      action: 'JOB_MANUALLY_DISPATCHED',
+      entityType: 'SystemJob',
+      entityId: 'leaderboard_snapshot',
+      afterState: {
+        jobKey: 'leaderboard_snapshot',
+        jobName: 'Monthly Leaderboard Snapshot',
+        period: currentPeriod,
+        recordsCreated: res.count,
+        success: true,
+        message,
+      },
+    }).catch(() => {})
+
     return {
       success: true,
-      message: `Leaderboard snapshot generated for period ${currentPeriod} (${res.count} faculty records).`,
+      message,
       details: { count: res.count, period: currentPeriod },
     }
   } catch (err: any) {
+    if (session?.user?.id) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'leaderboard_snapshot',
+        afterState: {
+          jobKey: 'leaderboard_snapshot',
+          jobName: 'Monthly Leaderboard Snapshot',
+          success: false,
+          error: err.message || 'Snapshot generation failed',
+        },
+      }).catch(() => {})
+    }
     return { success: false, message: err.message || 'Snapshot generation failed' }
   }
 }
 
 export async function runMonthlyAwardComputation(month: number, year: number): Promise<JobResult> {
+  let session: Awaited<ReturnType<typeof requireAdminOrHod>> | null = null
   try {
-    await requireAdminOrHod()
+    session = await requireAdminOrHod()
     const res = await computeFacultyOfMonth(month, year)
 
     if (res.error) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'faculty_of_month',
+        afterState: {
+          jobKey: 'faculty_of_month',
+          jobName: 'Faculty of the Month Evaluator',
+          month,
+          year,
+          success: false,
+          error: res.error,
+        },
+      }).catch(() => {})
       return { success: false, message: res.error }
     }
 
     if (res.alreadyComputed && res.award) {
+      const message = `Faculty of the Month for ${month}/${year} was already computed: ${res.award.faculty.name}.`
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'faculty_of_month',
+        afterState: {
+          jobKey: 'faculty_of_month',
+          jobName: 'Faculty of the Month Evaluator',
+          month,
+          year,
+          awardId: res.award.id,
+          facultyId: res.award.facultyId,
+          facultyName: res.award.faculty.name,
+          alreadyComputed: true,
+          success: true,
+          message,
+        },
+      }).catch(() => {})
+
       return {
         success: true,
-        message: `Faculty of the Month for ${month}/${year} was already computed: ${res.award.faculty.name}.`,
+        message,
         details: { awardId: res.award.id, facultyId: res.award.facultyId },
       }
     }
 
     if (res.success && res.award) {
       revalidatePath('/hod/faculty-of-month')
+      const message = `Faculty of the Month awarded to ${res.award.faculty.name}!`
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'faculty_of_month',
+        afterState: {
+          jobKey: 'faculty_of_month',
+          jobName: 'Faculty of the Month Evaluator',
+          month,
+          year,
+          awardId: res.award.id,
+          facultyId: res.award.facultyId,
+          facultyName: res.award.faculty.name,
+          alreadyComputed: false,
+          success: true,
+          message,
+        },
+      }).catch(() => {})
+
       return {
         success: true,
-        message: `Faculty of the Month awarded to ${res.award.faculty.name}!`,
+        message,
         details: { awardId: res.award.id, facultyId: res.award.facultyId },
       }
     }
 
+    await writeAudit({
+      actorId: session.user.id,
+      action: 'JOB_MANUALLY_DISPATCHED',
+      entityType: 'SystemJob',
+      entityId: 'faculty_of_month',
+      afterState: {
+        jobKey: 'faculty_of_month',
+        jobName: 'Faculty of the Month Evaluator',
+        month,
+        year,
+        success: false,
+        error: 'Could not compute award.',
+      },
+    }).catch(() => {})
+
     return { success: false, message: 'Could not compute award.' }
   } catch (err: any) {
+    if (session?.user?.id) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'faculty_of_month',
+        afterState: {
+          jobKey: 'faculty_of_month',
+          jobName: 'Faculty of the Month Evaluator',
+          month,
+          year,
+          success: false,
+          error: err.message || 'Award calculation failed',
+        },
+      }).catch(() => {})
+    }
     return { success: false, message: err.message || 'Award calculation failed' }
   }
 }
 
 export async function runEmailDigestJob(digestType: 'DAILY_TASK_DIGEST' | 'WEEKLY_HOD_SUMMARY'): Promise<JobResult> {
+  let session: Awaited<ReturnType<typeof requireAdminOrHod>> | null = null
   try {
-    const session = await requireAdminOrHod()
+    session = await requireAdminOrHod()
     const activeFaculty = await db.user.findMany({
       where: { deletedAt: null, role: 'FACULTY' },
       select: { id: true, name: true, email: true },
@@ -161,9 +327,28 @@ export async function runEmailDigestJob(digestType: 'DAILY_TASK_DIGEST' | 'WEEKL
         }
       }
 
+      const message = `Daily task email digest dispatched to ${sentCount} faculty members (${tasksDueToday.length} tasks pending).`
+
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'email_digest',
+        afterState: {
+          jobKey: 'email_digest',
+          jobName: 'Weekly Departmental Digest',
+          digestType,
+          sentCount,
+          totalFaculty: activeFaculty.length,
+          tasksDueToday: tasksDueToday.length,
+          success: true,
+          message,
+        },
+      }).catch(() => {})
+
       return {
         success: true,
-        message: `Daily task email digest dispatched to ${sentCount} faculty members (${tasksDueToday.length} tasks pending).`,
+        message,
         details: { sentCount, totalFaculty: activeFaculty.length },
       }
     } else {
@@ -171,20 +356,55 @@ export async function runEmailDigestJob(digestType: 'DAILY_TASK_DIGEST' | 'WEEKL
       const totalTasks = await db.task.count({ where: { deletedAt: null } })
       const completedTasks = await db.task.count({ where: { status: 'COMPLETED', deletedAt: null } })
 
+      const message = `Weekly Department Summary compiled: ${completedTasks}/${totalTasks} tasks completed across ${activeFaculty.length} active faculty members.`
+
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'email_digest',
+        afterState: {
+          jobKey: 'email_digest',
+          jobName: 'Weekly Departmental Digest',
+          digestType,
+          totalTasks,
+          completedTasks,
+          activeFaculty: activeFaculty.length,
+          success: true,
+          message,
+        },
+      }).catch(() => {})
+
       return {
         success: true,
-        message: `Weekly Department Summary compiled: ${completedTasks}/${totalTasks} tasks completed across ${activeFaculty.length} active faculty members.`,
+        message,
         details: { totalTasks, completedTasks, activeFaculty: activeFaculty.length },
       }
     }
   } catch (err: any) {
+    if (session?.user?.id) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'email_digest',
+        afterState: {
+          jobKey: 'email_digest',
+          jobName: 'Weekly Departmental Digest',
+          digestType,
+          success: false,
+          error: err.message || 'Email digest dispatch failed',
+        },
+      }).catch(() => {})
+    }
     return { success: false, message: err.message || 'Email digest dispatch failed' }
   }
 }
 
 export async function runComplianceIntegrityCheck(): Promise<JobResult> {
+  let session: Awaited<ReturnType<typeof requireAdminOrHod>> | null = null
   try {
-    await requireAdminOrHod()
+    session = await requireAdminOrHod()
     const faculty = await db.user.findMany({ where: { deletedAt: null } })
     const publications = await db.publication.findMany({ where: { deletedAt: null } })
 
@@ -210,11 +430,30 @@ export async function runComplianceIntegrityCheck(): Promise<JobResult> {
       issues.push('NBA Cadre Warning: 0 full Professors recorded in department roster.')
     }
 
+    const message = issues.length === 0
+      ? 'All compliance records pass NBA/NAAC SSR integrity verification with 0 warnings.'
+      : `Compliance check completed with ${issues.length} advisory notice(s).`
+
+    await writeAudit({
+      actorId: session.user.id,
+      action: 'JOB_MANUALLY_DISPATCHED',
+      entityType: 'SystemJob',
+      entityId: 'compliance_check',
+      afterState: {
+        jobKey: 'compliance_check',
+        jobName: 'NBA / NAAC Compliance Validator',
+        healthy: issues.length === 0,
+        issues,
+        facultyCount: faculty.length,
+        publicationCount: publications.length,
+        success: true,
+        message,
+      },
+    }).catch(() => {})
+
     return {
       success: true,
-      message: issues.length === 0
-        ? 'All compliance records pass NBA/NAAC SSR integrity verification with 0 warnings.'
-        : `Compliance check completed with ${issues.length} advisory notice(s).`,
+      message,
       details: {
         healthy: issues.length === 0,
         issues,
@@ -223,7 +462,20 @@ export async function runComplianceIntegrityCheck(): Promise<JobResult> {
       },
     }
   } catch (err: any) {
+    if (session?.user?.id) {
+      await writeAudit({
+        actorId: session.user.id,
+        action: 'JOB_MANUALLY_DISPATCHED',
+        entityType: 'SystemJob',
+        entityId: 'compliance_check',
+        afterState: {
+          jobKey: 'compliance_check',
+          jobName: 'NBA / NAAC Compliance Validator',
+          success: false,
+          error: err.message || 'Compliance check failed',
+        },
+      }).catch(() => {})
+    }
     return { success: false, message: err.message || 'Compliance check failed' }
   }
 }
-
