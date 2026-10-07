@@ -100,7 +100,7 @@ export function BadgesClient({ badges }: BadgesClientProps) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))",
           gap: 20,
         }}
       >
@@ -505,7 +505,7 @@ export function BadgesClient({ badges }: BadgesClientProps) {
                       fontFamily: "var(--font-mono)",
                     }}
                   >
-                    <Clock size={12} color="#98A2B3" />
+                    <Clock size={12} color="#667085" />
                     <span>{formatDate(ub.awardedAt)}</span>
                   </div>
                 </div>

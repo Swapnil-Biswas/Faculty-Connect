@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, X, FolderGit2, AlertCircle, CheckCircle2, UserCheck } from "lucide-react";
 import { createCluster, updateCluster, deleteCluster } from "@/actions/clusters";
+import { getRoleLabel } from "@/lib/utils";
+import { Role } from "@prisma/client";
 
 interface ClusterItem {
   id: string;
@@ -29,11 +32,37 @@ interface Props {
 }
 
 export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) {
+  const router = useRouter();
   const [clusters, setClusters] = useState(initialClusters);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCluster, setEditingCluster] = useState<ClusterItem | null>(null);
+  const [deletingCluster, setDeletingCluster] = useState<{ id: string; name: string } | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setClusters(initialClusters);
+  }, [initialClusters]);
+
+  useEffect(() => {
+    const isModalOpen = showCreateModal || !!editingCluster || !!deletingCluster;
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setShowCreateModal(false);
+          setEditingCluster(null);
+          setDeletingCluster(null);
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [showCreateModal, editingCluster, deletingCluster]);
 
   const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +76,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
         setErrorMessage(res.error || "Failed to create cluster");
       } else {
         setShowCreateModal(false);
-        window.location.reload();
+        router.refresh();
       }
     });
   };
@@ -64,21 +93,29 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
         setErrorMessage(res.error || "Failed to update cluster");
       } else {
         setEditingCluster(null);
-        window.location.reload();
+        router.refresh();
       }
     });
   };
 
-  const handleDelete = (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete the "${name}" cluster?`)) return;
-    setErrorMessage("");
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteError(null);
+    setDeletingCluster({ id, name });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deletingCluster) return;
+    setDeleteError(null);
+    const id = deletingCluster.id;
 
     startTransition(async () => {
       const res = await deleteCluster(id);
       if (!res.success) {
-        alert(res.error || "Failed to delete cluster");
+        setDeleteError(res.error || "Failed to delete cluster");
       } else {
         setClusters((prev) => prev.filter((c) => c.id !== id));
+        setDeletingCluster(null);
+        router.refresh();
       }
     });
   };
@@ -157,7 +194,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
             color: "#667085",
           }}
         >
-          <FolderGit2 size={36} style={{ color: "#98A2B3", margin: "0 auto 12px" }} />
+          <FolderGit2 size={36} style={{ color: "#667085", margin: "0 auto 12px" }} />
           <div style={{ fontSize: 15, fontWeight: 700, color: "#17202A" }}>
             No Academic Clusters Created
           </div>
@@ -184,7 +221,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))",
             gap: 20,
           }}
         >
@@ -244,7 +281,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                         <div
                           style={{
                             fontSize: 11,
-                            color: "#98A2B3",
+                            color: "#667085",
                             fontFamily: "var(--font-mono)",
                             marginTop: 2,
                           }}
@@ -269,11 +306,12 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                           cursor: "pointer",
                         }}
                         title="Edit cluster"
+                        aria-label={`Edit ${cluster.name}`}
                       >
                         <Pencil size={15} />
                       </button>
                       <button
-                        onClick={() => handleDelete(cluster.id, cluster.name)}
+                        onClick={() => handleDeleteClick(cluster.id, cluster.name)}
                         style={{
                           backgroundColor: "transparent",
                           border: "none",
@@ -283,6 +321,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                           cursor: "pointer",
                         }}
                         title="Delete cluster"
+                        aria-label={`Delete ${cluster.name}`}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -389,7 +428,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                     paddingTop: 12,
                     borderTop: "1px solid #F2F4F7",
                     fontSize: 11.5,
-                    color: "#98A2B3",
+                    color: "#667085",
                     display: "flex",
                     justifyContent: "space-between",
                   }}
@@ -406,6 +445,14 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
       {/* Create Modal */}
       {showCreateModal && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-cluster-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isPending) {
+              setShowCreateModal(false);
+            }
+          }}
           style={{
             position: "fixed",
             inset: 0,
@@ -440,11 +487,12 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                 borderBottom: "1px solid #F2F4F7",
               }}
             >
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#17202A", margin: 0 }}>
+              <h2 id="create-cluster-title" style={{ fontSize: 17, fontWeight: 700, color: "#17202A", margin: 0 }}>
                 Create Academic Cluster
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
+                aria-label="Close dialog"
                 style={{
                   backgroundColor: "transparent",
                   border: "none",
@@ -479,7 +527,6 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
             )}
 
             <form onSubmit={handleCreateSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {/* Fix label overlap: clean vertical flow */}
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <label style={modalLabelStyle} htmlFor="name">
                   Cluster Name <span style={{ color: "#C0392B" }}>*</span>
@@ -519,7 +566,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                   <option value="none">-- Unassigned (Select later) --</option>
                   {eligibleHeads.map((h) => (
                     <option key={h.id} value={h.id}>
-                      {h.name} ({h.email}) [{h.role.replace("_", " ")}]
+                      {h.name} ({h.email}) [{getRoleLabel(h.role as Role)}]
                     </option>
                   ))}
                 </select>
@@ -576,6 +623,14 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
       {/* Edit Modal */}
       {editingCluster && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-cluster-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isPending) {
+              setEditingCluster(null);
+            }
+          }}
           style={{
             position: "fixed",
             inset: 0,
@@ -610,11 +665,12 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                 borderBottom: "1px solid #F2F4F7",
               }}
             >
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#17202A", margin: 0 }}>
+              <h2 id="edit-cluster-title" style={{ fontSize: 17, fontWeight: 700, color: "#17202A", margin: 0 }}>
                 Edit Cluster: {editingCluster.name}
               </h2>
               <button
                 onClick={() => setEditingCluster(null)}
+                aria-label="Close dialog"
                 style={{
                   backgroundColor: "transparent",
                   border: "none",
@@ -690,7 +746,7 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                   <option value="none">-- Unassigned (No Cluster Head) --</option>
                   {eligibleHeads.map((h) => (
                     <option key={h.id} value={h.id}>
-                      {h.name} ({h.email}) [{h.role.replace("_", " ")}]
+                      {h.name} ({h.email}) [{getRoleLabel(h.role as Role)}]
                     </option>
                   ))}
                 </select>
@@ -740,6 +796,130 @@ export function ClusterManagerClient({ initialClusters, eligibleHeads }: Props) 
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {deletingCluster && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-cluster-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isPending) {
+              setDeletingCluster(null);
+              setDeleteError(null);
+            }
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(16, 24, 40, 0.45)",
+            backdropFilter: "blur(4px)",
+            zIndex: 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E4E7EC",
+              borderRadius: 12,
+              maxWidth: 440,
+              width: "100%",
+              padding: 24,
+              boxShadow: "0 20px 40px -15px rgba(16, 24, 40, 0.15)",
+              animation: "fadeIn 0.15s ease",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  backgroundColor: "rgba(192, 57, 43, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#C0392B",
+                  flexShrink: 0,
+                }}
+              >
+                <Trash2 size={18} />
+              </div>
+              <h2 id="delete-cluster-title" style={{ fontSize: 16, fontWeight: 700, color: "#17202A", margin: 0 }}>
+                Delete Academic Cluster
+              </h2>
+            </div>
+
+            <p style={{ fontSize: 13, color: "#667085", lineHeight: 1.5, margin: "0 0 16px" }}>
+              Are you sure you want to delete <strong>{deletingCluster.name}</strong>? Faculty memberships and cluster tasks will be unlinked or archived. This action cannot be undone.
+            </p>
+
+            {deleteError && (
+              <div
+                style={{
+                  backgroundColor: "rgba(192, 57, 43, 0.08)",
+                  border: "1px solid rgba(192, 57, 43, 0.25)",
+                  color: "#C0392B",
+                  padding: "8px 12px",
+                  borderRadius: 6,
+                  fontSize: 12.5,
+                  marginBottom: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                <span>{deleteError}</span>
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => {
+                  setDeletingCluster(null);
+                  setDeleteError(null);
+                }}
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E4E7EC",
+                  borderRadius: 6,
+                  padding: "8px 16px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#667085",
+                  cursor: isPending ? "not-allowed" : "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={handleDeleteConfirm}
+                style={{
+                  backgroundColor: "#C0392B",
+                  border: "none",
+                  borderRadius: 6,
+                  padding: "8px 18px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#FFFFFF",
+                  cursor: isPending ? "not-allowed" : "pointer",
+                }}
+              >
+                {isPending ? "Deleting…" : "Delete Cluster"}
+              </button>
+            </div>
           </div>
         </div>
       )}

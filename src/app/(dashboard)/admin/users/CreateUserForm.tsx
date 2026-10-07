@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createUser } from '@/actions/admin'
 import { SubmitButton } from '@/components/ui/SubmitButton'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
@@ -10,7 +11,29 @@ interface ClusterOption {
   name: string
 }
 
-export function CreateUserForm({ clusters: _clusters }: { clusters: ClusterOption[] }) {
+export function CreateUserForm({ clusters }: { clusters: ClusterOption[] }) {
+  const [resetKey, setResetKey] = useState(0)
+  const router = useRouter()
+
+  return (
+    <CreateUserFormInner
+      key={resetKey}
+      clusters={clusters}
+      onReset={() => {
+        setResetKey((k) => k + 1)
+        router.refresh()
+      }}
+    />
+  )
+}
+
+function CreateUserFormInner({
+  clusters: _clusters,
+  onReset,
+}: {
+  clusters: ClusterOption[]
+  onReset: () => void
+}) {
   const [state, formAction] = useActionState(createUser, { success: false })
 
   if (state.success) {
@@ -38,7 +61,8 @@ export function CreateUserForm({ clusters: _clusters }: { clusters: ClusterOptio
           </div>
         </div>
         <button
-          onClick={() => window.location.reload()}
+          type="button"
+          onClick={onReset}
           style={{
             marginTop: 8,
             fontSize: 12.5,
@@ -157,8 +181,8 @@ export function CreateUserForm({ clusters: _clusters }: { clusters: ClusterOptio
           >
             <option value="FACULTY">Faculty</option>
             <option value="CLUSTER_HEAD">Cluster Head</option>
-            <option value="HOD">Head of Department (HOD)</option>
-            <option value="ADMIN">System Administrator</option>
+            <option value="HOD">Head of Department</option>
+            <option value="ADMIN">Administrator</option>
           </select>
         </div>
 

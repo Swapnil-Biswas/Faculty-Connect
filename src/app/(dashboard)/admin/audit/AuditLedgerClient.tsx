@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -270,6 +270,21 @@ export function AuditLedgerClient({
   const [actorSearch, setActorSearch] = useState(currentFilters.actor || "");
   const [inspectingLog, setInspectingLog] = useState<SerializedAuditLog | null>(null);
   const [exported, setExported] = useState(false);
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (inspectingLog) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setInspectingLog(null);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [inspectingLog]);
 
   const handleApplyFilters = (e: React.FormEvent) => {
     e.preventDefault();
@@ -290,7 +305,8 @@ export function AuditLedgerClient({
 
   const handleExportCSV = () => {
     if (logs.length === 0) {
-      alert("No audit logs available to export.");
+      setExportNotice("No audit ledger entries available to export.");
+      setTimeout(() => setExportNotice(null), 3000);
       return;
     }
 
@@ -623,7 +639,7 @@ export function AuditLedgerClient({
         >
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "#17202A" }}>
-              Security Audit Trail
+              Security Audit Ledger
             </h2>
             <p style={{ fontSize: 13, color: "#667085", margin: "3px 0 0 0" }}>
               Immutable transaction timeline showing {total.toLocaleString()} total indexed events.
@@ -631,6 +647,11 @@ export function AuditLedgerClient({
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {exportNotice && (
+              <span style={{ fontSize: 12, color: "#C0392B", fontWeight: 500 }}>
+                {exportNotice}
+              </span>
+            )}
             <button
               type="button"
               onClick={handleExportCSV}
@@ -1012,6 +1033,9 @@ export function AuditLedgerClient({
       {/* 3. State Diff Inspector Modal / Drawer */}
       {inspectingLog && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="state-delta-inspector-title"
           style={{
             position: "fixed",
             top: 0,
@@ -1073,7 +1097,7 @@ export function AuditLedgerClient({
                     {new Date(inspectingLog.timestamp).toLocaleTimeString()}
                   </span>
                 </div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "#17202A" }}>
+                <h3 id="state-delta-inspector-title" style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "#17202A" }}>
                   State Transition Payload Inspector
                 </h3>
                 <p style={{ fontSize: 12.5, color: "#667085", margin: "2px 0 0" }}>
@@ -1085,6 +1109,7 @@ export function AuditLedgerClient({
               <button
                 type="button"
                 onClick={() => setInspectingLog(null)}
+                aria-label="Close inspector"
                 style={{
                   backgroundColor: "#F2F4F7",
                   border: "none",
