@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { ScoringConfigForm } from "@/app/(dashboard)/hod/scoring/ScoringConfigForm";
+import { ScoringConfigForm } from "@/components/scoring/ScoringConfigForm";
 import { formatDate } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricBlock } from "@/components/ui/MetricBlock";
@@ -50,17 +50,14 @@ export default async function AdminScoringPage() {
   return (
     <div
       style={{
-        padding: "28px 32px",
         display: "flex",
         flexDirection: "column",
         gap: 24,
-        backgroundColor: "#F7F8FA",
-        minHeight: "100%",
       }}
     >
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/admin" },
+          { label: "Admin Console", href: "/admin" },
           { label: "Scoring Configuration" },
         ]}
         title="Scoring Configuration"
@@ -99,7 +96,7 @@ export default async function AdminScoringPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
           gap: 16,
         }}
       >
@@ -284,7 +281,7 @@ export default async function AdminScoringPage() {
                       style={{
                         marginLeft: 8,
                         fontSize: 11,
-                        color: "#98A2B3",
+                        color: "#667085",
                         fontFamily: "var(--font-mono)",
                         fontWeight: 400,
                       }}
