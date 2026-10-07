@@ -198,7 +198,7 @@ export function JobsClient({ initialLastRuns }: JobsClientProps) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))",
           gap: 20,
         }}
       >
@@ -471,7 +471,7 @@ export function JobsClient({ initialLastRuns }: JobsClientProps) {
                 margin: "4px 0 0 0",
               }}
             >
-              Live chronological stream of manually dispatched routines in the current browser session. Durable records are persisted to the Security Audit Log.
+              Live chronological stream of manually dispatched routines in the current browser session. Durable records are persisted to the Security Audit Ledger.
             </p>
           </div>
 

@@ -51,12 +51,9 @@ export default async function AdminUsersPage({
   return (
     <div
       style={{
-        padding: '28px 32px',
         display: 'flex',
         flexDirection: 'column',
         gap: 24,
-        backgroundColor: '#F7F8FA',
-        minHeight: '100%',
       }}
     >
       <PageHeader
@@ -66,6 +63,7 @@ export default async function AdminUsersPage({
         ]}
         title="User Directory"
         subtitle="Provision institutional accounts, manage administrative roles, and allocate cluster memberships."
+        showDotMatrix={false}
         actions={
           <div
             style={{
@@ -90,7 +88,7 @@ export default async function AdminUsersPage({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))',
           alignItems: 'start',
           gap: 24,
         }}
@@ -167,10 +165,10 @@ export default async function AdminUsersPage({
           >
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#17202A' }}>
-                Enrolled Directory
+                User Directory
               </h2>
               <p style={{ margin: '2px 0 0', fontSize: 12.5, color: '#667085' }}>
-                Search, inspect, and configure accounts across institutional roles.
+                Enrolled Personnel & Accounts
               </p>
             </div>
           </div>
@@ -199,6 +197,7 @@ export default async function AdminUsersPage({
               <input
                 name="q"
                 type="text"
+                aria-label="Search directory by name or email"
                 placeholder="Search by name or email…"
                 defaultValue={query ?? ''}
                 style={{
@@ -218,6 +217,7 @@ export default async function AdminUsersPage({
             </div>
             <select
               name="role"
+              aria-label="Filter by institutional role"
               defaultValue={roleFilter ?? ''}
               style={{
                 width: 'auto',
@@ -356,7 +356,7 @@ export default async function AdminUsersPage({
                         <td style={{ padding: '12px' }}>
                           <RoleBadge role={u.role} />
                         </td>
-                        <td style={{ padding: '12px', fontSize: 12.5, color: clusterName ? '#17202A' : '#98A2B3' }}>
+                        <td style={{ padding: '12px', fontSize: 12.5, color: clusterName ? '#17202A' : '#667085' }}>
                           {clusterName ? (
                             <span style={{ fontWeight: 500 }}>{clusterName}</span>
                           ) : (

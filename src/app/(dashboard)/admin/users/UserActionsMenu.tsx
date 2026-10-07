@@ -5,6 +5,7 @@ import { updateUserRole, assignUserToCluster, softDeleteUser } from '@/actions/a
 import { SubmitButton } from '@/components/ui/SubmitButton'
 import { useRouter } from 'next/navigation'
 import { Role } from '@prisma/client'
+import { getRoleLabel } from '@/lib/utils'
 import { MoreVertical, Pencil, Trash2, Users, AlertTriangle } from 'lucide-react'
 
 interface Props {
@@ -22,6 +23,8 @@ export function UserActionsMenu({ userId, currentRole, clusters }: Props) {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="User actions"
+        aria-expanded={open}
+        aria-haspopup="true"
         style={{
           background: 'none',
           border: 'none',
@@ -48,6 +51,8 @@ export function UserActionsMenu({ userId, currentRole, clusters }: Props) {
             onClick={() => { setOpen(false); setMode(null) }}
           />
           <div
+            role="menu"
+            aria-label="User actions menu"
             style={{
               position: 'absolute',
               right: 0,
@@ -58,6 +63,7 @@ export function UserActionsMenu({ userId, currentRole, clusters }: Props) {
               borderRadius: 8,
               boxShadow: '0 10px 25px -5px rgba(16, 24, 40, 0.1), 0 8px 10px -6px rgba(16, 24, 40, 0.05)',
               minWidth: mode ? 240 : 180,
+              maxWidth: 'min(90vw, 260px)',
               padding: 6,
             }}
           >
@@ -183,11 +189,13 @@ function ChangeRoleForm({
   return (
     <form action={formAction} style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <input type="hidden" name="userId" value={userId} />
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
+      <label htmlFor={`role-select-${userId}`} style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
         Change Institutional Role
-      </div>
+      </label>
       <select
+        id={`role-select-${userId}`}
         name="role"
+        aria-label="Institutional Role"
         defaultValue={currentRole}
         style={{
           width: '100%',
@@ -201,7 +209,7 @@ function ChangeRoleForm({
         }}
       >
         {(['FACULTY', 'CLUSTER_HEAD', 'HOD', 'ADMIN'] as Role[]).map((r) => (
-          <option key={r} value={r}>{r.replace('_', ' ')}</option>
+          <option key={r} value={r}>{getRoleLabel(r)}</option>
         ))}
       </select>
       {state.error && <span style={{ fontSize: 11.5, color: '#C0392B' }}>{state.error}</span>}
@@ -256,11 +264,13 @@ function AssignClusterForm({
   return (
     <form action={formAction} style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <input type="hidden" name="userId" value={userId} />
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
+      <label htmlFor={`cluster-select-${userId}`} style={{ fontSize: 12.5, fontWeight: 600, color: '#17202A' }}>
         Assign Academic Cluster
-      </div>
+      </label>
       <select
+        id={`cluster-select-${userId}`}
         name="clusterId"
+        aria-label="Academic Cluster"
         defaultValue=""
         style={{
           width: '100%',
