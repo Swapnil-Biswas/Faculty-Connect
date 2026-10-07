@@ -72,6 +72,7 @@ export async function createUser(
   })
 
   revalidatePath('/admin/users')
+  revalidatePath('/admin')
   return { success: true }
 }
 
@@ -128,6 +129,7 @@ export async function updateUserRole(
   })
 
   revalidatePath('/admin/users')
+  revalidatePath('/admin')
   return { success: true }
 }
 
@@ -159,6 +161,7 @@ export async function softDeleteUser(userId: string): Promise<ActionState> {
   })
 
   revalidatePath('/admin/users')
+  revalidatePath('/admin')
   return { success: true }
 }
 
@@ -206,5 +209,6 @@ export async function assignUserToCluster(
   })
 
   revalidatePath('/admin/users')
+  revalidatePath('/admin')
   return { success: true }
 }

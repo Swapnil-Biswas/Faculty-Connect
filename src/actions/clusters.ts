@@ -78,6 +78,7 @@ export async function createCluster(
 
     revalidatePath('/admin/clusters')
     revalidatePath('/hod/clusters')
+    revalidatePath('/admin')
     return { success: true }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to create cluster' }
@@ -142,6 +143,7 @@ export async function updateCluster(
 
     revalidatePath('/admin/clusters')
     revalidatePath('/hod/clusters')
+    revalidatePath('/admin')
     return { success: true }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to update cluster' }
@@ -179,6 +181,7 @@ export async function deleteCluster(clusterId: string): Promise<ActionState> {
 
     revalidatePath('/admin/clusters')
     revalidatePath('/hod/clusters')
+    revalidatePath('/admin')
     return { success: true }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to delete cluster' }
