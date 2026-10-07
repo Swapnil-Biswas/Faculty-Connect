@@ -144,17 +144,14 @@ export default async function AdminJobsPage() {
   return (
     <div
       style={{
-        padding: "28px 32px",
         display: "flex",
         flexDirection: "column",
         gap: 24,
-        backgroundColor: "#F7F8FA",
-        minHeight: "100%",
       }}
     >
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/admin" },
+          { label: "Admin Console", href: "/admin" },
           { label: "Automation Jobs" },
         ]}
         title="Automation Jobs"
@@ -185,7 +182,7 @@ export default async function AdminJobsPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
           gap: 16,
         }}
       >

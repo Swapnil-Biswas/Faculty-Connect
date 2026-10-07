@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getRoleLabel(role: Role): string {
   const labels: Record<Role, string> = {
-    ADMIN: "Admin",
+    ADMIN: "Administrator",
     HOD: "Head of Department",
     CLUSTER_HEAD: "Cluster Head",
     FACULTY: "Faculty",

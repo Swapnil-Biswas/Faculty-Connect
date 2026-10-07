@@ -3027,7 +3027,7 @@ a {
   flex-direction: column;
   min-height: 100dvh;
   overflow-x: hidden;
-  background-color: var(--off-white);
+  background-color: #F7F8FA;
 }
 
 @media (max-width: 900px) {

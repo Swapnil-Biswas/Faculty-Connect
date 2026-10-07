@@ -47,21 +47,19 @@ export default async function AdminClustersPage() {
   return (
     <div
       style={{
-        padding: "28px 32px",
         display: "flex",
         flexDirection: "column",
         gap: 24,
-        backgroundColor: "#F7F8FA",
-        minHeight: "100%",
       }}
     >
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/admin" },
+          { label: "Admin Console", href: "/admin" },
           { label: "Academic Clusters" },
         ]}
         title="Academic Clusters"
         subtitle="Configure departmental cluster topology, assign academic leadership, and monitor operational progress."
+        showDotMatrix={false}
       />
 
       <ClusterManagerClient

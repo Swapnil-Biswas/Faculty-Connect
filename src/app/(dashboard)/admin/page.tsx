@@ -89,21 +89,19 @@ export default async function AdminDashboard() {
   return (
     <div
       style={{
-        padding: "28px 32px",
         display: "flex",
         flexDirection: "column",
         gap: 24,
-        backgroundColor: "#F7F8FA",
-        minHeight: "100%",
       }}
     >
       <PageHeader
         breadcrumbs={[
-          { label: "Dashboard", href: "/admin" },
+          { label: "Admin Console" },
           { label: "System Overview" },
         ]}
         title="System Overview"
         subtitle="Institutional identity directory, academic cluster topology, operational engines, and security audit ledger."
+        showDotMatrix={false}
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Link
@@ -180,7 +178,7 @@ export default async function AdminDashboard() {
           icon={<Shield size={18} />}
         />
         <MetricBlock
-          label="Scoring Engine"
+          label="Performance Scoring Engine"
           value={scoringConfig ? `v${scoringConfig.version}` : "Active"}
           context="Heuristic calibration rules"
           trendType="positive"
@@ -341,7 +339,7 @@ export default async function AdminDashboard() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
               gap: 16,
             }}
           >
@@ -414,7 +412,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Split Grid: Recent Users & Recent Audit Events */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", gap: 24 }}>
         {/* Recently Enrolled Users */}
         <div
           style={{
@@ -627,14 +625,14 @@ export default async function AdminDashboard() {
                   <div
                     style={{
                       fontSize: 11,
-                      color: "#98A2B3",
+                      color: "#667085",
                       display: "flex",
                       alignItems: "center",
                       gap: 4,
                       flexShrink: 0,
                     }}
                   >
-                    <Clock size={11} />
+                    <Clock size={11} color="#667085" />
                     {formatDate(log.timestamp)}
                   </div>
                 </div>
@@ -666,7 +664,7 @@ export default async function AdminDashboard() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
             gap: 14,
           }}
         >
