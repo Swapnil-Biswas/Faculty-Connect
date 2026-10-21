@@ -1,161 +1,76 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
-import RevealOnScroll from "@/components/ui/RevealOnScroll";
-import GlyphDivider from "@/components/ui/GlyphDivider";
-
-// 18x6 interactive dot grid that reacts to mouse
-function JoinGlyphGrid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    let w = 0, h = 0;
-    let animId = 0;
-
-    const COLS = 18;
-    const ROWS = 6;
-    const dots: { x: number; y: number; phase: number }[] = [];
-
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        dots.push({ x: 0, y: 0, phase: Math.random() * Math.PI * 2 });
-      }
-    }
-
-    const mouse = { x: -1000, y: -1000, active: false };
-    const handleMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-      mouse.active = true;
-    };
-    const handleLeave = () => { mouse.active = false; };
-    const handleResize = () => resize();
-
-    function resize() {
-      const parent = canvas!.parentElement;
-      if (!parent) return;
-      w = parent.clientWidth;
-      h = parent.clientHeight;
-      canvas!.width = w * dpr;
-      canvas!.height = h * dpr;
-      canvas!.style.width = `${w}px`;
-      canvas!.style.height = `${h}px`;
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const cellW = w / COLS;
-      const cellH = h / ROWS;
-      let i = 0;
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          dots[i].x = c * cellW + cellW / 2;
-          dots[i].y = r * cellH + cellH / 2;
-          i++;
-        }
-      }
-    }
-
-    canvas.addEventListener("mousemove", handleMove);
-    canvas.addEventListener("mouseleave", handleLeave);
-    window.addEventListener("resize", handleResize);
-    resize();
-
-    const start = performance.now();
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      const t = (performance.now() - start) / 1000;
-      for (const d of dots) {
-        let radius = 2.2;
-        let opacity = 0.08;
-        const wave = Math.sin(t * 1.2 + d.x * 0.02 + d.phase) * 0.5 + 0.5;
-        opacity = 0.06 + wave * 0.18;
-        radius = 1.6 + wave * 1.6;
-        if (mouse.active) {
-          const dx = d.x - mouse.x;
-          const dy = d.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 110) {
-            const force = 1 - dist / 110;
-            radius += force * 4;
-            opacity = Math.min(0.9, opacity + force * 0.7);
-          }
-        }
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(29, 29, 31, ${opacity})`;
-        ctx.fill();
-      }
-      animId = requestAnimationFrame(draw);
-    };
-    animId = requestAnimationFrame(draw);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      canvas.removeEventListener("mousemove", handleMove);
-      canvas.removeEventListener("mouseleave", handleLeave);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  return (
-    <div style={{ width: "100%", height: 110, position: "relative" }}>
-      <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} aria-hidden="true" />
-    </div>
-  );
-}
+import { ArrowRight, ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
 
 export default function JoinUs() {
   return (
-    <section className="join" id="portal-access">
-      <div className="join-inner">
-        <RevealOnScroll className="join-header">
-          <span className="section-eyebrow">// 07 — Enterprise Access</span>
-          <h2 className="section-heading">
-            Authenticate to
-            <br />
-            <span className="join-heading-ghost">your portal.</span>
-          </h2>
-          <p className="section-body join-sub">
-            Single sign-on active for BMSIT faculty, cluster heads, departmental evaluators, and academic administrators.
-          </p>
-        </RevealOnScroll>
+    <section
+      id="portal-access"
+      className="bg-[#F0C020] border-b-4 border-[#121212] py-16 sm:py-24 lg:py-28 relative overflow-hidden text-[#121212]"
+    >
+      {/* Subtle Bauhaus decorative geometric corner accents (contained and responsive) */}
+      <div
+        className="absolute top-6 left-6 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#D02020] opacity-25 border-4 border-[#121212] pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute bottom-6 right-6 w-24 h-24 sm:w-32 sm:h-32 bg-[#1040C0] opacity-25 border-4 border-[#121212] rotate-12 pointer-events-none"
+        aria-hidden="true"
+      />
 
-        <RevealOnScroll delay={80}>
-          <div className="card" style={{ maxWidth: 640, margin: "0 auto", padding: "32px 36px", textAlign: "center" }}>
-            <JoinGlyphGrid />
-            <div style={{ marginTop: 24 }}>
-              <span className="hero-status-led" style={{ display: "inline-block", marginRight: 8 }} />
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: "0.08em", color: "var(--grey-600)" }}>
-                FACULTY AUTH SERVICE · VTU SECURE ENCLAVE
-              </span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="bg-white border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] p-8 sm:p-12 lg:p-14 flex flex-col items-center text-center">
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2 bg-[#121212] text-white px-3.5 py-1.5 text-xs font-black tracking-widest uppercase mb-6 shadow-[2px_2px_0px_0px_#121212]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#D02020]" />
+            <span>ENTERPRISE IDENTITY FEDERATION // SSO</span>
+          </div>
+
+          {/* Heading with generous line-height to prevent text collision */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#121212] leading-[1.12] mb-5">
+            READY TO MANAGE YOUR
+            <br />
+            <span className="text-[#D02020]">ACADEMIC PORTFOLIO?</span>
+          </h2>
+
+          {/* Subheading with relaxed line-height */}
+          <p className="text-sm sm:text-base lg:text-lg font-medium text-[#424245] leading-relaxed max-w-2xl mx-auto mb-8">
+            Submit teaching loads, journal publications, and consultancy records with real-time automated validation and merit index computation.
+          </p>
+
+          {/* Action button container with generous vertical breathing room */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center gap-3 bg-[#D02020] text-white border-3 sm:border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-[#D02020]/90 px-8 sm:px-10 py-4 text-sm sm:text-base font-black tracking-wider uppercase transition-all duration-150"
+            >
+              <span>SIGN IN WITH INSTITUTIONAL SSO</span>
+              <ArrowRight className="w-5 h-5" strokeWidth={3} />
+            </Link>
+          </div>
+
+          {/* Bottom security strip with border and clean spacing */}
+          <div className="w-full pt-6 border-t-2 border-[#121212] flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs font-bold uppercase tracking-wider text-[#121212]">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#1040C0]" strokeWidth={2.5} />
+              <span>VTU ENCLAVE AUTH</span>
             </div>
-            <h3 style={{ fontSize: 22, fontWeight: 700, marginTop: 12, color: "var(--foreground)" }}>
-              Ready to manage your academic portfolio?
-            </h3>
-            <p style={{ color: "var(--grey-600)", fontSize: 14, lineHeight: 1.6, maxWidth: 480, margin: "10px auto 24px" }}>
-              Submit teaching loads, journal publications, and consultancy records with live automated validation and merit index computation.
-            </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: 14 }}>
-              <Link href="/login" className="btn-primary" style={{ padding: "12px 28px" }}>
-                SIGN IN WITH INSTITUTIONAL SSO
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}>
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </Link>
+            <span className="text-[#121212]/30 font-black">·</span>
+            <div className="flex items-center gap-2">
+              <Lock className="w-3.5 h-3.5 text-[#D02020]" strokeWidth={2.5} />
+              <span>256-BIT ENCRYPTION</span>
+            </div>
+            <span className="text-[#121212]/30 font-black">·</span>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#16A34A]" strokeWidth={2.5} />
+              <span>AUDITED MERIT ENGINE</span>
             </div>
           </div>
-        </RevealOnScroll>
-
-        <GlyphDivider variant="compact" />
+        </div>
       </div>
     </section>
   );
 }
+
 export { JoinUs };

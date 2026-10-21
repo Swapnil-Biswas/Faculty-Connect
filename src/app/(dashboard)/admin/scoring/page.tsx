@@ -61,7 +61,7 @@ export default async function AdminScoringPage() {
           { label: "Scoring Configuration" },
         ]}
         title="Scoring Configuration"
-        subtitle="Configure the relative weight distribution of performance dimensions governing departmental scoring. All modifications are versioned and audited."
+        subtitle="Configure the relative weight distribution of performance dimensions governing departmental scoring. All modifications are recorded and audited."
         showDotMatrix={false}
         actions={
           <div
@@ -87,7 +87,7 @@ export default async function AdminScoringPage() {
                 display: "inline-block",
               }}
             />
-            <span>Engine Active · v{activeConfig?.version ?? 1}</span>
+            <span>Scoring Engine Active</span>
           </div>
         }
       />
@@ -101,9 +101,9 @@ export default async function AdminScoringPage() {
         }}
       >
         <MetricBlock
-          label="Active Engine Version"
-          value={activeConfig ? `v${activeConfig.version}` : "v1"}
-          context="Active institutional calibration"
+          label="Scoring Calibration"
+          value={activeConfig ? "Active" : "Standard"}
+          context="Institutional rubric calibrated"
           trendType="positive"
           icon={<Settings size={18} />}
         />
@@ -122,9 +122,9 @@ export default async function AdminScoringPage() {
           icon={<Sliders size={18} />}
         />
         <MetricBlock
-          label="Configuration Revisions"
+          label="Calibrated Profiles"
           value={totalRevisions}
-          context="Audited heuristic versions"
+          context="Audited heuristic records"
           trendType="neutral"
           icon={<History size={18} />}
         />
@@ -161,14 +161,14 @@ export default async function AdminScoringPage() {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#17202A", marginBottom: 4 }}>
-            Institutional Governance & Versioning Protocol
+            Institutional Governance & Calibration Protocol
           </div>
           <p style={{ fontSize: 13, color: "#667085", lineHeight: 1.5, margin: "0 0 10px 0" }}>
-            Departmental scoring operates under immutable versioned heuristics. Points accrued by faculty remain permanently anchored to the configuration version active when deliverables and evaluations were completed. Saving modifications increments the global version number and takes effect immediately for future scoring without altering historical records.
+            Departmental scoring operates under immutable calibration heuristics. Points accrued by faculty remain permanently anchored to the configuration active when deliverables and evaluations were completed. Saving modifications takes effect immediately for future scoring without altering historical records.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", fontSize: 12, color: "#667085" }}>
             <span>
-              Active Version: <strong style={{ color: "#17202A" }}>#{activeConfig?.version ?? 1}</strong>
+              Active Profile: <strong style={{ color: "#17202A" }}>#{activeConfig ? activeConfig.id.slice(-6).toUpperCase() : "STANDARD"}</strong>
             </span>
             <span>·</span>
             <span>
@@ -233,7 +233,7 @@ export default async function AdminScoringPage() {
             Configuration Audit History
           </h2>
           <p style={{ fontSize: 13, color: "#667085", margin: "4px 0 0 0" }}>
-            Chronological record of calibrated heuristic versions and privileged updates.
+            Chronological record of calibrated heuristic revisions and privileged updates.
           </p>
         </div>
 
@@ -276,18 +276,7 @@ export default async function AdminScoringPage() {
                   }}
                 >
                   <td style={{ padding: "14px 20px", fontWeight: 700, color: "#17202A" }}>
-                    Version #{cfg.version}
-                    <span
-                      style={{
-                        marginLeft: 8,
-                        fontSize: 11,
-                        color: "#667085",
-                        fontFamily: "var(--font-mono)",
-                        fontWeight: 400,
-                      }}
-                    >
-                      ({cfg.id.slice(-6)})
-                    </span>
+                    Profile #{cfg.id.slice(-6).toUpperCase()}
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     <span

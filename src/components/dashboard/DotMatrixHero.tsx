@@ -1,8 +1,6 @@
 "use client";
 
 import React from "react";
-import { DotMatrixCanvas } from "@/components/ui/DotMatrixCanvas";
-import { DotMatrixPattern } from "@/components/ui/DotMatrixPattern";
 
 interface HeroStat {
   label: string;
@@ -27,160 +25,241 @@ export function DotMatrixHero({
   eyebrow = "// 01 NODE · BMSIT CSE ACADEMIC OS",
   tagline = "Autonomous Academic Synchronization & Merit Appraisal Engine",
   stats,
-  color1 = "#1d1d1f",
-  color2 = "#424245",
   className = "",
 }: DotMatrixHeroProps) {
   return (
     <div
-      className={`tech-card ${className}`}
+      className={`bauhaus-hero-banner ${className}`}
       style={{
-        padding: "24px 28px",
-        marginBottom: 24,
-        background: "#ffffff",
-        border: "1px solid #e8e8ed",
-        borderRadius: 14,
+        padding: "28px 32px",
+        marginBottom: 28,
+        background: "#FFFFFF",
+        border: "4px solid #121212",
+        borderRadius: 0,
         position: "relative",
         overflow: "hidden",
-        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.04)",
+        boxShadow: "8px 8px 0px 0px #121212",
       }}
     >
-      {/* Background ambient corner glow */}
-      <div
-        style={{
-          position: "absolute",
-          top: -60,
-          right: -60,
-          width: 240,
-          height: 240,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(0, 0, 0, 0.025) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr auto",
-          gap: 24,
+          gap: 28,
           alignItems: "center",
           position: "relative",
           zIndex: 1,
         }}
       >
-        {/* Left: Dot Matrix Title & Telemetry */}
+        {/* Left: Constructivist Title & Meta */}
         <div>
           <div
             style={{
-              display: "flex",
+              display: "inline-flex",
               alignItems: "center",
               gap: 8,
               marginBottom: 14,
+              backgroundColor: "#F0C020",
+              border: "2px solid #121212",
+              boxShadow: "3px 3px 0px 0px #121212",
+              padding: "4px 10px",
             }}
           >
-            <span className="tech-led led-green" />
             <span
               style={{
-                fontFamily: "var(--font-mono, monospace)",
-                fontSize: 10.5,
-                fontWeight: 600,
-                letterSpacing: "0.16em",
+                display: "inline-block",
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                backgroundColor: "#D02020",
+              }}
+            />
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 900,
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "#6e6e73",
+                color: "#121212",
               }}
             >
               {eyebrow}
             </span>
           </div>
 
-          {/* 5x7 Dot Matrix Display */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
-            <DotMatrixCanvas
-              text={titleLine1}
-              fontSize={48}
-              color={color1}
-            />
-            <DotMatrixCanvas
-              text={titleLine2}
-              fontSize={48}
-              color={color2}
-            />
+          {/* Constructivist Display Headlines */}
+          <div style={{ display: "flex", flexDirection: "column", lineHeight: 0.95, marginBottom: 12 }}>
+            <span
+              style={{
+                fontSize: 44,
+                fontWeight: 900,
+                textTransform: "uppercase",
+                letterSpacing: "-0.03em",
+                color: "#121212",
+              }}
+            >
+              {titleLine1}
+            </span>
+            <span
+              style={{
+                fontSize: 44,
+                fontWeight: 900,
+                textTransform: "uppercase",
+                letterSpacing: "-0.03em",
+                color: "#1040C0",
+              }}
+            >
+              {titleLine2}
+            </span>
           </div>
 
           <p
             style={{
-              fontSize: 13,
-              color: "#6e6e73",
+              fontSize: 14,
+              fontWeight: 500,
+              color: "#424245",
               margin: 0,
-              maxWidth: 480,
+              maxWidth: 540,
               lineHeight: 1.5,
-              fontFamily: "var(--font-sans, sans-serif)",
             }}
           >
             {tagline}
           </p>
 
-          {/* Optional inline quick metrics */}
+          {/* Quick Metrics Grid */}
           {stats && stats.length > 0 && (
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
-                gap: 18,
-                marginTop: 18,
-                paddingTop: 14,
-                borderTop: "1px solid #e8e8ed",
+                alignItems: "stretch",
+                gap: 12,
+                marginTop: 20,
+                paddingTop: 16,
+                borderTop: "3px solid #121212",
                 flexWrap: "wrap",
               }}
             >
-              {stats.map((s, idx) => (
-                <div key={idx} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <span
+              {stats.map((s, idx) => {
+                const borderAccent =
+                  idx % 3 === 0 ? "#D02020" : idx % 3 === 1 ? "#1040C0" : "#F0C020";
+                return (
+                  <div
+                    key={idx}
                     style={{
-                      fontFamily: "var(--font-mono, monospace)",
-                      fontSize: 18,
-                      fontWeight: 700,
-                      color: s.color || "#1d1d1f",
-                      lineHeight: 1.1,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 4,
+                      padding: "8px 14px",
+                      background: "#F0F0F0",
+                      border: "2px solid #121212",
+                      borderTop: `4px solid ${borderAccent}`,
+                      boxShadow: "3px 3px 0px 0px #121212",
+                      minWidth: 110,
                     }}
                   >
-                    {s.value}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono, monospace)",
-                      fontSize: 9.5,
-                      fontWeight: 600,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color: "#86868b",
-                    }}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-              ))}
+                    <span
+                      style={{
+                        fontSize: 22,
+                        fontWeight: 900,
+                        color: "#121212",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {s.value}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "#424245",
+                      }}
+                    >
+                      {s.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
 
-        {/* Right: Interactive 3D Dot Matrix Fibonacci Sphere */}
+        {/* Right: Bauhaus Geometric Art Composition */}
         <div
           style={{
-            width: 240,
-            height: 200,
+            width: 180,
+            height: 180,
+            position: "relative",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
+            flexShrink: 0,
           }}
+          aria-hidden="true"
         >
-          <DotMatrixPattern
-            style={{ width: 240, height: 200 }}
-            color="#1d1d1f"
-            accentColor="#0284c7"
+          {/* Blue background square */}
+          <div
+            style={{
+              position: "absolute",
+              width: 120,
+              height: 120,
+              background: "#1040C0",
+              border: "3px solid #121212",
+              boxShadow: "4px 4px 0px 0px #121212",
+              top: 10,
+              left: 10,
+            }}
           />
+          {/* Yellow circle overlapping */}
+          <div
+            style={{
+              position: "absolute",
+              width: 110,
+              height: 110,
+              borderRadius: "50%",
+              background: "#F0C020",
+              border: "3px solid #121212",
+              boxShadow: "4px 4px 0px 0px #121212",
+              bottom: 10,
+              right: 10,
+            }}
+          />
+          {/* Red 45deg rotated diamond */}
+          <div
+            style={{
+              position: "absolute",
+              width: 56,
+              height: 56,
+              background: "#D02020",
+              border: "3px solid #121212",
+              transform: "rotate(45deg)",
+              boxShadow: "3px 3px 0px 0px #121212",
+            }}
+          />
+          {/* Center stark white square with triangle */}
+          <div
+            style={{
+              position: "absolute",
+              width: 28,
+              height: 28,
+              background: "#FFFFFF",
+              border: "2px solid #121212",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: "6px solid transparent",
+                borderRight: "6px solid transparent",
+                borderBottom: "10px solid #121212",
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

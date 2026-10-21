@@ -179,7 +179,7 @@ export default async function AdminDashboard() {
         />
         <MetricBlock
           label="Performance Scoring Engine"
-          value={scoringConfig ? `v${scoringConfig.version}` : "Active"}
+          value={scoringConfig ? "Active" : "Standard"}
           context="Heuristic calibration rules"
           trendType="positive"
           icon={<Settings size={18} />}

@@ -43,11 +43,11 @@ export default async function ScoringConfigPage() {
           { label: "Scoring Configuration" },
         ]}
         title="Scoring Configuration"
-        subtitle="Configure the relative weight distribution of performance dimensions governing departmental scoring. All modifications are versioned and audited."
+        subtitle="Configure the relative weight distribution of performance dimensions governing departmental scoring. All modifications are recorded and audited."
         showDotMatrix={false}
       />
 
-      {/* 2. Explainability & Versioning Callout */}
+      {/* 2. Explainability & Governance Callout */}
       <div
         style={{
           display: "flex",
@@ -78,16 +78,16 @@ export default async function ScoringConfigPage() {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#17202A", marginBottom: 4 }}>
-            Explainability & Versioning Protocol
+            Explainability & Governance Protocol
           </div>
           <p style={{ fontSize: 13, color: "#667085", lineHeight: 1.5, margin: "0 0 10px 0" }}>
-            Historical faculty points remain permanently tied to the configuration version active when deliverables and evaluations were completed. Updates to weight factors take effect immediately for future scoring without altering historical records.
+            Historical faculty points remain permanently tied to the configuration active when deliverables and evaluations were completed. Updates to weight factors take effect immediately for future scoring without altering historical records.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", fontSize: 12, color: "#667085" }}>
             <span>
               Active Configuration:{" "}
               <strong style={{ color: "#17202A" }}>
-                Version #{activeConfig?.version ?? 1}
+                Profile #{activeConfig ? activeConfig.id.slice(-6).toUpperCase() : "STANDARD"}
               </strong>
             </span>
             <span>·</span>
@@ -183,7 +183,7 @@ export default async function ScoringConfigPage() {
                 padding: "4px 10px",
               }}
             >
-              {history.length} Revisions Recorded
+              {history.length} Profiles Recorded
             </span>
           </div>
 
@@ -191,7 +191,7 @@ export default async function ScoringConfigPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
               <thead>
                 <tr style={{ backgroundColor: "#F7F8FA", borderBottom: "1px solid #E4E7EC" }}>
-                  <th style={{ padding: "12px 16px", fontWeight: 600, color: "#667085" }}>Version</th>
+                  <th style={{ padding: "12px 16px", fontWeight: 600, color: "#667085" }}>Profile</th>
                   <th style={{ padding: "12px 16px", fontWeight: 600, color: "#667085", textAlign: "center" }}>Status</th>
                   <th style={{ padding: "12px 16px", fontWeight: 600, color: "#667085" }}>Configured By</th>
                   <th style={{ padding: "12px 16px", fontWeight: 600, color: "#667085", textAlign: "center" }}>On-Time</th>
@@ -215,10 +215,10 @@ export default async function ScoringConfigPage() {
                         transition: "background-color 0.15s ease",
                       }}
                     >
-                      {/* Version */}
+                      {/* Profile */}
                       <td style={{ padding: "14px 16px" }}>
                         <span style={{ fontWeight: 700, color: "#17202A" }}>
-                          Version #{cfg.version}
+                          Profile #{cfg.id.slice(-6).toUpperCase()}
                         </span>
                       </td>
 

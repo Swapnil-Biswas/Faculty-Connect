@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-/* Small shared primitives from BMSIT Coding Club so every page/form looks identical. */
+/* Bauhaus shared UI primitives */
 
 export function Spinner({ label = "Loading" }: { label?: string }) {
   return (
     <div className="loading-row" role="status" aria-live="polite">
       <span className="spinner" aria-hidden="true" />
-      <span>{label}…</span>
+      <span style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        {label}…
+      </span>
     </div>
   );
 }
@@ -23,17 +25,69 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="empty">
-      <div className="empty-glyph" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-        <span />
+    <div
+      style={{
+        padding: "36px 24px",
+        textAlign: "center",
+        backgroundColor: "#FFFFFF",
+        border: "3px solid #121212",
+        boxShadow: "4px 4px 0px 0px #121212",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+      }}
+    >
+      <div
+        style={{
+          width: 36,
+          height: 36,
+          backgroundColor: "#F0C020",
+          border: "2px solid #121212",
+          boxShadow: "2px 2px 0px 0px #121212",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: 6,
+        }}
+        aria-hidden="true"
+      >
+        <div
+          style={{
+            width: 0,
+            height: 0,
+            borderLeft: "7px solid transparent",
+            borderRight: "7px solid transparent",
+            borderBottom: "12px solid #121212",
+          }}
+        />
       </div>
-      <div className="empty-title">{title}</div>
-      {body && <div className="empty-body">{body}</div>}
-      {action}
+      <div
+        style={{
+          fontSize: 16,
+          fontWeight: 900,
+          textTransform: "uppercase",
+          letterSpacing: "-0.01em",
+          color: "#121212",
+        }}
+      >
+        {title}
+      </div>
+      {body && (
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: "#424245",
+            maxWidth: 420,
+            lineHeight: 1.5,
+          }}
+        >
+          {body}
+        </div>
+      )}
+      {action && <div style={{ marginTop: 8 }}>{action}</div>}
     </div>
   );
 }
@@ -41,7 +95,19 @@ export function EmptyState({
 export function FormError({ children }: { children: ReactNode }) {
   if (!children) return null;
   return (
-    <div className="form-error" role="alert">
+    <div
+      role="alert"
+      style={{
+        backgroundColor: "rgba(208, 32, 32, 0.1)",
+        border: "2px solid #D02020",
+        padding: "10px 14px",
+        color: "#D02020",
+        fontSize: "12.5px",
+        fontWeight: 800,
+        textTransform: "uppercase",
+        letterSpacing: "0.04em",
+      }}
+    >
       {children}
     </div>
   );
@@ -50,7 +116,19 @@ export function FormError({ children }: { children: ReactNode }) {
 export function FormSuccess({ children }: { children: ReactNode }) {
   if (!children) return null;
   return (
-    <div className="form-success" role="status">
+    <div
+      role="status"
+      style={{
+        backgroundColor: "rgba(16, 64, 192, 0.1)",
+        border: "2px solid #1040C0",
+        padding: "10px 14px",
+        color: "#1040C0",
+        fontSize: "12.5px",
+        fontWeight: 800,
+        textTransform: "uppercase",
+        letterSpacing: "0.04em",
+      }}
+    >
       {children}
     </div>
   );
@@ -70,7 +148,7 @@ export function Field({
   return (
     <div className="field">
       <label className="field-label">
-        {label} {required && <span className="req">*</span>}
+        {label} {required && <span style={{ color: "#D02020" }}>*</span>}
       </label>
       {children}
       {hint && <span className="field-hint">{hint}</span>}
@@ -87,19 +165,50 @@ export function Badge({
   variant?: "default" | "dark" | "published" | "draft" | "completed";
   dot?: boolean;
 }) {
-  const cls =
-    variant === "dark"
-      ? "badge badge-dark"
-      : variant === "published"
-        ? "badge status-published"
-        : variant === "draft"
-          ? "badge status-draft"
-          : variant === "completed"
-            ? "badge status-completed"
-            : "badge";
+  const getColors = () => {
+    switch (variant) {
+      case "dark":
+        return { bg: "#121212", text: "#FFFFFF" };
+      case "published":
+      case "completed":
+        return { bg: "#1040C0", text: "#FFFFFF" };
+      case "draft":
+        return { bg: "#F0C020", text: "#121212" };
+      default:
+        return { bg: "#F0F0F0", text: "#121212" };
+    }
+  };
+
+  const colors = getColors();
+
   return (
-    <span className={cls}>
-      {dot && <span className="badge-dot" aria-hidden="true" />}
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "2px 8px",
+        fontSize: "11px",
+        fontWeight: 800,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        border: "1.5px solid #121212",
+        boxShadow: "2px 2px 0px 0px #121212",
+        backgroundColor: colors.bg,
+        color: colors.text,
+      }}
+    >
+      {dot && (
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            backgroundColor: "#D02020",
+          }}
+          aria-hidden="true"
+        />
+      )}
       {children}
     </span>
   );
@@ -115,7 +224,37 @@ export function RoleChip({ role }: { role: string }) {
         : roleNorm === "admin"
           ? "Admin"
           : roleNorm.charAt(0).toUpperCase() + roleNorm.slice(1);
-  return <span className={`role-chip role-${roleNorm}`}>{label}</span>;
+
+  const bg =
+    roleNorm === "admin"
+      ? "#D02020"
+      : roleNorm === "hod"
+        ? "#F0C020"
+        : roleNorm === "cluster_lead"
+          ? "#1040C0"
+          : "#FFFFFF";
+
+  const color = roleNorm === "hod" || roleNorm === "faculty" ? "#121212" : "#FFFFFF";
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "2px 8px",
+        fontSize: "11px",
+        fontWeight: 800,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        border: "1.5px solid #121212",
+        boxShadow: "2px 2px 0px 0px #121212",
+        backgroundColor: bg,
+        color: color,
+      }}
+    >
+      {label}
+    </span>
+  );
 }
 
 export function Modal({
@@ -156,15 +295,77 @@ export function Modal({
       }}
     >
       <div className={`modal ${large ? "modal-lg" : ""}`} role="dialog" aria-modal="true" ref={ref}>
-        <button className="modal-close" onClick={onClose} aria-label="Close dialog">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+        <button
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close dialog"
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            width: 32,
+            height: 32,
+            backgroundColor: "#F0C020",
+            border: "2px solid #121212",
+            boxShadow: "2px 2px 0px 0px #121212",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#121212" strokeWidth="3" strokeLinecap="square">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        {eyebrow && <span className="modal-eyebrow">{eyebrow}</span>}
-        {title && <h2 className="modal-title">{title}</h2>}
-        {sub && <p className="modal-sub">{sub}</p>}
+        {eyebrow && (
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 10.5,
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              backgroundColor: "#F0C020",
+              color: "#121212",
+              border: "1.5px solid #121212",
+              padding: "2px 8px",
+              marginBottom: 8,
+            }}
+          >
+            {eyebrow}
+          </div>
+        )}
+        {title && (
+          <h2
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              textTransform: "uppercase",
+              letterSpacing: "-0.02em",
+              color: "#121212",
+              margin: "4px 0 6px 0",
+            }}
+          >
+            {title}
+          </h2>
+        )}
+        {sub && (
+          <p
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: "#424245",
+              margin: "0 0 18px 0",
+              lineHeight: 1.5,
+            }}
+          >
+            {sub}
+          </p>
+        )}
         {children}
       </div>
     </div>
@@ -187,8 +388,20 @@ export function Avatar({
     .join("")
     .toUpperCase();
   return (
-    <span className={`avatar ${large ? "avatar-lg" : ""}`} aria-hidden="true">
-      {src ? <img src={src} alt="" /> : initials || "?"}
+    <span
+      className={`avatar ${large ? "avatar-lg" : ""}`}
+      style={{
+        borderRadius: "50%",
+        border: "2px solid #121212",
+        boxShadow: "2px 2px 0px 0px #121212",
+        backgroundColor: "#121212",
+        color: "#FFFFFF",
+        fontWeight: 800,
+        textTransform: "uppercase",
+      }}
+      aria-hidden="true"
+    >
+      {src ? <img src={src} alt="" style={{ borderRadius: "50%" }} /> : initials || "?"}
     </span>
   );
 }

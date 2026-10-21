@@ -170,20 +170,22 @@ export function StatusBadge({
         alignItems: "center",
         gap: isSm ? 4 : 5,
         padding: isSm ? "2px 7px" : "3px 9px",
-        borderRadius: 4,
-        fontSize: isSm ? 10.5 : 11.5,
-        fontWeight: 600,
-        fontFamily: "var(--font-mono)",
-        letterSpacing: "0.04em",
-        color: cfg.color,
-        backgroundColor: cfg.bg,
-        border: `1px solid ${cfg.border}`,
+        borderRadius: 0,
+        fontSize: isSm ? 10 : 11,
+        fontWeight: 700,
+        fontFamily: "var(--font-body)",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
+        color: "#121212",
+        backgroundColor: cfg.bg.includes("34, 197, 94") ? "#DCFCE7" : cfg.bg.includes("244, 63, 94") || cfg.bg.includes("225, 29, 72") ? "#FEE2E2" : cfg.bg.includes("245, 158, 11") ? "#FEF08A" : "#FFFFFF",
+        border: "2px solid #121212",
+        boxShadow: "2px 2px 0px 0px #121212",
         whiteSpace: "nowrap",
         lineHeight: 1.2,
       }}
     >
-      <span style={{ fontSize: isSm ? 8 : 9, opacity: 0.85 }}>{cfg.glyph}</span>
-      {showIcon && <IconComp size={isSm ? 11 : 12} />}
+      <span style={{ fontSize: isSm ? 8 : 9 }}>{cfg.glyph}</span>
+      {showIcon && <IconComp size={isSm ? 11 : 12} color="#121212" />}
       <span>{displayText}</span>
     </span>
   );

@@ -14,9 +14,9 @@ import {
 import { testWebhookEndpoint, WebhookTestResult } from "@/actions/webhooks";
 
 export function WebhooksClient() {
-  const [endpointUrl, setEndpointUrl] = useState("https://webhook.site/placeholder");
+  const [endpointUrl, setEndpointUrl] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("TASK_COMPLETED");
-  const [secretToken, setSecretToken] = useState("fc_sec_9938472910");
+  const [secretToken, setSecretToken] = useState("");
   const [result, setResult] = useState<WebhookTestResult | null>(null);
   const [showHeaders, setShowHeaders] = useState(false);
   const [isPending, startTransition] = useTransition();

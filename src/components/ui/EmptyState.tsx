@@ -24,11 +24,12 @@ export function EmptyState({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "48px 24px",
+        padding: "40px 24px",
         textAlign: "center",
         backgroundColor: "#FFFFFF",
-        border: "1px solid #E4E7EC",
-        borderRadius: 8,
+        border: "3px solid #121212",
+        borderRadius: 0,
+        boxShadow: "4px 4px 0px 0px #121212",
         position: "relative",
       }}
     >
@@ -37,25 +38,28 @@ export function EmptyState({
           style={{
             width: 44,
             height: 44,
-            borderRadius: 8,
-            backgroundColor: "#F2F4F7",
-            border: "1px solid #E4E7EC",
+            borderRadius: 0,
+            backgroundColor: "#F0C020",
+            border: "2px solid #121212",
+            boxShadow: "2px 2px 0px 0px #121212",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 14,
-            color: "#173B67",
+            color: "#121212",
           }}
         >
-          <Icon size={20} />
+          <Icon size={22} strokeWidth={2.5} />
         </div>
       )}
 
       <h3
         style={{
-          fontSize: 15,
-          fontWeight: 600,
-          color: "#17202A",
+          fontSize: 16,
+          fontWeight: 900,
+          textTransform: "uppercase",
+          letterSpacing: "-0.01em",
+          color: "#121212",
           margin: "0 0 6px 0",
         }}
       >
@@ -66,9 +70,10 @@ export function EmptyState({
         <p
           style={{
             fontSize: 13,
-            color: "#667085",
+            fontWeight: 500,
+            color: "#424245",
             margin: "0 0 16px 0",
-            maxWidth: 400,
+            maxWidth: 420,
             lineHeight: 1.5,
           }}
         >
@@ -80,3 +85,5 @@ export function EmptyState({
     </div>
   );
 }
+
+export default EmptyState;

@@ -7,7 +7,7 @@ interface SubmitButtonProps {
   label: string
   pendingLabel?: string
   className?: string
-  variant?: 'gradient' | 'outline' | 'danger'
+  variant?: 'primary' | 'gradient' | 'outline' | 'danger'
   icon?: React.ReactNode
   style?: React.CSSProperties
 }
@@ -16,18 +16,18 @@ export function SubmitButton({
   label,
   pendingLabel,
   className,
-  variant = 'gradient',
+  variant = 'primary',
   icon,
   style = {},
 }: SubmitButtonProps) {
   const { pending } = useFormStatus()
 
   const variantClass =
-    variant === 'gradient'
-      ? 'btn-gradient'
-      : variant === 'danger'
+    variant === 'danger'
       ? 'btn-danger'
-      : 'btn-outline'
+      : variant === 'outline'
+      ? 'btn-outline'
+      : 'btn-primary'
 
   return (
     <button
@@ -37,9 +37,11 @@ export function SubmitButton({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '0.5rem',
         opacity: pending ? 0.7 : 1,
         cursor: pending ? 'not-allowed' : 'pointer',
+        borderRadius: 0,
         ...style,
       }}
     >
@@ -52,7 +54,7 @@ export function SubmitButton({
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth={2}
+            strokeWidth={3}
           >
             <path d="M21 12a9 9 0 11-6.219-8.56" />
           </svg>
@@ -68,3 +70,5 @@ export function SubmitButton({
     </button>
   )
 }
+
+export default SubmitButton;

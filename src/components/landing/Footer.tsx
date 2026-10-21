@@ -6,89 +6,99 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer" id="footer">
-      <div className="footer-glyph-strip" aria-hidden="true">
-        <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
-        <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
-        <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
-        <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
-        <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
+    <footer className="bg-[#121212] text-white border-t-4 border-[#121212]" id="footer">
+      {/* Bauhaus Geometric Color Strip Accent */}
+      <div className="flex w-full h-2">
+        <div className="w-1/3 bg-[#D02020]" />
+        <div className="w-1/3 bg-[#1040C0]" />
+        <div className="w-1/3 bg-[#F0C020]" />
       </div>
 
-      <div className="footer-top">
-        {/* Brand */}
-        <div className="footer-brand">
-          <Link href="/" className="footer-brand-logo">
-            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="40" height="40" rx="10" fill="#1d1d1f" />
-              <text
-                x="50%"
-                y="54%"
-                dominantBaseline="middle"
-                textAnchor="middle"
-                fill="white"
-                fontSize="16"
-                fontWeight="700"
-                fontFamily="system-ui, sans-serif"
-              >
-                FC
-              </text>
-            </svg>
-            <span className="footer-brand-name">Faculty-Connect</span>
-          </Link>
-          <span className="footer-brand-tagline">
-            Enter Once. Sync Everywhere.
-          </span>
-          <span className="footer-brand-meta">
-            Department of CSE · BMSIT &amp; M · Bengaluru, IN
-          </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-14">
+          {/* Brand Column (2 cols on lg) */}
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5" aria-hidden="true">
+                <span className="w-4 h-4 rounded-full bg-[#D02020] border-2 border-white" />
+                <span className="w-4 h-4 bg-[#1040C0] border-2 border-white" />
+                <div
+                  className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[14px] border-b-[#F0C020]"
+                />
+              </div>
+              <span className="text-xl font-black uppercase tracking-tight text-white">
+                FACULTY CONNECT
+              </span>
+            </Link>
+
+            <p className="text-xs font-black text-[#F0C020] uppercase tracking-widest mt-1">
+              ENTER ONCE. SYNC EVERYWHERE.
+            </p>
+
+            <p className="text-xs text-[#E0E0E0]/80 leading-relaxed max-w-sm">
+              Department of Computer Science &amp; Engineering
+              <br />
+              BMS Institute of Technology &amp; Management
+              <br />
+              Autonomous Institution Affiliated to VTU · Bengaluru, Karnataka
+            </p>
+          </div>
+
+          {/* Quick Portals */}
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#F0C020] mb-5 border-b-2 border-white/20 pb-2">
+              PORTALS
+            </p>
+            <ul className="space-y-3 text-xs font-bold uppercase tracking-wider text-[#E0E0E0]">
+              <li><Link href="/login" className="hover:text-[#D02020] transition-colors">Faculty Workspace</Link></li>
+              <li><Link href="/login" className="hover:text-[#D02020] transition-colors">Cluster Lead Hub</Link></li>
+              <li><Link href="/login" className="hover:text-[#D02020] transition-colors">HOD Merit Review</Link></li>
+              <li><Link href="/login" className="hover:text-[#D02020] transition-colors">Administrator OS</Link></li>
+            </ul>
+          </div>
+
+          {/* Accreditation */}
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#F0C020] mb-5 border-b-2 border-white/20 pb-2">
+              ACCREDITATION
+            </p>
+            <ul className="space-y-3 text-xs font-bold uppercase tracking-wider text-[#E0E0E0]">
+              <li><Link href="#resources" className="hover:text-[#D02020] transition-colors">NBA Tier-1 Criteria</Link></li>
+              <li><Link href="#resources" className="hover:text-[#D02020] transition-colors">NAAC SSR Matrix</Link></li>
+              <li><Link href="#resources" className="hover:text-[#D02020] transition-colors">NIRF Data Census</Link></li>
+              <li><Link href="#resources" className="hover:text-[#D02020] transition-colors">VTU Autonomous BOS</Link></li>
+            </ul>
+          </div>
+
+          {/* Academic Clusters */}
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#F0C020] mb-5 border-b-2 border-white/20 pb-2">
+              ACADEMIC CLUSTERS
+            </p>
+            <ul className="space-y-3 text-xs font-bold uppercase tracking-wider text-[#E0E0E0]">
+              <li><Link href="#domains" className="hover:text-[#D02020] transition-colors">Systems &amp; Cloud</Link></li>
+              <li><Link href="#domains" className="hover:text-[#D02020] transition-colors">AI &amp; Data Science</Link></li>
+              <li><Link href="#domains" className="hover:text-[#D02020] transition-colors">Cybersecurity</Link></li>
+              <li><Link href="#domains" className="hover:text-[#D02020] transition-colors">IoT &amp; Embedded</Link></li>
+            </ul>
+          </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <p className="footer-col-title">Portals</p>
-          <ul className="footer-col-list">
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/login">Faculty Workspace</Link></li>
-            <li><Link href="/login">Cluster Lead Hub</Link></li>
-            <li><Link href="/login">HOD Merit Review</Link></li>
-            <li><Link href="/login">Administrator OS</Link></li>
-          </ul>
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t-2 border-white/20 flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-[#E0E0E0]/80">
+          <div>
+            © {year} BMS Institute of Technology &amp; Management (Department of CSE). All rights reserved.
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-[#D02020]" />
+            <span className="font-bold tracking-widest uppercase text-white">
+              SYSTEM OPERATIONAL · AUTONOMOUS VTU TIER-1
+            </span>
+          </div>
         </div>
-
-        {/* Accreditation */}
-        <div>
-          <p className="footer-col-title">Accreditation</p>
-          <ul className="footer-col-list">
-            <li><Link href="#resources">NBA Tier-1 Criteria</Link></li>
-            <li><Link href="#resources">NAAC SSR Matrix</Link></li>
-            <li><Link href="#resources">NIRF Data Census</Link></li>
-            <li><Link href="#resources">VTU Autonomous Scheme</Link></li>
-          </ul>
-        </div>
-
-        {/* Clusters */}
-        <div>
-          <p className="footer-col-title">Academic Clusters</p>
-          <ul className="footer-col-list">
-            <li><Link href="#domains">Systems &amp; Cloud</Link></li>
-            <li><Link href="#domains">AI &amp; Data Science</Link></li>
-            <li><Link href="#domains">Cybersecurity</Link></li>
-            <li><Link href="#domains">IoT &amp; Embedded</Link></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="footer-bottom">
-        <span className="footer-copy">
-          © {year} BMS Institute of Technology &amp; Management (Department of CSE). All rights reserved.
-        </span>
-        <span className="footer-status-pill">
-          <span className="footer-status-dot" />
-          SYSTEM OPERATIONAL · AUTONOMOUS VTU TIER-1
-        </span>
       </div>
     </footer>
   );
 }
+
 export { Footer };

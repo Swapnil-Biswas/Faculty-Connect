@@ -14,8 +14,7 @@ import Footer from "@/components/landing/Footer";
 
 export default function HomePage() {
   return (
-    <main>
-      <ScrollProgress />
+    <main className="overflow-x-hidden w-full bg-[#F0F0F0]">
       <Header />
       <Hero />
       <StatsBar />

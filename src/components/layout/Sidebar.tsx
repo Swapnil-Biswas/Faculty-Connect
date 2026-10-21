@@ -179,9 +179,22 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar" aria-label="Main navigation">
-      {/* Institutional Brand Header */}
+      {/* Bauhaus Institutional Brand Header */}
       <div className="sidebar-brand">
-        <div className="sidebar-logo" style={{ backgroundColor: "#173B67", border: "1px solid #173B67" }}>FC</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 8px", backgroundColor: "#FFFFFF", border: "2px solid #121212", boxShadow: "3px 3px 0px 0px #121212" }}>
+          <span style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: "#D02020", display: "inline-block", border: "1.5px solid #121212" }} />
+          <span style={{ width: 12, height: 12, borderRadius: 0, backgroundColor: "#1040C0", display: "inline-block", border: "1.5px solid #121212" }} />
+          <span
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: "12px solid #F0C020",
+              display: "inline-block",
+            }}
+          />
+        </div>
         <div className="sidebar-brand-text">
           <div className="sidebar-brand-name">
             <span>FACULTY CONNECT</span>
@@ -189,9 +202,9 @@ export function Sidebar() {
           <div className="sidebar-brand-dept" title={deptName}>
             {deptName}
           </div>
-          <div style={{ marginTop: 4 }}>
-            <span style={{ fontSize: 11, fontWeight: 500, color: "#667085" }}>
-              Academic Year 2026–27
+          <div style={{ marginTop: 2 }}>
+            <span style={{ fontSize: 10.5, fontWeight: 700, color: "#121212", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              AY 2026–27
             </span>
           </div>
         </div>
@@ -200,8 +213,8 @@ export function Sidebar() {
       {/* Primary Navigation */}
       <nav className="sidebar-nav" aria-label="Primary navigation">
         {navGroups.map((group) => (
-          <div key={group.section} style={{ marginBottom: 8 }}>
-            <div className="sidebar-section-label" style={{ fontFamily: "var(--font-sans, Inter)", letterSpacing: "0.06em", color: "#667085" }}>
+          <div key={group.section} style={{ marginBottom: 12 }}>
+            <div className="sidebar-section-label" style={{ fontFamily: "var(--font-body)", letterSpacing: "0.08em", color: "#121212" }}>
               <span>{group.code}</span>
             </div>
             {group.items.map((item) => {
@@ -220,7 +233,7 @@ export function Sidebar() {
                   <span className="sidebar-item-icon">{item.icon}</span>
                   <span style={{ flex: 1 }}>{item.label}</span>
                   {item.badge != null && item.badge > 0 && (
-                    <span className="sidebar-item-badge">{item.badge}</span>
+                    <span className="sidebar-item-badge" style={{ borderRadius: 0, border: "1.5px solid #121212", backgroundColor: "#D02020", color: "#FFFFFF" }}>{item.badge}</span>
                   )}
                 </Link>
               );
@@ -230,33 +243,35 @@ export function Sidebar() {
       </nav>
 
       {/* User Cyber Console Footer */}
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" style={{ borderTop: "4px solid #121212", backgroundColor: "#FFFFFF", padding: "12px 14px" }}>
         <div className="sidebar-user" title={`${session.user.name} — ${getRoleLabel(role)}`}>
           <div 
             className="avatar avatar-sm" 
             style={{ 
-              background: "var(--grey-800, #1D1D1F)", 
-              border: "1px solid var(--grey-800, #1D1D1F)", 
+              background: "#121212", 
+              border: "2px solid #121212", 
               color: "#FFFFFF",
-              fontWeight: 700,
+              fontWeight: 900,
+              borderRadius: "50%",
             }}
           >
             {getInitials(session.user.name)}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="sidebar-user-name">{session.user.name}</div>
+            <div className="sidebar-user-name" style={{ fontWeight: 700, color: "#121212" }}>{session.user.name}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
               <span 
                 style={{ 
-                  fontFamily: "var(--font-mono)", 
+                  fontFamily: "var(--font-body)", 
                   fontSize: 10, 
-                  fontWeight: 600,
-                  color: "var(--grey-600, #424245)",
-                  letterSpacing: "0.04em",
-                  background: "var(--grey-100, #E8E8ED)",
-                  border: "1px solid var(--grey-200, #D2D2D7)",
+                  fontWeight: 700,
+                  color: "#121212",
+                  letterSpacing: "0.06em",
+                  background: "#F0C020",
+                  border: "1.5px solid #121212",
                   padding: "1px 6px",
-                  borderRadius: 4
+                  borderRadius: 0,
+                  textTransform: "uppercase",
                 }}
               >
                 {ROLE_GLYPHS[role]} {getRoleLabel(role)}
@@ -270,9 +285,11 @@ export function Sidebar() {
             aria-label="Sign out"
             style={{
               padding: 6,
-              borderRadius: 6,
-              color: "var(--grey-500, #6E6E73)",
-              transition: "all 0.15s ease",
+              borderRadius: 0,
+              border: "1.5px solid #121212",
+              backgroundColor: "#FFFFFF",
+              color: "#121212",
+              cursor: "pointer",
             }}
           >
             <LogOut size={16} />

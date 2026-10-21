@@ -1,163 +1,110 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { DotMatrixCanvas } from "@/components/ui/DotMatrixCanvas";
-import { DotMatrixPattern } from "@/components/ui/DotMatrixPattern";
-import Cursor from "@/components/ui/Cursor";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  const [fontSize, setFontSize] = useState(100);
-  const [time, setTime] = useState<string>("");
-
-  useEffect(() => {
-    const update = () => {
-      const vw = window.innerWidth;
-      if (vw < 480) setFontSize(40);
-      else if (vw < 768) setFontSize(56);
-      else if (vw < 1024) setFontSize(72);
-      else setFontSize(100);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
-  useEffect(() => {
-    const tick = () => {
-      const d = new Date();
-      const hh = String(d.getHours()).padStart(2, "0");
-      const mm = String(d.getMinutes()).padStart(2, "0");
-      const ss = String(d.getSeconds()).padStart(2, "0");
-      setTime(`${hh}:${mm}:${ss}`);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
   return (
-    <section className="hero" id="hero">
-      <div className="hero-status" aria-hidden="true">
-        <div className="hero-status-row">
-          <span className="hero-status-led" />
-          <span className="hero-status-label">SYSTEM ONLINE</span>
-          <span className="hero-status-divider">·</span>
-          <span className="hero-status-label">BMSIT / CSE DEPT</span>
-          <span className="hero-status-divider">·</span>
-          <span className="hero-status-label hero-status-time">{time}</span>
-        </div>
-        <div className="hero-status-row hero-status-row-glyphs">
-          <span /><span /><span /><span /><span />
-          <span /><span /><span /><span /><span />
-          <span /><span /><span /><span /><span />
-        </div>
-      </div>
-
-      <div className="hero-inner">
-        {/* Left: Dot matrix text + tagline + buttons */}
-        <div className="hero-left">
-          <div className="hero-eyebrow">
-            <span className="hero-eyebrow-dot" />
-            <span>ACADEMIC OS · EST. BMSIT CSE</span>
-            <Cursor />
+    <section
+      id="hero"
+      className="relative bg-[#F0F0F0] border-b-4 border-[#121212] overflow-hidden pt-20 sm:pt-24"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* Left Column: Massive Constructivist Poster Typography & Actions */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2 self-start bg-[#F0C020] text-[#121212] border-2 border-[#121212] shadow-[3px_3px_0px_0px_#121212] px-3.5 py-1 text-xs sm:text-sm font-black tracking-widest uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#D02020]" />
+            <span>ACADEMIC OS // EST. BMSIT CSE</span>
           </div>
 
-          <div className="hero-dot-lines">
-            <DotMatrixCanvas
-              text="FACULTY."
-              fontSize={fontSize}
-              animate
-              animDelay={200}
-            />
-            <DotMatrixCanvas
-              text="CONNECT."
-              fontSize={fontSize}
-              animate
-              animDelay={500}
-            />
-            <DotMatrixCanvas
-              text="EXCELLENCE."
-              fontSize={fontSize}
-              animate
-              animDelay={800}
-            />
+          {/* Constructivist Display Headline */}
+          <div className="flex flex-col gap-1">
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[1.0] text-[#121212]">
+              FACULTY.
+            </h1>
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[1.0] text-[#1040C0]">
+              CONNECT.
+            </h1>
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[1.0] text-[#D02020]">
+              EXCELLENCE.
+            </h1>
           </div>
 
-          <p className="hero-tagline">
-            Intelligent Academic Data Synchronization & Governance Engine.
-            <br />
-            Enter once, use everywhere for NBA, NAAC, NIRF & appraisals.
+          {/* Subheading / Tagline */}
+          <p className="text-base sm:text-lg font-medium text-[#121212] leading-relaxed max-w-2xl border-l-4 border-[#121212] pl-4 my-2">
+            Intelligent Academic Data Synchronization &amp; Governance Engine. Enter teaching loads, research milestones, and mentorship records once — synchronize effortlessly for NBA, NAAC, NIRF &amp; annual appraisals.
           </p>
 
-          <div className="hero-actions">
-            <Link href="/login" className="btn-primary" id="hero-enter-btn">
-              ENTER WORKSPACE
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}>
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-4 pt-3">
+            <Link
+              href="/login"
+              id="hero-enter-btn"
+              className="inline-flex items-center gap-3 bg-[#D02020] text-white border-3 sm:border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-[#D02020]/90 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-black tracking-wider uppercase transition-all duration-150"
+            >
+              <span>ENTER WORKSPACE</span>
+              <ArrowRight className="w-5 h-5" strokeWidth={3} />
             </Link>
-            <Link href="#modules" className="btn-secondary" id="hero-modules-btn">
-              EXPLORE MODULES
+
+            <Link
+              href="#domains"
+              id="hero-modules-btn"
+              className="inline-flex items-center gap-3 bg-[#F0C020] text-[#121212] border-3 sm:border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-[#F0C020]/90 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-black tracking-wider uppercase transition-all duration-150"
+            >
+              <span>EXPLORE CLUSTERS</span>
             </Link>
           </div>
 
-          {/* ── Highlight teaser banner ─────────────── */}
-          <div className="hero-teaser">
-            <span
-              style={{
-                display: "inline-block",
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: "#16A34A",
-                flexShrink: 0,
-                boxShadow: "0 0 8px 2px rgba(22, 163, 74, 0.4)",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 12,
-                letterSpacing: "0.08em",
-                color: "var(--grey-800)",
-                lineHeight: 1.5,
-              }}
-            >
-              ACADEMIC YEAR 2026-27 ·{" "}
-              <span style={{ color: "var(--grey-500)", fontStyle: "italic" }}>
-                Full Autonomous VTU Compliance
+          {/* Teaser Highlight Box */}
+          <div className="mt-4 bg-white border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] p-4 flex items-center justify-between max-w-xl">
+            <div className="flex items-center gap-3">
+              <span className="w-3 h-3 rounded-full bg-[#1040C0]" />
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#121212]">
+                AY 2026-27 · FULL AUTONOMOUS VTU SCHEME
               </span>
+            </div>
+            <span className="text-xs font-black bg-[#E0E0E0] border border-[#121212] px-2 py-0.5 uppercase">
+              TIER-1
             </span>
           </div>
+        </div>
 
-          <div className="hero-strip" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
+        {/* Right Column: Bauhaus Frame with Seamless Loop Video */}
+        <div className="lg:col-span-5 flex justify-center">
+          <div className="w-full max-w-md sm:max-w-lg aspect-square bg-[#121212] border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] relative overflow-hidden flex flex-col justify-between">
+            {/* The Video Element */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/api/video" type="video/mp4" />
+              <source src="/hero-loop.mp4" type="video/mp4" />
+            </video>
+
+            {/* Top Bauhaus Header Overlay */}
+            <div className="relative z-10 p-4 sm:p-5 flex items-center justify-start pointer-events-none">
+              <div className="flex items-center gap-2 bg-[#121212]/90 backdrop-blur-sm border-2 border-white/80 px-2.5 py-1">
+                <span className="w-3 h-3 rounded-full bg-[#D02020] animate-pulse" />
+                <span className="w-3 h-3 bg-[#1040C0]" />
+                <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-[#F0C020]" />
+              </div>
+            </div>
+
+            {/* Bottom Bauhaus Caption Overlay */}
+            <div className="relative z-10 bg-[#121212]/90 backdrop-blur-sm border-t-2 border-[#121212] px-4 sm:px-6 py-3 flex items-center justify-between text-white text-xs font-black uppercase tracking-widest pointer-events-none">
+              <span className="text-[#F0C020]">FORM FOLLOWS FUNCTION</span>
+              <span>1926 // 2026</span>
+            </div>
           </div>
         </div>
-
-        {/* Right: Decorative dot pattern */}
-        <div className="hero-right">
-          <DotMatrixPattern />
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="hero-scroll" aria-hidden="true">
-        <span className="hero-scroll-dot">●</span>
-        <span className="hero-scroll-text">SCROLL TO DISCOVER</span>
       </div>
     </section>
   );
 }
+
 export { Hero };

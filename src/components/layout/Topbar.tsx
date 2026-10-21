@@ -79,10 +79,8 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
         top: 0,
         zIndex: 30,
         height: 60,
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid var(--grey-100, #E8E8ED)",
+        backgroundColor: "#F0F0F0",
+        borderBottom: "4px solid #121212",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -91,12 +89,12 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
     >
       {/* Left: Department & Institutional Identity */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
-          <span style={{ fontWeight: 600, color: "#17202A" }}>Faculty Connect</span>
-          <span style={{ color: "#D2D2D7" }}>·</span>
-          <span style={{ color: "#667085" }}>{deptName}</span>
-          <span style={{ color: "#D2D2D7" }}>·</span>
-          <span style={{ fontWeight: 500, color: "#667085" }}>Academic Year 2026–27</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5 }}>
+          <span style={{ fontWeight: 900, textTransform: "uppercase", color: "#121212" }}>Faculty Connect</span>
+          <span style={{ color: "#121212", fontWeight: 700 }}>/</span>
+          <span style={{ color: "#121212", fontWeight: 600 }}>{deptName}</span>
+          <span style={{ color: "#121212", fontWeight: 700 }}>/</span>
+          <span style={{ fontWeight: 700, textTransform: "uppercase", color: "#D02020" }}>AY 2026–27</span>
         </div>
       </div>
 
@@ -105,19 +103,22 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
         {/* Institutional Accreditation / Affiliation Chip */}
         <div
           style={{
-            fontSize: 11.5,
-            fontWeight: 500,
-            color: "#667085",
-            padding: "4px 10px",
-            borderRadius: 6,
-            backgroundColor: "#F2F4F7",
-            border: "1px solid #E4E7EC",
+            fontSize: 11,
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            color: "#121212",
+            padding: "5px 12px",
+            borderRadius: 0,
+            backgroundColor: "#F0C020",
+            border: "2px solid #121212",
+            boxShadow: "2px 2px 0px 0px #121212",
             display: "flex",
             alignItems: "center",
             gap: 6,
           }}
         >
-          <Activity size={12} color="#2F6FED" />
+          <Activity size={13} color="#121212" />
           <span>Autonomous Institution · VTU</span>
         </div>
 
@@ -135,12 +136,13 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 8,
-              border: "1px solid " + (showNotif ? "var(--grey-800, #1D1D1F)" : "var(--grey-200, #D2D2D7)"),
-              backgroundColor: showNotif ? "var(--grey-100, #E8E8ED)" : "var(--white, #FFFFFF)",
-              color: "var(--grey-800, #1D1D1F)",
+              borderRadius: 0,
+              border: "2px solid #121212",
+              backgroundColor: showNotif ? "#D02020" : "#FFFFFF",
+              color: showNotif ? "#FFFFFF" : "#121212",
+              boxShadow: "3px 3px 0px 0px #121212",
               cursor: "pointer",
-              transition: "all 0.15s ease",
+              transition: "transform 0.15s ease-out",
             }}
           >
             <Bell size={17} />
@@ -148,21 +150,21 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               <span
                 style={{
                   position: "absolute",
-                  top: -3,
-                  right: -3,
-                  backgroundColor: "var(--grey-900, #0A0A0A)",
+                  top: -4,
+                  right: -4,
+                  backgroundColor: "#D02020",
                   color: "#FFFFFF",
-                  fontFamily: "var(--font-mono)",
+                  fontFamily: "var(--font-body)",
                   fontSize: 10,
-                  fontWeight: 700,
-                  height: 16,
-                  minWidth: 16,
-                  padding: "0 4px",
-                  borderRadius: 8,
+                  fontWeight: 900,
+                  height: 18,
+                  minWidth: 18,
+                  padding: "0 3px",
+                  borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  border: "2px solid #FFFFFF",
+                  border: "2px solid #121212",
                 }}
               >
                 {unread > 99 ? "99+" : unread}
@@ -177,12 +179,12 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
               style={{
                 position: "absolute",
                 right: 0,
-                top: 46,
-                width: 390,
+                top: 48,
+                width: 400,
                 backgroundColor: "#FFFFFF",
-                border: "1px solid var(--grey-200, #D2D2D7)",
-                borderRadius: 14,
-                boxShadow: "0 20px 50px -12px rgba(0, 0, 0, 0.15)",
+                border: "4px solid #121212",
+                borderRadius: 0,
+                boxShadow: "8px 8px 0px 0px #121212",
                 zIndex: 50,
                 overflow: "hidden",
               }}
@@ -193,25 +195,27 @@ export function Topbar({ title, notifications = [] }: TopbarProps) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "12px 16px",
-                  borderBottom: "1px solid var(--grey-100, #E8E8ED)",
-                  backgroundColor: "var(--grey-50, #F5F5F7)",
+                  padding: "14px 18px",
+                  borderBottom: "3px solid #121212",
+                  backgroundColor: "#121212",
+                  color: "#FFFFFF",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 11, color: "var(--grey-800, #1D1D1F)", letterSpacing: "0.06em" }}>
-                    // NOTIFICATIONS
+                  <span style={{ fontFamily: "var(--font-body)", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    NOTIFICATIONS LEDGER
                   </span>
                   {unread > 0 && (
                     <span
                       style={{
-                        fontFamily: "var(--font-mono)",
+                        fontFamily: "var(--font-body)",
                         fontSize: 10,
-                        fontWeight: 700,
-                        backgroundColor: "var(--grey-800, #1D1D1F)",
+                        fontWeight: 900,
+                        backgroundColor: "#D02020",
                         color: "#FFFFFF",
                         padding: "1px 6px",
-                        borderRadius: 4,
+                        border: "1.5px solid #FFFFFF",
+                        borderRadius: 0,
                       }}
                     >
                       {unread} NEW

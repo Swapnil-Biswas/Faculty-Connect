@@ -12,11 +12,9 @@ import {
   Trophy,
   Star,
   Clock,
-  AlertTriangle,
   Award,
   ArrowRight,
-  ShieldAlert,
-  Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -81,12 +79,13 @@ export default async function FacultyDashboard() {
 
   return (
     <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 48 }}>
-      {/* 1. Page Header with BMSIT Cyber Eyebrow */}
+      {/* 1. Page Header with Bauhaus Eyebrow */}
       <PageHeader
         breadcrumbs={[
           { label: "FACULTY_CONSOLE" },
           { label: "WORKSPACE" },
         ]}
+        eyebrow="FACULTY CONSOLE"
         title={`Good ${getGreeting()}, ${session.user.name}`}
         subtitle={`Operational console for ${formatDate(new Date())} · NODE: ${clusterName.toUpperCase()} · BMSIT CSE`}
         actions={
@@ -94,7 +93,7 @@ export default async function FacultyDashboard() {
             <Link
               href="/faculty/leave"
               className="btn-outline"
-              style={{ fontSize: 12.5, padding: "7px 14px", fontFamily: "var(--font-mono)" }}
+              style={{ fontSize: 12.5, padding: "8px 16px" }}
             >
               <Calendar size={14} />
               + APPLY LEAVE
@@ -102,7 +101,7 @@ export default async function FacultyDashboard() {
             <Link
               href="/faculty/tasks"
               className="btn-primary"
-              style={{ fontSize: 12.5, padding: "7px 16px", fontFamily: "var(--font-mono)" }}
+              style={{ fontSize: 12.5, padding: "8px 18px" }}
             >
               <CheckSquare size={14} />
               TASK MATRIX
@@ -111,28 +110,28 @@ export default async function FacultyDashboard() {
         }
       />
 
-      {/* BMSIT Coding Club Cyber Dot Matrix Command Hero */}
+      {/* Bauhaus Constructivist Command Hero */}
       <DotMatrixHero
         titleLine1="FACULTY"
         titleLine2="WORKSPACE"
         eyebrow={`// OPERATIONAL NODE · ${clusterName.toUpperCase()} · BMSIT CSE`}
         tagline="Realtime academic activity logging, peer recognition, and automated NAAC/NBA criteria dossier synchronization."
         stats={[
-          { label: "MERIT STARS", value: totalPoints, color: "#FFD700" },
-          { label: "LEADERBOARD", value: leaderboardRank ? `#${leaderboardRank.rank}` : "UNRANKED", color: "#38BDF8" },
-          { label: "ACTIVE TASKS", value: activeTasks.length, color: "#22C55E" },
-          { label: "BADGES HELD", value: recentBadges.length, color: "#F59E0B" },
+          { label: "MERIT STARS", value: totalPoints, color: "#121212" },
+          { label: "LEADERBOARD", value: leaderboardRank ? `#${leaderboardRank.rank}` : "UNRANKED", color: "#1040C0" },
+          { label: "ACTIVE TASKS", value: activeTasks.length, color: "#121212" },
+          { label: "BADGES HELD", value: recentBadges.length, color: "#D02020" },
         ]}
       />
 
-      {/* 2. Cyber Attention Alert Ribbons */}
+      {/* 2. Bauhaus Attention Alert Ribbons */}
       {(overdueTasks.length > 0 || pendingLeaves.length > 0) && (
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 10,
-            marginBottom: 24,
+            gap: 12,
+            marginBottom: 28,
           }}
         >
           {overdueTasks.length > 0 && (
@@ -141,20 +140,21 @@ export default async function FacultyDashboard() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "12px 18px",
-                backgroundColor: "rgba(244, 63, 94, 0.08)",
-                border: "1px solid rgba(244, 63, 94, 0.35)",
-                borderRadius: 8,
-                gap: 12,
+                padding: "14px 20px",
+                backgroundColor: "#D02020",
+                color: "#FFFFFF",
+                border: "3px solid #121212",
+                boxShadow: "4px 4px 0px 0px #121212",
+                gap: 14,
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span className="tech-led led-red" />
+                <AlertTriangle size={18} strokeWidth={3} />
                 <div>
-                  <span style={{ fontSize: 12.5, fontWeight: 700, color: "#FB7185", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     CRITICAL ATTENTION:
                   </span>{" "}
-                  <span style={{ fontSize: 13, color: "#F8FAFC" }}>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>
                     You have {overdueTasks.length} overdue{" "}
                     {overdueTasks.length === 1 ? "deliverable" : "deliverables"} requiring immediate submission.
                   </span>
@@ -163,10 +163,14 @@ export default async function FacultyDashboard() {
               <Link
                 href="/faculty/tasks"
                 style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  fontFamily: "var(--font-mono)",
-                  color: "#FB7185",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#121212",
+                  backgroundColor: "#FFFFFF",
+                  border: "2px solid #121212",
+                  padding: "4px 10px",
                   textDecoration: "none",
                   display: "inline-flex",
                   alignItems: "center",
@@ -174,7 +178,7 @@ export default async function FacultyDashboard() {
                   whiteSpace: "nowrap",
                 }}
               >
-                RESOLVE MATRIX <ArrowRight size={13} />
+                RESOLVE MATRIX <ArrowRight size={13} strokeWidth={3} />
               </Link>
             </div>
           )}
@@ -185,20 +189,21 @@ export default async function FacultyDashboard() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "12px 18px",
-                backgroundColor: "rgba(245, 158, 11, 0.08)",
-                border: "1px solid rgba(245, 158, 11, 0.35)",
-                borderRadius: 8,
-                gap: 12,
+                padding: "14px 20px",
+                backgroundColor: "#F0C020",
+                color: "#121212",
+                border: "3px solid #121212",
+                boxShadow: "4px 4px 0px 0px #121212",
+                gap: 14,
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span className="tech-led led-gold" />
+                <Clock size={18} strokeWidth={3} />
                 <div>
-                  <span style={{ fontSize: 12.5, fontWeight: 700, color: "#FCD34D", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     LEAVE PENDING:
                   </span>{" "}
-                  <span style={{ fontSize: 13, color: "#F8FAFC" }}>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>
                     {pendingLeaves.length} leave application awaiting Cluster Head evaluation.
                   </span>
                 </div>
@@ -206,10 +211,14 @@ export default async function FacultyDashboard() {
               <Link
                 href="/faculty/leave"
                 style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  fontFamily: "var(--font-mono)",
-                  color: "#FFD700",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#FFFFFF",
+                  backgroundColor: "#121212",
+                  border: "2px solid #121212",
+                  padding: "4px 10px",
                   textDecoration: "none",
                   display: "inline-flex",
                   alignItems: "center",
@@ -217,20 +226,20 @@ export default async function FacultyDashboard() {
                   whiteSpace: "nowrap",
                 }}
               >
-                TRACK STATUS <ArrowRight size={13} />
+                TRACK STATUS <ArrowRight size={13} strokeWidth={3} />
               </Link>
             </div>
           )}
         </div>
       )}
 
-      {/* 3. Cyber Operational Metric Blocks */}
+      {/* 3. Bauhaus Operational Metric Blocks */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           gap: 16,
-          marginBottom: 24,
+          marginBottom: 28,
         }}
       >
         <MetricBlock
@@ -238,7 +247,7 @@ export default async function FacultyDashboard() {
           value={totalPoints.toLocaleString()}
           context="Verified append-only ledger"
           trendType="neutral"
-          icon={<Star size={18} color="#FFD700" />}
+          icon={<Star size={18} />}
         />
         <MetricBlock
           label="Active Deliverables"
@@ -249,14 +258,14 @@ export default async function FacultyDashboard() {
               : "All tasks on schedule"
           }
           trendType={overdueTasks.length > 0 ? "danger" : "positive"}
-          icon={<CheckSquare size={18} color="#38BDF8" />}
+          icon={<CheckSquare size={18} />}
         />
         <MetricBlock
           label="Department Standing"
           value={leaderboardRank ? `#${leaderboardRank.rank}` : "TOP TIER"}
           context="Monthly faculty leaderboard"
           trendType="neutral"
-          icon={<Trophy size={18} color="#FFD700" />}
+          icon={<Trophy size={18} />}
         />
         <MetricBlock
           label="Pending Applications"
@@ -265,53 +274,82 @@ export default async function FacultyDashboard() {
             pendingLeaves.length > 0 ? "Under cluster review" : "Pipeline clear"
           }
           trendType={pendingLeaves.length > 0 ? "warning" : "neutral"}
-          icon={<Calendar size={18} color="#A78BFA" />}
+          icon={<Calendar size={18} />}
         />
       </div>
 
-      {/* 4. MAIN WORKSPACE: 2-COLUMN CYBER GRID */}
+      {/* 4. MAIN WORKSPACE: 2-COLUMN BAUHAUS GRID */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "minmax(0, 1.65fr) minmax(0, 1fr)",
-          gap: 20,
+          gap: 24,
           alignItems: "start",
         }}
       >
         {/* LEFT COLUMN: ACTIVE TASKS */}
-        <div className="tech-card" style={{ padding: 0, overflow: "hidden" }}>
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "4px solid #121212",
+            boxShadow: "6px 6px 0px 0px #121212",
+            overflow: "hidden",
+          }}
+        >
           <div
             style={{
               padding: "16px 22px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              borderBottom: "3px solid #121212",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              backgroundColor: "rgba(7, 9, 14, 0.6)",
+              backgroundColor: "#F0F0F0",
             }}
           >
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span className="hero-eyebrow" style={{ margin: 0 }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    backgroundColor: "#1040C0",
+                    color: "#FFFFFF",
+                    padding: "2px 8px",
+                    border: "1.5px solid #121212",
+                  }}
+                >
                   // DELIVERABLES
                 </span>
-                <span className="glyph-chip glyph-chip-cyan" style={{ fontSize: 10 }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    backgroundColor: "#F0C020",
+                    color: "#121212",
+                    padding: "2px 6px",
+                    border: "1.5px solid #121212",
+                  }}
+                >
                   {tasks.length} ALLOCATED
                 </span>
               </div>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "4px 0 0 0" }}>
+              <h2 style={{ fontSize: 18, fontWeight: 900, textTransform: "uppercase", color: "#121212", margin: "6px 0 0 0" }}>
                 Assigned Academic Tasks
               </h2>
             </div>
             <Link
               href="/faculty/tasks"
               style={{
-                fontSize: 11.5,
-                fontWeight: 600,
-                fontFamily: "var(--font-mono)",
-                color: "#FFD700",
+                fontSize: 12,
+                fontWeight: 900,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                color: "#1040C0",
                 textDecoration: "none",
-                letterSpacing: "0.04em",
               }}
             >
               EXPAND ALL →
@@ -335,18 +373,18 @@ export default async function FacultyDashboard() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "14px 22px",
-                    borderBottom: index < tasks.length - 1 ? "1px solid rgba(255, 255, 255, 0.05)" : "none",
+                    padding: "16px 22px",
+                    borderBottom: index < tasks.length - 1 ? "2px solid #121212" : "none",
                     gap: 14,
+                    backgroundColor: "#FFFFFF",
                   }}
-                  className="cyber-row-hover"
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: "#F8FAFC",
+                        fontSize: 15,
+                        fontWeight: 700,
+                        color: "#121212",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -360,16 +398,25 @@ export default async function FacultyDashboard() {
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
-                        fontSize: 11.5,
-                        fontFamily: "var(--font-mono)",
-                        color: "#64748B",
+                        fontSize: 12,
+                        color: "#424245",
                       }}
                     >
-                      <span style={{ display: "flex", alignItems: "center", gap: 4, color: "#94A3B8" }}>
-                        <Clock size={12} />
+                      <span style={{ display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                        <Clock size={13} />
                         DUE: {formatDate(task.deadline)}
                       </span>
-                      <span>PRIORITY: <strong style={{ color: task.priority === "HIGH" ? "#F43F5E" : "#38BDF8" }}>{task.priority}</strong></span>
+                      <span>
+                        PRIORITY:{" "}
+                        <strong
+                          style={{
+                            color: task.priority === "HIGH" ? "#D02020" : "#1040C0",
+                            fontWeight: 900,
+                          }}
+                        >
+                          {task.priority}
+                        </strong>
+                      </span>
                     </div>
                   </div>
 
@@ -378,7 +425,7 @@ export default async function FacultyDashboard() {
                     <Link
                       href="/faculty/tasks"
                       className="btn-outline"
-                      style={{ fontSize: 11, padding: "4px 10px", fontFamily: "var(--font-mono)" }}
+                      style={{ fontSize: 11, padding: "5px 12px" }}
                     >
                       UPDATE
                     </Link>
@@ -390,9 +437,16 @@ export default async function FacultyDashboard() {
         </div>
 
         {/* RIGHT COLUMN: RECOGNITION & LEAVE PIPELINE */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {/* BADGES / ACHIEVEMENTS */}
-          <div className="tech-card" style={{ padding: 22 }}>
+          <div
+            style={{
+              background: "#FFFFFF",
+              border: "4px solid #121212",
+              boxShadow: "6px 6px 0px 0px #121212",
+              padding: 22,
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -402,20 +456,31 @@ export default async function FacultyDashboard() {
               }}
             >
               <div>
-                <span className="hero-eyebrow" style={{ margin: 0 }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    backgroundColor: "#F0C020",
+                    color: "#121212",
+                    padding: "2px 8px",
+                    border: "1.5px solid #121212",
+                  }}
+                >
                   // RECOGNITION
                 </span>
-                <h2 style={{ fontSize: 15, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                <h2 style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", color: "#121212", margin: "6px 0 0 0" }}>
                   Earned Badges
                 </h2>
               </div>
               <Link
                 href="/faculty/stars"
                 style={{
-                  fontSize: 11,
-                  fontFamily: "var(--font-mono)",
-                  fontWeight: 600,
-                  color: "#FFD700",
+                  fontSize: 11.5,
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  color: "#D02020",
                   textDecoration: "none",
                 }}
               >
@@ -439,34 +504,33 @@ export default async function FacultyDashboard() {
                       alignItems: "center",
                       gap: 12,
                       padding: "10px 14px",
-                      backgroundColor: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid rgba(255, 215, 0, 0.2)",
-                      borderRadius: 8,
+                      backgroundColor: "#F0F0F0",
+                      border: "2px solid #121212",
+                      boxShadow: "3px 3px 0px 0px #121212",
                     }}
                   >
                     <div
                       style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: 6,
-                        backgroundColor: "rgba(255, 215, 0, 0.1)",
-                        border: "1px solid rgba(255, 215, 0, 0.3)",
+                        width: 36,
+                        height: 36,
+                        backgroundColor: "#F0C020",
+                        border: "2px solid #121212",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#FFD700",
+                        color: "#121212",
                         flexShrink: 0,
-                        boxShadow: "0 0 10px rgba(255, 215, 0, 0.15)",
                       }}
                     >
-                      <Award size={18} />
+                      <Award size={18} strokeWidth={2.5} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
                           fontSize: 13,
-                          fontWeight: 700,
-                          color: "#F8FAFC",
+                          fontWeight: 800,
+                          textTransform: "uppercase",
+                          color: "#121212",
                           lineHeight: 1.2,
                         }}
                       >
@@ -474,8 +538,9 @@ export default async function FacultyDashboard() {
                       </div>
                       <div
                         style={{
-                          fontSize: 11,
-                          color: "#64748B",
+                          fontSize: 11.5,
+                          fontWeight: 500,
+                          color: "#424245",
                           marginTop: 2,
                           whiteSpace: "nowrap",
                           overflow: "hidden",
@@ -492,7 +557,14 @@ export default async function FacultyDashboard() {
           </div>
 
           {/* RECENT LEAVE PIPELINE */}
-          <div className="tech-card" style={{ padding: 22 }}>
+          <div
+            style={{
+              background: "#FFFFFF",
+              border: "4px solid #121212",
+              boxShadow: "6px 6px 0px 0px #121212",
+              padding: 22,
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -502,20 +574,31 @@ export default async function FacultyDashboard() {
               }}
             >
               <div>
-                <span className="hero-eyebrow" style={{ margin: 0 }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    backgroundColor: "#1040C0",
+                    color: "#FFFFFF",
+                    padding: "2px 8px",
+                    border: "1.5px solid #121212",
+                  }}
+                >
                   // WORKFLOW
                 </span>
-                <h2 style={{ fontSize: 15, fontWeight: 700, color: "#F8FAFC", margin: "2px 0 0 0" }}>
+                <h2 style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", color: "#121212", margin: "6px 0 0 0" }}>
                   Leave Pipeline
                 </h2>
               </div>
               <Link
                 href="/faculty/leave"
                 style={{
-                  fontSize: 11,
-                  fontFamily: "var(--font-mono)",
-                  fontWeight: 600,
-                  color: "#38BDF8",
+                  fontSize: 11.5,
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  color: "#1040C0",
                   textDecoration: "none",
                 }}
               >
@@ -536,9 +619,9 @@ export default async function FacultyDashboard() {
                     key={leave.id}
                     style={{
                       padding: "12px 14px",
-                      backgroundColor: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid rgba(255, 255, 255, 0.07)",
-                      borderRadius: 8,
+                      backgroundColor: "#F0F0F0",
+                      border: "2px solid #121212",
+                      boxShadow: "3px 3px 0px 0px #121212",
                     }}
                   >
                     <div
@@ -549,7 +632,7 @@ export default async function FacultyDashboard() {
                         marginBottom: 6,
                       }}
                     >
-                      <span style={{ fontSize: 12, fontWeight: 600, fontFamily: "var(--font-mono)", color: "#F8FAFC" }}>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#121212" }}>
                         {formatDate(leave.startDate)} — {formatDate(leave.endDate)}
                       </span>
                       <StatusBadge status={leave.status} size="sm" />
@@ -557,7 +640,8 @@ export default async function FacultyDashboard() {
                     <div
                       style={{
                         fontSize: 12,
-                        color: "#94A3B8",
+                        fontWeight: 500,
+                        color: "#424245",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
